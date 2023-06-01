@@ -123,7 +123,7 @@ const Card = () => {
   return (
     <div>
       <div
-        className={`Card ${dragging ? "" : "Released"}`}
+              className={`Card ${dragging ? "" : "Released"} ${offset < -OFFSET_THRESHOLD ? "Danger" : ""} ${offset > OFFSET_THRESHOLD ? "Accepting" : ""}`}
         onMouseDown={dragStart}
         onMouseUp={dragEnd}
         onMouseMove={dragMove}
