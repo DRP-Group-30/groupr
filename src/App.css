@@ -61,3 +61,16 @@
 .Danger {
   background-color: red;
 }
+
+@keyframes Throw-left {
+  to {
+    transform: translateX(600px) rotate(360)
+  }
+}
+
+
+@keyframes Throw-right {
+  to {
+    transform: translateX(-600px) rotate(-360)
+  }
+}
