@@ -1,6 +1,6 @@
-import { Routes, Route } from 'react-router-dom';
-import Dashboard from './Dashboard';
-import Finder from './Finder';
+import { Routes, Route } from "react-router-dom";
+import Dashboard from "./Dashboard";
+import Finder from "./Finder";
 
 function App() {
   return (

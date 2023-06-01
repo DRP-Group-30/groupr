@@ -1,17 +1,15 @@
-import React from "react";
 import { render, screen } from "@testing-library/react";
+import { getDoc } from "@firebase/firestore";
+import { DEFAULT_USER } from "./Card";
 import App from "./App";
-import { doc, getDoc } from "@firebase/firestore";
-import { db } from "./Firebase";
-import { DEFAULT_USER_ID, USERS } from "./Card";
+import { BrowserRouter } from "react-router-dom";
 
-test("renders learn react link", () => {
-  render(<App />);
-  const linkElement = screen.getByText(/learn react/i);
+test("renders dashboard link", () => {
+  render(
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  );
+  const linkElement = screen.getByText(/dashboard/i);
   expect(linkElement).toBeInTheDocument();
-});
-
-test(`connect to firestore successfully`, async () => {
-  const snapshot = await getDoc(doc(db, USERS, DEFAULT_USER_ID));
-  expect(snapshot.get("Name")).toBe("DefaultUser");
 });

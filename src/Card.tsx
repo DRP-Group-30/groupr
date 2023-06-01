@@ -12,11 +12,11 @@ import {
 } from "firebase/firestore";
 
 const PROJECTS = "projects";
-const USERS = "users";
+export const USERS = "users";
 const OFFSET_THRESHOLD = 300;
 
 export const DEFAULT_USER_ID = "4yVmpEgdaQvizc3sNgas";
-const DEFAULT_USER = doc(db, USERS, DEFAULT_USER_ID);
+export const DEFAULT_USER = doc(db, USERS, DEFAULT_USER_ID);
 
 const INTERESTED = "Interested";
 const MATCHED = "Matched";
