@@ -1,4 +1,3 @@
-import { rejects } from "assert";
 import React from "react";
 import { MouseEvent } from "react";
 import { db } from "./Firebase";
@@ -11,7 +10,6 @@ import {
   getDocs,
   updateDoc,
 } from "firebase/firestore";
-import { readSync } from "fs";
 
 const OFFSET_THRESHOLD = 300;
 const DEFAULT_USER_ID = "4yVmpEgdaQvizc3sNgas";
@@ -133,11 +131,11 @@ const Card = () => {
 
 export default Card;
 
-function timeout(delay: number) {
+export function timeout(delay: number) {
   return new Promise((res) => setTimeout(res, delay));
 }
 
-function inlineLog<T>(x: T): T {
+export function inlineLog<T>(x: T): T {
   console.log(x);
   return x;
 }
