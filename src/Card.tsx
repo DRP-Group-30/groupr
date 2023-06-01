@@ -3,12 +3,15 @@ import React from "react";
 import { MouseEvent } from "react";
 import { db } from "./Firebase";
 import {
+  DocumentData,
   DocumentReference,
   collection,
   doc,
   getDoc,
   getDocs,
+  updateDoc,
 } from "firebase/firestore";
+import { readSync } from "fs";
 
 const OFFSET_THRESHOLD = 300;
 const DEFAULT_USER_ID = "4yVmpEgdaQvizc3sNgas";
@@ -16,14 +19,22 @@ const DEFAULT_USER_ID = "4yVmpEgdaQvizc3sNgas";
 const Card = () => {
   const [offset, setOffset] = React.useState(0);
   const [dragging, setDragging] = React.useState(false);
-  const [name, setName] = React.useState("");
-  let [cards, setCards] = React.useState<string[]>([]);
-  if (name === "") nextCard();
+  let [cardRef, setCardRef] = React.useState<DocumentReference | null>(null);
+  let [cardData, setCardData] = React.useState<{ cardName: string } | null>(
+    null
+  );
+  let [cards, setCards] = React.useState<DocumentReference[]>([]);
 
+  if (cardRef === null) nextCard();
   async function nextCard() {
     if (cards.length === 0) await pollCards();
-    setName(inlineLog(cards[cards.length - 1]));
+    if (cards.length === 0) return;
+    cardRef = cards[cards.length - 1];
     cards.pop();
+    setCardRef(cardRef);
+    const cardDoc = await getDoc(cardRef);
+    cardData = { cardName: cardDoc.get("Name") };
+    setCardData(cardData);
   }
   async function pollCards() {
     const defaultUser = await getDoc(doc(db, "users", DEFAULT_USER_ID));
@@ -32,10 +43,10 @@ const Card = () => {
     const rejected: DocumentReference[] = defaultUser.get("Rejected");
     const seenBefore = interested.concat(matched).concat(rejected);
     const ds = await getDocs(collection(db, "projects"));
-
     cards = ds.docs
-      .filter((d) => seenBefore.find((r) => r === d.ref) === undefined)
-      .map((n) => n.get("Name"));
+      .map((d) => d.ref)
+      .filter((r0) => seenBefore.find((r1) => r0.id === r1.id) === undefined);
+
     setCards(cards);
   }
 
@@ -44,12 +55,24 @@ const Card = () => {
     setOffset(ev.pageX - window.innerWidth / 2);
   }
 
-  function acceptCard() {
-    console.log("Accept");
+  async function acceptCard() {
+    const cr = cardRef;
+    if (cr === null) return;
+    await updateField<DocumentReference[]>(
+      doc(db, "users", DEFAULT_USER_ID),
+      "Interested",
+      (rs) => rs.concat([cr])
+    );
   }
 
-  function rejectCard() {
-    console.log("Reject");
+  async function rejectCard() {
+    const cr = cardRef;
+    if (cr === null) return;
+    await updateField<DocumentReference[]>(
+      doc(db, "users", DEFAULT_USER_ID),
+      "Rejected",
+      (rs) => rs.concat([cr])
+    );
   }
 
   async function dragEnd(ev: MouseEvent<HTMLDivElement>) {
@@ -91,7 +114,7 @@ const Card = () => {
           transform: `translate(${offset}px, 0) rotate(${offset / 10}deg)`,
         }}
       >
-        <h1>{name}</h1>
+        <h1>{cardData?.cardName ?? "Out of Cards :("}</h1>
       </div>
     </div>
   );
@@ -107,3 +130,12 @@ function inlineLog<T>(x: T): T {
   console.log(x);
   return x;
 }
+
+const updateField = <T,>(
+  d: DocumentReference<DocumentData>,
+  f: string,
+  m: (x: T) => T
+): Promise<void> =>
+  getDoc(d)
+    .then((snapshot) => snapshot.get(f))
+    .then((n: T) => updateDoc(d, { [f]: m(n) }));
