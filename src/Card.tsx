@@ -4,18 +4,27 @@ import { db } from "./Firebase";
 import {
   DocumentData,
   DocumentReference,
-  DocumentSnapshot,
   collection,
   doc,
   getDoc,
   getDocs,
-  snapshotEqual,
   updateDoc,
 } from "firebase/firestore";
-import { fstat } from "fs";
 
+const PROJECTS = "projects";
+const USERS = "users";
 const OFFSET_THRESHOLD = 300;
+
 const DEFAULT_USER_ID = "4yVmpEgdaQvizc3sNgas";
+const DEFAULT_USER = doc(db, USERS, DEFAULT_USER_ID);
+
+const INTERESTED = "Interested";
+const MATCHED = "Matched";
+const REJECTED = "Rejected";
+
+const NAME = "Name";
+
+const USER_CARD_CATEGORIES = [INTERESTED, MATCHED, REJECTED];
 
 const Card = () => {
   const [offset, setOffset] = React.useState(0);
@@ -38,26 +47,20 @@ const Card = () => {
     console.log(cards.length);
     cards.pop();
     const cardDoc = await getDoc(cardRef);
-    setCardData((cardData = { ref: cardRef, name: cardDoc.get("Name") }));
+    setCardData((cardData = { ref: cardRef, name: cardDoc.get(NAME) }));
   }
 
   async function pollCards() {
-    const defaultUser = await getDoc(doc(db, "users", DEFAULT_USER_ID));
-    const interested: DocumentReference[] = defaultUser.get("Interested");
-    const matched: DocumentReference[] = defaultUser.get("Matched");
-    const rejected: DocumentReference[] = defaultUser.get("Rejected");
-    const seenBefore = interested
-      .concat(matched)
-      .concat(rejected)
-      .map((r) => r.id);
-    const cr = cardData?.ref;
-    if (cr != null) {
-      // Current card might not have been added to Firestore so we manually add
-      // it to the 'seenBefore' list
-      seenBefore.push(cr.id);
-    }
+    const defaultUser = await getDoc(DEFAULT_USER);
+    const seenBefore = USER_CARD_CATEGORIES.flatMap<DocumentReference>((d) =>
+      defaultUser.get(d)
+    ).map((r) => r.id);
+    const id = cardData?.ref?.id;
+    // Current card might not have been added to Firestore so we manually add
+    // it to the 'seenBefore' list
+    if (id !== undefined) seenBefore.push(id);
 
-    const ds = await getDocs(collection(db, "projects"));
+    const ds = await getDocs(collection(db, PROJECTS));
 
     setCards(
       (cards = ds.docs
@@ -74,20 +77,16 @@ const Card = () => {
   async function acceptCard() {
     const cr = cardData?.ref;
     if (cr === undefined) return;
-    await updateField<DocumentReference[]>(
-      doc(db, "users", DEFAULT_USER_ID),
-      "Interested",
-      (rs) => rs.concat([cr])
+    await updateField<DocumentReference[]>(DEFAULT_USER, INTERESTED, (rs) =>
+      rs.concat([cr])
     );
   }
 
   async function rejectCard() {
     const cr = cardData?.ref;
     if (cr === undefined) return;
-    await updateField<DocumentReference[]>(
-      doc(db, "users", DEFAULT_USER_ID),
-      "Rejected",
-      (rs) => rs.concat([cr])
+    await updateField<DocumentReference[]>(DEFAULT_USER, REJECTED, (rs) =>
+      rs.concat([cr])
     );
   }
 
@@ -115,12 +114,10 @@ const Card = () => {
   }
 
   async function resetCards() {
-    const defaultUser = await getDoc(doc(db, "users", DEFAULT_USER_ID));
-    updateFields(doc(db, "users", DEFAULT_USER_ID), [
-      ["Interested", () => []],
-      ["Rejected", () => []],
-      ["Matched", () => []],
-    ]);
+    updateFields(
+      DEFAULT_USER,
+      USER_CARD_CATEGORIES.map((c) => [c, () => []])
+    );
   }
 
   return (
@@ -162,10 +159,6 @@ const updateField = <T,>(
     .then((snapshot) => snapshot.get(f))
     .then((n: T) => updateDoc(d, { [f]: m(n) }));
 
-type FieldUpdate<T> = [string, (x: T) => T];
-
-const x: number[] = [1, 2, 3];
-
 const updateFields = (
   d: DocumentReference<DocumentData>,
   fs: [string, (x: any) => any][]
@@ -175,8 +168,3 @@ const updateFields = (
     .then((n) =>
       updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])])))
     );
-
-/*
-const updateFields = (d: DocumentReference<DocumentData>, fs: [f: string, m: <T>(x: T) => T][]) => getDoc(d).then(
-  (snapshot) => fs.map(([f, _]) => snapshot.get(f))).then((n) => updateDoc(d, {[fs.map([f, _] => f)]: n.map(m)}))
-*/
