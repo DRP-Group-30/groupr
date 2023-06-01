@@ -19,35 +19,50 @@ const DEFAULT_USER_ID = "4yVmpEgdaQvizc3sNgas";
 const Card = () => {
   const [offset, setOffset] = React.useState(0);
   const [dragging, setDragging] = React.useState(false);
-  let [cardRef, setCardRef] = React.useState<DocumentReference | null>(null);
-  let [cardData, setCardData] = React.useState<{ cardName: string } | null>(
-    null
-  );
+  let [cardData, setCardData] = React.useState<{
+    ref: DocumentReference;
+    name: string;
+  } | null>(null);
   let [cards, setCards] = React.useState<DocumentReference[]>([]);
 
-  if (cardRef === null) nextCard();
+  if (cardData === null) nextCard();
+
   async function nextCard() {
     if (cards.length === 0) await pollCards();
-    if (cards.length === 0) return;
-    cardRef = cards[cards.length - 1];
+    if (cards.length === 0) {
+      setCardData((cardData = null));
+      return;
+    }
+    const cardRef = cards[cards.length - 1];
+    console.log(cards.length);
     cards.pop();
-    setCardRef(cardRef);
     const cardDoc = await getDoc(cardRef);
-    cardData = { cardName: cardDoc.get("Name") };
-    setCardData(cardData);
+    setCardData((cardData = { ref: cardRef, name: cardDoc.get("Name") }));
   }
+
   async function pollCards() {
     const defaultUser = await getDoc(doc(db, "users", DEFAULT_USER_ID));
     const interested: DocumentReference[] = defaultUser.get("Interested");
     const matched: DocumentReference[] = defaultUser.get("Matched");
     const rejected: DocumentReference[] = defaultUser.get("Rejected");
-    const seenBefore = interested.concat(matched).concat(rejected);
-    const ds = await getDocs(collection(db, "projects"));
-    cards = ds.docs
-      .map((d) => d.ref)
-      .filter((r0) => seenBefore.find((r1) => r0.id === r1.id) === undefined);
+    const seenBefore = interested
+      .concat(matched)
+      .concat(rejected)
+      .map((r) => r.id);
+    const cr = cardData?.ref;
+    if (cr != null) {
+      // Current card might not have been added to Firestore so we manually add
+      // it to the 'seenBefore' list
+      seenBefore.push(cr.id);
+    }
 
-    setCards(cards);
+    const ds = await getDocs(collection(db, "projects"));
+
+    setCards(
+      (cards = ds.docs
+        .map((d) => d.ref)
+        .filter((r) => !seenBefore.includes(r.id)))
+    );
   }
 
   function dragStart(ev: MouseEvent<HTMLDivElement>) {
@@ -56,8 +71,8 @@ const Card = () => {
   }
 
   async function acceptCard() {
-    const cr = cardRef;
-    if (cr === null) return;
+    const cr = cardData?.ref;
+    if (cr === undefined) return;
     await updateField<DocumentReference[]>(
       doc(db, "users", DEFAULT_USER_ID),
       "Interested",
@@ -66,8 +81,8 @@ const Card = () => {
   }
 
   async function rejectCard() {
-    const cr = cardRef;
-    if (cr === null) return;
+    const cr = cardData?.ref;
+    if (cr === undefined) return;
     await updateField<DocumentReference[]>(
       doc(db, "users", DEFAULT_USER_ID),
       "Rejected",
@@ -77,10 +92,6 @@ const Card = () => {
 
   async function dragEnd(ev: MouseEvent<HTMLDivElement>) {
     setDragging(false);
-    if (offset > OFFSET_THRESHOLD) {
-    } else if (offset < -OFFSET_THRESHOLD) {
-    } else {
-    }
 
     if (Math.abs(offset) >= OFFSET_THRESHOLD) {
       if (offset > 0) {
@@ -114,7 +125,7 @@ const Card = () => {
           transform: `translate(${offset}px, 0) rotate(${offset / 10}deg)`,
         }}
       >
-        <h1>{cardData?.cardName ?? "Out of Cards :("}</h1>
+        <h1>{cardData?.name ?? "Out of Cards :("}</h1>
       </div>
     </div>
   );
