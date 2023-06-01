@@ -39,7 +39,7 @@ const Card = () => {
   >(undefined);
   let [cards, setCards] = React.useState<DocumentReference[]>([]);
 
-  if (cardData === null) nextCard();
+  if (cardData === undefined) nextCard();
 
   async function nextCard() {
     if (cards.length === 0) await pollCards();
