@@ -15,7 +15,7 @@ const PROJECTS = "projects";
 const USERS = "users";
 const OFFSET_THRESHOLD = 300;
 
-const DEFAULT_USER_ID = "4yVmpEgdaQvizc3sNgas";
+export const DEFAULT_USER_ID = "4yVmpEgdaQvizc3sNgas";
 const DEFAULT_USER = doc(db, USERS, DEFAULT_USER_ID);
 
 const INTERESTED = "Interested";
@@ -39,7 +39,7 @@ const Card = () => {
   >(undefined);
   let [cards, setCards] = React.useState<DocumentReference[]>([]);
 
-  if (cardData === undefined) nextCard();
+  if (cardData === null) nextCard();
 
   async function nextCard() {
     if (cards.length === 0) await pollCards();
@@ -127,7 +127,9 @@ const Card = () => {
   return (
     <div>
       <div
-        className={`Card ${dragging ? "" : "Released"}`}
+        className={`Card ${dragging ? "" : "Released"} ${
+          offset < -OFFSET_THRESHOLD ? "Danger" : ""
+        } ${offset > OFFSET_THRESHOLD ? "Accepting" : ""}`}
         onMouseDown={dragStart}
         onMouseUp={dragEnd}
         onMouseMove={dragMove}
