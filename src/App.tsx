@@ -1,11 +1,15 @@
-import './App.css';
-import Card from './Card';
+import { Routes, Route } from 'react-router-dom';
+import Dashboard from './Dashboard';
+import Finder from './Finder';
 
 function App() {
   return (
-    <div className="App">
-      <Card></Card>
-    </div>
+    <>
+      <Routes>
+        <Route path="/" element={<Finder />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+      </Routes>
+    </>
   );
 }
 
