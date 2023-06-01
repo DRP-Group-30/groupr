@@ -29,13 +29,17 @@ const USER_CARD_CATEGORIES = [INTERESTED, MATCHED, REJECTED];
 const Card = () => {
   const [offset, setOffset] = React.useState(0);
   const [dragging, setDragging] = React.useState(false);
-  let [cardData, setCardData] = React.useState<{
-    ref: DocumentReference;
-    name: string;
-  } | null>(null);
+  let [cardData, setCardData] = React.useState<
+    | {
+        ref: DocumentReference;
+        name: string;
+      }
+    | null
+    | undefined
+  >(undefined);
   let [cards, setCards] = React.useState<DocumentReference[]>([]);
 
-  if (cardData === null) nextCard();
+  if (cardData === undefined) nextCard();
 
   async function nextCard() {
     if (cards.length === 0) await pollCards();
