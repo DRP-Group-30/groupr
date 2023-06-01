@@ -1,5 +1,10 @@
 .App {
-  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .App-logo {
@@ -35,4 +40,24 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.Card {
+  width: 20vw;
+  height: 40vh;
+  box-shadow: 0 5px 15px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  user-select: none;
+}
+
+.Released {
+  transition: transform 0.2s;
+}
+
+.Danger {
+  background-color: red;
 }
