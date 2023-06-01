@@ -4,12 +4,15 @@ import { db } from "./Firebase";
 import {
   DocumentData,
   DocumentReference,
+  DocumentSnapshot,
   collection,
   doc,
   getDoc,
   getDocs,
+  snapshotEqual,
   updateDoc,
 } from "firebase/firestore";
+import { fstat } from "fs";
 
 const OFFSET_THRESHOLD = 300;
 const DEFAULT_USER_ID = "4yVmpEgdaQvizc3sNgas";
@@ -111,6 +114,15 @@ const Card = () => {
     setOffset(ev.pageX - window.innerWidth / 2);
   }
 
+  async function resetCards() {
+    const defaultUser = await getDoc(doc(db, "users", DEFAULT_USER_ID));
+    updateFields(doc(db, "users", DEFAULT_USER_ID), [
+      ["Interested", () => []],
+      ["Rejected", () => []],
+      ["Matched", () => []],
+    ]);
+  }
+
   return (
     <div>
       <div
@@ -125,6 +137,7 @@ const Card = () => {
       >
         <h1>{cardData?.name ?? "Out of Cards :("}</h1>
       </div>
+      <button onClick={resetCards}>Reset Database</button>
     </div>
   );
 };
@@ -148,3 +161,22 @@ const updateField = <T,>(
   getDoc(d)
     .then((snapshot) => snapshot.get(f))
     .then((n: T) => updateDoc(d, { [f]: m(n) }));
+
+type FieldUpdate<T> = [string, (x: T) => T];
+
+const x: number[] = [1, 2, 3];
+
+const updateFields = (
+  d: DocumentReference<DocumentData>,
+  fs: [string, (x: any) => any][]
+): Promise<void> =>
+  getDoc(d)
+    .then((snapshot) => fs.map(([f, _]) => snapshot.get(f)))
+    .then((n) =>
+      updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])])))
+    );
+
+/*
+const updateFields = (d: DocumentReference<DocumentData>, fs: [f: string, m: <T>(x: T) => T][]) => getDoc(d).then(
+  (snapshot) => fs.map(([f, _]) => snapshot.get(f))).then((n) => updateDoc(d, {[fs.map([f, _] => f)]: n.map(m)}))
+*/
