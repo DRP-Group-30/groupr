@@ -9,7 +9,7 @@ const Finder = () => {
         updateFields(
             DEFAULT_USER,
             USER_CARD_CATEGORIES.map((c) => [c, () => []])
-        );
+        ).then(() => window.location.reload());
     }
 
     return <div className="App">
