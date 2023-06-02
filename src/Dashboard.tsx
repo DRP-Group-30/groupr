@@ -7,18 +7,16 @@ import {
 } from "firebase/firestore";
 import { db } from './Firebase';
 import { DEFAULT_USER_ID } from './Card';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 const Dashboard = () => {
     const [matched, setMatched] = useState<string[] | null>(null);
     const [interested, setInterested] = useState<string[] | null>(null);
     const [rejected, setRejected] = useState<string[] | null>(null);
 
-    useEffect(() => {
-        if (matched === null) getMatched();
-        if (interested === null) getInterested();
-        if (rejected === null) getRejected();
-    }, []);
+    if (matched === null) getMatched();
+    if (interested === null) getInterested();
+    if (rejected === null) getRejected();
 
     async function getMatched() {
         const defaultUser = await getDoc(doc(db, "users", DEFAULT_USER_ID));

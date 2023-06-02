@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { MouseEvent } from "react";
 import { db } from "./Firebase";
 import {
