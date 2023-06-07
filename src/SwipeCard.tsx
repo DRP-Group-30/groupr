@@ -9,6 +9,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { MouseEvent, Dispatch, SetStateAction } from "react";
+import { ProjectCard } from "./Finder";
 
 interface SwipeCardProps {
 	offset: number;
@@ -18,6 +19,8 @@ interface SwipeCardProps {
 	cardAnchor: number;
 	acceptCard: () => void;
 	rejectCard: () => void;
+	data: ProjectCard;
+	cardHidden: boolean;
 }
 
 const SwipeCard = ({
@@ -28,6 +31,8 @@ const SwipeCard = ({
 	cardAnchor,
 	acceptCard,
 	rejectCard,
+	data,
+	cardHidden,
 }: SwipeCardProps) => {
 	function dragStart(ev: MouseEvent<HTMLDivElement>) {
 		setDragging(true);
@@ -67,7 +72,7 @@ const SwipeCard = ({
 				rounded={"md"}
 				border={Math.abs(offset) >= 300 ? "4px" : "0px"}
 				borderColor={offset >= 300 ? "green" : offset <= -300 ? "red" : "transparent"}
-				opacity={Math.abs(offset) >= 600 ? "0%" : "100%"}
+				opacity={cardHidden ? "0%" : "100%"}
 				p={6}
 				overflow={"hidden"}
 				className={`${dragging ? "" : "Released"}`}
@@ -98,20 +103,16 @@ const SwipeCard = ({
 						fontSize={"sm"}
 						letterSpacing={1.1}
 					>
-						Blog
+						Developer
 					</Text>
 					<Heading
 						color={useColorModeValue("gray.700", "white")}
 						fontSize={"2xl"}
 						fontFamily={"body"}
 					>
-						Boost your conversion rate
+						{data.name}
 					</Heading>
-					<Text color={"gray.500"}>
-						Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
-						eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
-						voluptua. At vero eos et accusam et justo duo dolores et ea rebum.
-					</Text>
+					<Text color={"gray.500"}>{data.overview}</Text>
 				</Stack>
 				<Stack mt={6} direction={"row"} spacing={4} align={"center"}>
 					<Avatar src={"https://avatars0.githubusercontent.com/u/1164541?v=4"} />
