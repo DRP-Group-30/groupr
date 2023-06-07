@@ -99,6 +99,13 @@ const Finder = () => {
 		showNextCard();
 	}
 
+	function resetLists() {
+		updateFields(
+			DEFAULT_USER,
+			USER_CARD_CATEGORIES.map(c => [c, () => []]),
+		).then(() => window.location.reload());
+	}
+
 	function showNextCard() {
 		setCardHidden(true);
 
@@ -125,6 +132,7 @@ const Finder = () => {
 		>
 			<GridItem pl="2" bg="gray.100" area={"nav"} zIndex="9999">
 				<Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
+					<Button onClick={resetLists}>Reset</Button>
 					<Button
 						onClick={toggleSideBar}
 						alignSelf="flex-end"
@@ -176,22 +184,19 @@ const Finder = () => {
 		// <div className="App">
 		//   {/* <Card></Card> */}
 		//   <SwipeCard></SwipeCard>
-		//   <button onClick={resetLists}>Reset</button>
 		// </div>
 	);
 };
 
 export default Finder;
 
-// const updateFields = (
-//   d: DocumentReference<DocumentData>,
-//   fs: [string, (x: any) => any][]
-// ): Promise<void> =>
-//   getDoc(d)
-//     .then((snapshot) => fs.map(([f, _]) => snapshot.get(f)))
-//     .then((n) =>
-//       updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])])))
-//     );
+const updateFields = (
+	d: DocumentReference<DocumentData>,
+	fs: [string, (x: any) => any][],
+): Promise<void> =>
+	getDoc(d)
+		.then(snapshot => fs.map(([f, _]) => snapshot.get(f)))
+		.then(n => updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])]))));
 
 const updateField = <T,>(
 	d: DocumentReference<DocumentData>,
