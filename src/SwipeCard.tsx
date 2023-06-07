@@ -37,7 +37,7 @@ const SwipeCard = ({
 	function dragEnd(ev: MouseEvent<HTMLDivElement>) {
 		setDragging(false);
 
-		if (Math.abs(offset) >= 200) {
+		if (Math.abs(offset) >= 300) {
 			if (offset > 0) {
 				acceptCard();
 			} else {
@@ -65,6 +65,8 @@ const SwipeCard = ({
 				bg={useColorModeValue("white", "gray.900")}
 				boxShadow={"2xl"}
 				rounded={"md"}
+				border={Math.abs(offset) >= 300 ? "4px" : "0px"}
+				borderColor={offset >= 300 ? "green" : offset <= -300 ? "red" : "transparent"}
 				p={6}
 				overflow={"hidden"}
 				className={`${dragging ? "" : "Released"}`}

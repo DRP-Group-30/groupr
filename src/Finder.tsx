@@ -5,8 +5,6 @@
 //   updateDoc,
 // } from "firebase/firestore";
 import "./App.css";
-// import Card from './Card';
-// import { DEFAULT_USER, USER_CARD_CATEGORIES } from "./Card";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "./SwipeCard";
 import { Button, Center, Flex, Grid, GridItem } from "@chakra-ui/react";
@@ -78,7 +76,7 @@ const Finder = () => {
 					<Flex justifyContent="space-evenly" alignItems="center" w="60%">
 						<Button
 							className={`${dragging ? "Hidden" : ""}`}
-							onClick={dragging ? rejectCard : () => {}}
+							onClick={rejectCard}
 							leftIcon={<MdClose />}
 						>
 							Reject
@@ -94,7 +92,7 @@ const Finder = () => {
 						></SwipeCard>
 						<Button
 							className={`${dragging ? "Hidden" : ""}`}
-							onClick={dragging ? acceptCard : () => {}}
+							onClick={acceptCard}
 							rightIcon={<MdDone />}
 						>
 							Accept
