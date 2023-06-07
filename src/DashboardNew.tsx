@@ -18,6 +18,8 @@ import {
 	IconButton,
 	SimpleGrid,
 } from "@chakra-ui/react";
+import Sidebar from "./Sidebar";
+import { Dispatch, SetStateAction, useState } from "react";
 
 const DashboardCard = ({ content }: { content: any }) => {
 	return (
@@ -39,20 +41,24 @@ const DashboardCard = ({ content }: { content: any }) => {
 					</Text>
 				</CardBody>
 
-				<CardFooter alignSelf='end'>
-					<IconButton colorScheme="blue" icon={<ChevronRightIcon />} size='sm' aria-label={""}/>
+				<CardFooter alignSelf="end">
+					<IconButton
+						colorScheme="blue"
+						icon={<ChevronRightIcon />}
+						size="sm"
+						aria-label={""}
+					/>
 				</CardFooter>
 			</Stack>
 		</Card>
 	);
 };
 
-const DashboardColumn = ({ heading, children }: { heading: string; children: any[] }) => {
+const DashboardList = ({ heading, children }: { heading: string; children: any[] }) => {
 	return (
-		<Container maxW="80%" maxH="" overflowY='auto' centerContent>
+		<Container maxW="100%" maxH="" overflowY="auto" centerContent>
 			<Heading>{heading}</Heading>
-			<SimpleGrid columns={2} spacing={5}>
-				
+			<SimpleGrid columns={2} spacing={8}>
 				{children.map(link => (
 					<DashboardCard content={link}></DashboardCard>
 				))}
@@ -61,13 +67,64 @@ const DashboardColumn = ({ heading, children }: { heading: string; children: any
 	);
 };
 
-const DashboardNew = () => {
+const DashboardColumn = ({ heading, children }: { heading: string; children: any[] }) => {
 	return (
-		<Flex p='30'>
-			{/* <DashboardColumn heading="Matched" children={["Test", "Test2"]}></DashboardColumn> */}
-			<DashboardColumn heading="Interested" children={["Test","Test","Test","Test"]}></DashboardColumn>
-			{/* <DashboardColumn heading="Rejected" children={["Test"]}></DashboardColumn> */}
-		</Flex>
+		<Container maxW="80%" maxH="" overflowY="auto" centerContent>
+			<Heading>{heading}</Heading>
+			<VStack spacing={5}>
+				{children.map(link => (
+					<DashboardCard content={link}></DashboardCard>
+				))}
+			</VStack>
+		</Container>
+	);
+};
+
+const DashboardSidebar = ({ setMatched }: { setMatched: Dispatch<SetStateAction<boolean>> }) => {
+	return (
+		<Card w="90%" p="2">
+			<VStack>
+				<Button size="md" width="90%" onClick={() => setMatched(true)}>
+					Matched Projects
+				</Button>
+				<Button size="md" width="90%" onClick={() => setMatched(false)}>
+					Pending Projects
+				</Button>
+			</VStack>
+		</Card>
+	);
+};
+
+const DashboardNew = () => {
+	const [matched, setMatched] = useState(true);
+
+	return (
+		<Sidebar
+			sideElem={<DashboardSidebar setMatched={setMatched}></DashboardSidebar>}
+			mainElem={
+				<Flex p="15" w="100%">
+					{" "}
+					{matched ? (
+						<DashboardList
+							heading="Matched"
+							children={["Test", "Test", "Test", "Test"]}
+						></DashboardList>
+					) : (
+						<>
+							<DashboardColumn
+								heading="Interested"
+								children={["Test", "Test2"]}
+							></DashboardColumn>
+							<DashboardColumn
+								heading="Rejected"
+								children={["Test"]}
+							></DashboardColumn>
+						</>
+					)}
+					{/* <DashboardList heading="Interested" children={["Test","Test","Test","Test"]}></DashboardList> */}
+				</Flex>
+			}
+		></Sidebar>
 	);
 };
 
