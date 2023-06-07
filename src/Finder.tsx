@@ -1,34 +1,77 @@
-// import {
-//   DocumentReference,
-//   DocumentData,
-//   getDoc,
-//   updateDoc,
-// } from "firebase/firestore";
+import {
+	DocumentReference,
+	doc,
+	getDoc,
+	getDocs,
+	collection,
+	DocumentData,
+	updateDoc,
+} from "firebase/firestore";
 import "./App.css";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "./SwipeCard";
-import { Button, Center, Flex, Grid, GridItem } from "@chakra-ui/react";
+import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
+import { db } from "./Firebase";
+
+const DEFAULT_USER_ID = "j9Rq6xiNHcDAVJftHbrQ";
+const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
+
+const INTERESTED = "interested";
+const MATCHED = "matched";
+const REJECTED = "rejected";
+
+const USER_CARD_CATEGORIES = [INTERESTED, MATCHED, REJECTED];
+
+export interface ProjectCard {
+	name: string;
+	overview: string;
+	hrs: number;
+}
 
 const Finder = () => {
 	const [offset, setOffset] = useState(0);
 	const [dragging, setDragging] = useState(false);
 	let [sideBarWidth, setSideBarWidth] = useState(25);
 	const [cardAnchor, setCardAnchor] = useState(0);
+	let [cards, setCards] = useState<DocumentReference[]>([]);
+	let [currentCard, setCurrentCard] = useState<ProjectCard | null>(null);
+	const [cardHidden, setCardHidden] = useState(false);
+	let [cardIndex, setCardIndex] = useState(0);
 
 	useEffect(() => {
 		setCardAnchor(
 			window.innerWidth * (sideBarWidth / 100) +
 				(window.innerWidth * (1 - sideBarWidth / 100)) / 2,
 		);
-	}, [setCardAnchor, sideBarWidth]);
+		pollCards().then(() => {
+			getNextCard();
+		});
+	}, []);
 
-	// async function resetLists() {
-	// 	updateFields(
-	// 		DEFAULT_USER,
-	// 		USER_CARD_CATEGORIES.map(c => [c, () => []]),
-	// 	).then(() => window.location.reload());
-	// }
+	async function pollCards() {
+		let defaultUser = await getDoc(DEFAULT_USER);
+		const seenBefore = USER_CARD_CATEGORIES.flatMap<DocumentReference>(d =>
+			defaultUser.get(d),
+		).map(r => r.id);
+
+		const ds = await getDocs(collection(db, "projects"));
+
+		setCards((cards = ds.docs.map(d => d.ref).filter(r => !seenBefore.includes(r.id))));
+	}
+
+	async function getNextCard() {
+		if (cardIndex >= cards.length) {
+			setTimeout(() => {
+				setCurrentCard(null);
+			}, 200);
+			return;
+		}
+
+		let card = await getDoc(cards[cardIndex]);
+		setCurrentCard((currentCard = card.data() as ProjectCard));
+		setCardIndex((cardIndex = cardIndex + 1));
+	}
 
 	function toggleSideBar() {
 		setSideBarWidth((sideBarWidth = sideBarWidth === 4 ? 25 : 4));
@@ -39,13 +82,35 @@ const Finder = () => {
 	}
 
 	function acceptCard() {
+		console.log(`ACCEPT ${currentCard?.name}`);
 		setOffset(window.innerWidth / 2);
+		updateField<DocumentReference[]>(DEFAULT_USER, INTERESTED, rs =>
+			rs.concat([cards[cardIndex - 1]]),
+		);
+		showNextCard();
 	}
 
 	function rejectCard() {
+		console.log(`REJECTED ${currentCard?.name}`);
 		setOffset(-window.innerWidth / 2);
+		updateField<DocumentReference[]>(DEFAULT_USER, REJECTED, rs =>
+			rs.concat([cards[cardIndex - 1]]),
+		);
+		showNextCard();
 	}
 
+	function showNextCard() {
+		setCardHidden(true);
+
+		getNextCard();
+
+		setTimeout(() => {
+			setOffset(0);
+			setTimeout(() => {
+				setCardHidden(false);
+			}, 200);
+		}, 200);
+	}
 	return (
 		<Grid
 			templateAreas={`"nav main"`}
@@ -81,15 +146,21 @@ const Finder = () => {
 						>
 							Reject
 						</Button>
-						<SwipeCard
-							offset={offset}
-							setOffset={setOffset}
-							dragging={dragging}
-							setDragging={setDragging}
-							cardAnchor={cardAnchor}
-							acceptCard={acceptCard}
-							rejectCard={rejectCard}
-						></SwipeCard>
+						{currentCard ? (
+							<SwipeCard
+								offset={offset}
+								setOffset={setOffset}
+								dragging={dragging}
+								setDragging={setDragging}
+								cardAnchor={cardAnchor}
+								acceptCard={acceptCard}
+								rejectCard={rejectCard}
+								data={currentCard}
+								cardHidden={cardHidden}
+							></SwipeCard>
+						) : (
+							<Text fontSize="xl">No projects! Come back later.</Text>
+						)}
 						<Button
 							className={`${dragging ? "Hidden" : ""}`}
 							onClick={acceptCard}
@@ -121,3 +192,12 @@ export default Finder;
 //     .then((n) =>
 //       updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])])))
 //     );
+
+const updateField = <T,>(
+	d: DocumentReference<DocumentData>,
+	f: string,
+	m: (x: T) => T,
+): Promise<void> =>
+	getDoc(d)
+		.then(snapshot => snapshot.get(f))
+		.then((n: T) => updateDoc(d, { [f]: m(n) }));
