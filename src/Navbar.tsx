@@ -16,7 +16,6 @@ import {
   Stack,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
-import { ReactNode } from "react";
 import { Link as RouteLink} from "react-router-dom";
 
 const Links = ["Dashboard", "Find Projects"];

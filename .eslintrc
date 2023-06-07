@@ -1,0 +1,100 @@
+{
+	"parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"jsx": true,
+		"useJSXTextNode": true,
+		"ecmaVersion": 2018,
+		"sourceType": "module",
+		"project": "./tsconfig.json"
+	},
+	"ignorePatterns": [
+		"/out",
+		"/tests"
+	],
+	"plugins": [
+		"@typescript-eslint",
+		"@typescript-eslint/eslint-plugin",
+		"prettier",
+		"roblox-ts",
+		"simple-import-sort",
+		"no-autofix"
+	],
+	"extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+		"plugin:prettier/recommended"
+	],
+	"rules": {
+		"prettier/prettier": [
+			"warn",
+			{
+				"endOfLine": "auto"
+			}
+		],
+		"@typescript-eslint/array-type": [
+			"warn",
+			{
+				"default": "generic",
+				"readonly": "generic"
+			}
+		],
+		"@typescript-eslint/no-floating-promises": [
+			"warn",
+			{
+				"ignoreVoid": true
+			}
+		],
+		"@typescript-eslint/no-unused-vars": [
+			"warn",
+			{
+				"argsIgnorePattern": "^_",
+				"varsIgnorePattern": "^_",
+				"caughtErrorsIgnorePattern": "^_"
+			}
+		],
+		"@typescript-eslint/interface-name-prefix": "off",
+		"@typescript-eslint/no-empty-function": "off",
+		"@typescript-eslint/no-empty-interface": "off",
+		"@typescript-eslint/no-namespace": "off",
+		"@typescript-eslint/no-non-null-assertion": "off",
+		"@typescript-eslint/no-use-before-define": "off",
+		"@typescript-eslint/explicit-module-boundary-types": "off",
+		"@typescript-eslint/no-require-imports": "error",
+		"@typescript-eslint/no-unused-expressions": "warn",
+		"@typescript-eslint/explicit-member-accessibility": [
+			"warn",
+			{
+				"overrides": {
+					"constructors": "no-public"
+				}
+			}
+		],
+		"curly": [
+			"warn",
+			"multi-line",
+			"consistent"
+		],
+		"no-param-reassign": "warn",
+		"no-autofix/prefer-const": "warn",
+		"no-constant-condition": [
+			"error",
+			{
+				"checkLoops": false
+			}
+		],
+		"no-debugger": "off",
+		"no-empty": [
+			"error",
+			{
+				"allowEmptyCatch": true
+			}
+		],
+		"no-void": "off",
+		"no-extra-boolean-cast": "off",
+		"no-undef-init": "error",
+		"prefer-const": "off",
+		"simple-import-sort/exports": "warn",
+		"simple-import-sort/imports": "warn",
+		"roblox-ts/lua-truthiness": "off"
+	}
+}
