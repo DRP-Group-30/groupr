@@ -85,7 +85,7 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
       await deleteCollection(currentPath + n, cs[n]);
     }
   };
-  const deleteCollection = async <D extends FireDoc>(
+  const deleteCollection = async <D extends AbstractFireDoc>(
     collectionPath: string,
     c: FireCollection<D>
   ) => {
@@ -94,16 +94,16 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
     await Promise.all(snapshot.docs.map((d) => deleteFullDoc(arbDoc, d)));
   };
   const deleteFullDoc = async (
-    modelDoc: FireDoc | null,
+    modelDoc: AbstractFireDoc | null,
     snapshot: QueryDocumentSnapshot<DocumentData>
   ) => {
-    deleteDoc(snapshot.ref);
+    await deleteDoc(snapshot.ref);
     // Might miss deleting some files if collection is populated on current live
     // database but not on default. Will fix later if I can be bothered
     // enough...
     if (modelDoc === null) return;
 
-    deleteCollections(snapshot.ref.path + "/", modelDoc.collections);
+    await deleteCollections(snapshot.ref.path + "/", modelDoc.collections);
   };
 
   deleteCollections("", model);
@@ -114,9 +114,8 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
  * `globals` categories and recreating it
  */
 
-const resetDatabase = async (newDb: FireDatabase): Promise<void> => {
-  for (const n in newDb.collections.keys) {
-  }
+const resetDatabase = async (model: FireDatabase): Promise<void> => {
+  await deleteAll(model);
 };
 
 /**
@@ -124,17 +123,25 @@ const resetDatabase = async (newDb: FireDatabase): Promise<void> => {
  * Not domain-specific
  */
 type FireDatabase = FireCollections;
-type FireCollections = { [name: string]: FireCollection<FireDoc> };
+type FireCollections = {
+  [name: string]: FireCollection<AbstractFireDoc>;
+};
 /**
  * More restrictive than Firebase in reality (i.e: each document in a
  * collection can have different structure)
  */
-type FireCollection<D extends FireDoc> = D[];
+type FireCollection<D> = D extends FireDoc<infer C, infer F>
+  ? FireDoc<C, F>[]
+  : never;
 
-const toFireDoc = <T extends FireDoc>(
-  doc: T,
+const toFireDoc = <F extends FireCollections, C extends FireFields>(
+  docSpec: FireDoc<F, C>,
   snapshot: QueryDocumentSnapshot<DocumentData>
-): T => {};
+): FireDoc<F, C> => ({
+  id: snapshot.id,
+  collections: docSpec.collections,
+  fields: snapshot.data() as C,
+});
 
 /**
   const tmp: FireDoc = {
@@ -145,11 +152,15 @@ const toFireDoc = <T extends FireDoc>(
   return tmp as T;
  */
 
-interface FireDoc {
+type FireFields = { [name: string]: FireValue };
+
+type AbstractFireDoc = FireDoc<FireCollections, FireFields>;
+
+type FireDoc<C extends FireCollections, F extends FireFields> = {
   id: DocId;
-  collections: FireCollections;
-  fields: { [name: string]: FireValue };
-}
+  collections: C;
+  fields: F;
+};
 type FireValue =
   | string
   | number
