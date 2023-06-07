@@ -10,6 +10,7 @@ const defaultDatabase: GrouprDatabase = {
         collaborators: [],
         contactInfo: "",
         overview: "Spooky",
+        coverImage: null,
       },
     },
     {
@@ -20,6 +21,7 @@ const defaultDatabase: GrouprDatabase = {
         collaborators: [],
         contactInfo: "",
         overview: "Spooky",
+        coverImage: null,
       },
     },
     {
@@ -30,6 +32,7 @@ const defaultDatabase: GrouprDatabase = {
         collaborators: [],
         contactInfo: "",
         overview: "Hol' up...",
+        coverImage: null,
       },
     },
     {
@@ -40,6 +43,7 @@ const defaultDatabase: GrouprDatabase = {
         collaborators: [],
         contactInfo: "",
         overview: "DRP",
+        coverImage: null,
       },
     },
   ],

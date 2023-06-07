@@ -5,19 +5,27 @@ import {
   updateDoc,
   Timestamp,
   GeoPoint,
+  getDocs,
+  collection,
+  deleteDoc,
+  QueryDocumentSnapshot,
 } from "firebase/firestore";
 import "./App.css";
 import Card from "./Card";
 import { Link } from "react-router-dom";
 import { DEFAULT_USER, USER_CARD_CATEGORIES } from "./Card";
-import { storage } from "./Firebase";
-import { makeArr, range } from "./Util";
+import { db, storage } from "./Firebase";
+import { makeArr, range, safeHead } from "./Util";
 import { FirebaseApp } from "firebase/app";
 
 const HOURS_PER_DAY = 24;
 const DAYS_PER_WEEK = 7;
 
-export const RANDOM = "Random";
+const USERS = "users";
+const PROJECTS = "projects";
+const GLOBALS = "globals";
+
+export const RANDOM = "random";
 type Random = typeof RANDOM;
 export type DocId = string | Random;
 
@@ -53,35 +61,93 @@ const Finder = () => {
   );
 };
 
-const updateFields = (
+const updateFields = async (
   d: DocumentReference<DocumentData>,
   fs: [string, (x: any) => any][]
-): Promise<void> =>
-  getDoc(d)
-    .then((snapshot) => fs.map(([f, _]) => snapshot.get(f)))
-    .then((n) =>
-      updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])])))
-    );
+): Promise<void> => {
+  const snapshot = await getDoc(d);
+  const n = fs.map(([f, _]) => snapshot.get(f));
+  await updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])])));
+};
 
 export default Finder;
 
-// Resets the database completely
-// Danger: Will erase ALL changes!
-function resetDatabase() {}
+/**
+ * Delete every document in every collection in the model recursively (Firestore
+ * should never be nested enough that stack overflow is a problem)
+ */
+const deleteAll = async (model: FireDatabase): Promise<void> => {
+  const deleteCollections = async (
+    currentPath: string,
+    cs: FireCollections
+  ) => {
+    for (const n in cs) {
+      await deleteCollection(currentPath + n, cs[n]);
+    }
+  };
+  const deleteCollection = async <D extends FireDoc>(
+    collectionPath: string,
+    c: FireCollection<D>
+  ) => {
+    const snapshot = await getDocs(collection(db, collectionPath));
+    const arbDoc = safeHead(c); // Used to view the structure of the documents
+    await Promise.all(snapshot.docs.map((d) => deleteFullDoc(arbDoc, d)));
+  };
+  const deleteFullDoc = async (
+    modelDoc: FireDoc | null,
+    snapshot: QueryDocumentSnapshot<DocumentData>
+  ) => {
+    deleteDoc(snapshot.ref);
+    // Might miss deleting some files if collection is populated on current live
+    // database but not on default. Will fix later if I can be bothered
+    // enough...
+    if (modelDoc === null) return;
+
+    deleteCollections(snapshot.ref.path + "/", modelDoc.collections);
+  };
+
+  deleteCollections("", model);
+};
+
+/**
+ * Resets the database, deleting everything in `users`, `documents` and
+ * `globals` categories and recreating it
+ */
+
+const resetDatabase = async (newDb: FireDatabase): Promise<void> => {
+  for (const n in newDb.collections.keys) {
+  }
+};
 
 /**
  * Models the structure of data that can be stored in a Firebase database
  * Not domain-specific
  */
-type FireDatabase = { [name: string]: FireCollection<FireDoc> };
+type FireDatabase = FireCollections;
+type FireCollections = { [name: string]: FireCollection<FireDoc> };
 /**
  * More restrictive than Firebase in reality (i.e: each document in a
  * collection can have different structure)
  */
 type FireCollection<D extends FireDoc> = D[];
+
+const toFireDoc = <T extends FireDoc>(
+  doc: T,
+  snapshot: QueryDocumentSnapshot<DocumentData>
+): T => {};
+
+/**
+  const tmp: FireDoc = {
+    id: snapshot.id,
+    collections: {},
+    fields: snapshot.data(),
+  };
+  return tmp as T;
+ */
+
 interface FireDoc {
   id: DocId;
-  collections: { [name: string]: FireCollection<FireDoc> };
+  collections: FireCollections;
   fields: { [name: string]: FireValue };
 }
 type FireValue =
@@ -120,6 +186,7 @@ type Project = {
     collaborators: string[];
     contactInfo: string;
     overview: string;
+    coverImage: string | null;
   };
 };
 /**
@@ -214,10 +281,10 @@ const DOC_ID_LENGTH = 20;
  * Generates a random document ID vaguely similar to the ones that Firebase can
  * create automatically
  */
-function randomId(): string {
+const randomId = (): string => {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   return range(0, DOC_ID_LENGTH)
     .map(() => chars[Math.floor(Math.random() * chars.length)])
     .join();
-}
+};
