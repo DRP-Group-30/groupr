@@ -17,10 +17,12 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { ReactNode } from "react";
+import { Link as RouteLink} from "react-router-dom";
 
-const Links = ["Dashboard", "Projects", "Team"];
+const Links = ["Dashboard", "Find Projects"];
+const LinksRoutes: {[key: string]: string} = {"Dashboard" : "/Dashboard", "Find Projects" : "/"}
 
-const NavLink = ({ children }: { children: ReactNode }) => (
+const NavLink = ({ children }: { children: string }) => (
   <Link
     px={2}
     py={1}
@@ -29,7 +31,7 @@ const NavLink = ({ children }: { children: ReactNode }) => (
       textDecoration: "none",
       bg: useColorModeValue("gray.200", "gray.700"),
     }}
-    href={"#"}
+    as={RouteLink} to={LinksRoutes[children]}
   >
     {children}
   </Link>
