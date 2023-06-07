@@ -11,8 +11,11 @@ import { DEFAULT_USER, USER_CARD_CATEGORIES } from "./Card";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "./SwipeCard";
 import { Button, Center, Flex, Spacer } from "@chakra-ui/react";
+import { useState } from "react";
 
 const Finder = () => {
+  const [dragging, setDragging] = useState(false);
+
   async function resetLists() {
     updateFields(
       DEFAULT_USER,
@@ -20,16 +23,32 @@ const Finder = () => {
     ).then(() => window.location.reload());
   }
 
+  function dragStart() {
+    setDragging(true);
+  }
+
+  function dragEnd() {
+    setDragging(false);
+  }
+
   return (
-    <Center>
-      <Flex>
-        <Center>
-          <Button leftIcon={<MdClose />}> Reject </Button>
-        </Center>
-        <SwipeCard></SwipeCard>
-        <Center>
-          <Button rightIcon={<MdDone />}> Accept</Button>
-        </Center>
+    <Center h="100%">
+      <Flex justifyContent="space-evenly" alignItems="center" w="60%">
+        <Button
+          className={`${dragging ? "Hidden" : ""}`}
+          leftIcon={<MdClose />}
+        >
+          {" "}
+          Reject{" "}
+        </Button>
+        <SwipeCard dragStart={dragStart} dragEnd={dragEnd}></SwipeCard>
+        <Button
+          className={`${dragging ? "Hidden" : ""}`}
+          rightIcon={<MdDone />}
+        >
+          {" "}
+          Accept
+        </Button>
       </Flex>
     </Center>
 

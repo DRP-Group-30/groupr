@@ -7,6 +7,15 @@
   align-items: center;
 }
 
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+.Hidden {
+  opacity: 0%;
+}
+
 .Dashboard {
   width: 100vw;
   height: 100vh;

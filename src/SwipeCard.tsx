@@ -8,8 +8,47 @@ import {
   Avatar,
   useColorModeValue,
 } from "@chakra-ui/react";
+import { useState, MouseEvent } from "react";
 
-const SwipeCard = () => {
+interface SwipeCardProps {
+  dragStart: () => void;
+  dragEnd: () => void;
+}
+
+const SwipeCard = (props: SwipeCardProps) => {
+  const [offset, setOffset] = useState(0);
+  const [dragging, setDragging] = useState(false);
+
+  function dragStart(ev: MouseEvent<HTMLDivElement>) {
+    setDragging(true);
+    setOffset(ev.pageX - window.innerWidth / 2);
+    props.dragStart();
+  }
+
+  function dragEnd(ev: MouseEvent<HTMLDivElement>) {
+    setDragging(false);
+
+    // if (Math.abs(offset) >= OFFSET_THRESHOLD) {
+    //   if (offset > 0) {
+    //     acceptCard();
+    //   } else {
+    //     rejectCard();
+    //   }
+    //   // In an ideal world, we would have the card that flies up be a separate
+    //   // card, given the same state as the current one
+    //   nextCard();
+    // }
+
+    setOffset(0);
+    props.dragEnd();
+  }
+
+  function dragMove(ev: MouseEvent<HTMLDivElement>) {
+    if (!dragging) return;
+
+    setOffset(ev.pageX - window.innerWidth / 2);
+  }
+
   return (
     <Center py={6}>
       <Box
@@ -20,6 +59,17 @@ const SwipeCard = () => {
         rounded={"md"}
         p={6}
         overflow={"hidden"}
+        className={`${dragging ? "" : "Released"}`}
+        onMouseDown={dragStart}
+        onMouseUp={dragEnd}
+        onMouseMove={dragMove}
+        onMouseLeave={dragEnd}
+        style={{
+          transform: `translate(${offset}px, 0) rotate(${offset / 15}deg)`,
+          userSelect: "none",
+          zIndex: "9999",
+          cursor: "pointer",
+        }}
       >
         <Box
           h={"210px"}
@@ -35,6 +85,7 @@ const SwipeCard = () => {
             }
             boxSize="100%"
             objectFit="fill"
+            draggable="false"
           />
         </Box>
         <Stack>
