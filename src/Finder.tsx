@@ -1,12 +1,12 @@
-import {
-  DocumentReference,
-  DocumentData,
-  getDoc,
-  updateDoc,
-} from "firebase/firestore";
+// import {
+//   DocumentReference,
+//   DocumentData,
+//   getDoc,
+//   updateDoc,
+// } from "firebase/firestore";
 import "./App.css";
 // import Card from './Card';
-import { DEFAULT_USER, USER_CARD_CATEGORIES } from "./Card";
+// import { DEFAULT_USER, USER_CARD_CATEGORIES } from "./Card";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "./SwipeCard";
 import { Button, Center, Flex, Grid, GridItem } from "@chakra-ui/react";
@@ -23,14 +23,14 @@ const Finder = () => {
 			window.innerWidth * (sideBarWidth / 100) +
 				(window.innerWidth * (1 - sideBarWidth / 100)) / 2,
 		);
-	});
+	}, [setCardAnchor, sideBarWidth]);
 
-	async function resetLists() {
-		updateFields(
-			DEFAULT_USER,
-			USER_CARD_CATEGORIES.map(c => [c, () => []]),
-		).then(() => window.location.reload());
-	}
+	// async function resetLists() {
+	// 	updateFields(
+	// 		DEFAULT_USER,
+	// 		USER_CARD_CATEGORIES.map(c => [c, () => []]),
+	// 	).then(() => window.location.reload());
+	// }
 
 	function toggleSideBar() {
 		setSideBarWidth((sideBarWidth = sideBarWidth === 4 ? 25 : 4));
@@ -114,12 +114,12 @@ const Finder = () => {
 
 export default Finder;
 
-const updateFields = (
-  d: DocumentReference<DocumentData>,
-  fs: [string, (x: any) => any][]
-): Promise<void> =>
-  getDoc(d)
-    .then((snapshot) => fs.map(([f, _]) => snapshot.get(f)))
-    .then((n) =>
-      updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])])))
-    );
+// const updateFields = (
+//   d: DocumentReference<DocumentData>,
+//   fs: [string, (x: any) => any][]
+// ): Promise<void> =>
+//   getDoc(d)
+//     .then((snapshot) => fs.map(([f, _]) => snapshot.get(f)))
+//     .then((n) =>
+//       updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])])))
+//     );

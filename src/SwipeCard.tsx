@@ -8,7 +8,7 @@ import {
   Avatar,
   useColorModeValue,
 } from "@chakra-ui/react";
-import { useState, MouseEvent, Dispatch, SetStateAction } from "react";
+import { MouseEvent, Dispatch, SetStateAction } from "react";
 
 interface SwipeCardProps {
 	offset: number;
