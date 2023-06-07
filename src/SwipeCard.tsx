@@ -67,6 +67,7 @@ const SwipeCard = ({
 				rounded={"md"}
 				border={Math.abs(offset) >= 300 ? "4px" : "0px"}
 				borderColor={offset >= 300 ? "green" : offset <= -300 ? "red" : "transparent"}
+				opacity={Math.abs(offset) >= 600 ? "0%" : "100%"}
 				p={6}
 				overflow={"hidden"}
 				className={`${dragging ? "" : "Released"}`}

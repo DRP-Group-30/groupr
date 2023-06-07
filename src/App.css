@@ -96,7 +96,7 @@
 }
 
 .Released {
-  transition: transform 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
 }
 
 .Danger {
