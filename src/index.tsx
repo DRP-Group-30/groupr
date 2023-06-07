@@ -11,11 +11,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <ChakraProvider>
-    <React.StrictMode>
       <BrowserRouter>
         <App />
       </BrowserRouter>
-    </React.StrictMode>
   </ChakraProvider>
 );
 
