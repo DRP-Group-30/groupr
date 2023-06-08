@@ -34,12 +34,14 @@ const SwipeCard = ({
 	data,
 	cardHidden,
 }: SwipeCardProps) => {
-	function dragStart(ev: MouseEvent<HTMLDivElement>) {
+	function dragStart(e: MouseEvent<HTMLDivElement>) {
+		e.preventDefault();
 		setDragging(true);
-		setOffset(ev.pageX - cardAnchor);
+		setOffset(e.pageX - cardAnchor);
 	}
 
-	function dragEnd(ev: MouseEvent<HTMLDivElement>) {
+	function dragEnd(e: MouseEvent<HTMLDivElement>) {
+		e.preventDefault();
 		setDragging(false);
 
 		if (Math.abs(offset) >= 300) {
@@ -56,10 +58,11 @@ const SwipeCard = ({
 		}
 	}
 
-	function dragMove(ev: MouseEvent<HTMLDivElement>) {
+	function dragMove(e: MouseEvent<HTMLDivElement>) {
+		e.preventDefault();
 		if (!dragging) return;
 
-		setOffset(ev.pageX - cardAnchor);
+		setOffset(e.pageX - cardAnchor);
 	}
 
 	return (
@@ -76,10 +79,10 @@ const SwipeCard = ({
 				p={6}
 				overflow={"hidden"}
 				className={`${dragging ? "" : "Released"}`}
-				onMouseDown={dragStart}
-				onMouseUp={dragEnd}
-				onMouseMove={dragMove}
-				onMouseLeave={dragEnd}
+				onMouseDown={e => dragStart(e)}
+				onMouseUp={e => dragEnd(e)}
+				onMouseMove={e => dragMove(e)}
+				onMouseLeave={e => dragEnd(e)}
 				style={{
 					transform: `translate(${offset}px, 0) rotate(${offset / 20}deg)`,
 					userSelect: "none",
@@ -87,9 +90,7 @@ const SwipeCard = ({
 			>
 				<Box h={"210px"} bg={"gray.100"} mt={-6} mx={-6} mb={6} pos={"relative"}>
 					<Image
-						src={
-							"https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?ixid=MXwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80"
-						}
+						src={`https://picsum.photos/seed/${data.name}/800`}
 						boxSize="100%"
 						objectFit="fill"
 						draggable="false"

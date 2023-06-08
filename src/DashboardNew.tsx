@@ -19,17 +19,22 @@ import {
 	SimpleGrid,
 } from "@chakra-ui/react";
 import Sidebar from "./Sidebar";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, DragEvent, SetStateAction, useEffect, useState } from "react";
 import { DEFAULT_USER, Project } from "./Finder";
 import { DocumentData, DocumentReference, DocumentSnapshot, getDoc } from "firebase/firestore";
 
 const DashboardCard = ({ data }: { data: Project }) => {
 	return (
-		<Card direction={{ base: "column", sm: "row" }} overflow="hidden" variant="outline">
+		<Card
+			direction={{ base: "column", sm: "row" }}
+			overflow="hidden"
+			boxShadow={"xl"}
+			draggable={true}
+		>
 			<Image
 				objectFit="cover"
 				maxW={{ base: "100%", sm: "200px" }}
-				src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
+				src={`https://picsum.photos/seed/${data.name}/800`}
 				alt="Caffe Latte"
 			/>
 
@@ -67,10 +72,26 @@ const DashboardList = ({ heading, children }: { heading: string; children: Proje
 };
 
 const DashboardColumn = ({ heading, children }: { heading: string; children: Project[] }) => {
+	function dragOver(e: DragEvent<HTMLDivElement>) {
+		e.preventDefault();
+	}
+
+	function drop(e: DragEvent<HTMLDivElement>) {
+		alert(heading);
+	}
+
 	return (
-		<Container maxW="80%" maxH="" overflowY="auto" centerContent>
-			<Heading>{heading}</Heading>
-			<VStack spacing={5}>
+		<Container
+			h="100%"
+			overflowY="auto"
+			bgColor="gray.100"
+			borderRadius="lg"
+			centerContent
+			onDragOver={e => dragOver(e)}
+			onDrop={e => drop(e)}
+		>
+			<Heading m="16px">{heading}</Heading>
+			<VStack h="100%" spacing={5}>
 				{children.map(project => (
 					<DashboardCard key={project.name} data={project}></DashboardCard>
 				))}
@@ -134,7 +155,7 @@ const DashboardNew = () => {
 		<Sidebar
 			sideElem={<DashboardSidebar setShowMatched={setShowMatched}></DashboardSidebar>}
 			mainElem={
-				<Flex p="15" w="100%">
+				<Flex p="15" w="100%" h="100%" justifyContent="space-evenly">
 					{showMatched ? (
 						<DashboardList heading="Matched" children={matched}></DashboardList>
 					) : (
