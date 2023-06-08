@@ -5,7 +5,7 @@ import { DEFAULT_USER } from "./Finder";
 
 const USERS = "users";
 
-export const defaultDatabase: GrouprDatabase = {
+export const defaultDatabase = (): GrouprDatabase => ({
 	projects: [
 		{
 			id: RANDOM,
@@ -16,7 +16,14 @@ export const defaultDatabase: GrouprDatabase = {
 				contactInfo: "",
 				overview: "Hol' up...",
 				coverImage: null,
-				tags: [],
+				tags: [
+					"Multiplayer",
+					"Battle-Royale",
+					"Unreal Engine",
+					"Realistic",
+					"Shooter",
+					"C++",
+				],
 				interested: [],
 			},
 		},
@@ -29,7 +36,7 @@ export const defaultDatabase: GrouprDatabase = {
 				contactInfo: "",
 				overview: "Spooky",
 				coverImage: null,
-				tags: [],
+				tags: ["Horror", "Unity", "C#"],
 				interested: [DEFAULT_USER],
 			},
 		},
@@ -37,12 +44,33 @@ export const defaultDatabase: GrouprDatabase = {
 			id: RANDOM,
 			collections: { boxes: [], roles: [] },
 			fields: {
-				name: "Call of Work",
+				name: "Overstory",
 				collaborators: [],
 				contactInfo: "",
-				overview: "DRP",
+				overview: "",
 				coverImage: null,
-				tags: [],
+				tags: ["RPG", "Retro", "Pixel Art", "Narrative Driven", "RPGMaker"],
+				interested: [DEFAULT_USER],
+			},
+		},
+		{
+			id: RANDOM,
+			collections: { boxes: [], roles: [] },
+			fields: {
+				name: "Universe of Battlebuild",
+				collaborators: [],
+				contactInfo: "",
+				overview: "",
+				coverImage: null,
+				tags: [
+					"MMO",
+					"Multiplayer",
+					"Fantasy",
+					"Systems Driven",
+					"Sandbox",
+					"Roblox",
+					"Lua",
+				],
 				interested: [],
 			},
 		},
@@ -132,6 +160,6 @@ export const defaultDatabase: GrouprDatabase = {
 			fields: {},
 		},
 	],
-};
+});
 
 export default defaultDatabase;

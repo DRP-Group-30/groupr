@@ -27,6 +27,6 @@ const SignInScreen = () => {
 	);
 };
 
-export const currentUser = () => DEFAULT_USER;
-
 export default SignInScreen;
+
+export const currentUser = () => DEFAULT_USER;

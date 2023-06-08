@@ -49,7 +49,7 @@ const DashboardCard = ({
 			overflow="hidden"
 			boxShadow={"xl"}
 			draggable={true}
-			onDragStart={e => dragStart(e)}
+			onDragStart={dragStart}
 		>
 			<Image
 				objectFit="cover"
@@ -127,8 +127,8 @@ const DashboardColumn = ({
 			bgColor="gray.100"
 			borderRadius="lg"
 			centerContent
-			onDragOver={e => dragOver(e)}
-			onDrop={e => drop(e)}
+			onDragOver={dragOver}
+			onDrop={drop}
 		>
 			<Heading m="16px">{heading}</Heading>
 			<VStack h="100%" spacing={5}>

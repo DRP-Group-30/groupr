@@ -16,6 +16,7 @@ import { db } from "./Firebase";
 import { resetDatabase, updateField, updateFields } from "./FirebaseUtil";
 import defaultDatabase from "./DefaultDatabase";
 import { Project } from "./Backend";
+import { currentUser } from "./Auth";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
@@ -77,12 +78,27 @@ const Finder = () => {
 		);
 	}
 
-	function acceptCard() {
+	async function acceptCard() {
 		console.log(`ACCEPT ${currentCard?.name}`);
 		setOffset(window.innerWidth / 2);
-		updateField<DocumentReference[]>(DEFAULT_USER, INTERESTED, rs =>
-			rs.concat([cards[cardIndex - 1]]),
-		);
+		const cur = cards[cardIndex - 1];
+		const snapshot = (await getDoc(cur)).data() as Project["fields"];
+		console.log(snapshot.interested);
+		const curUser = currentUser();
+		if (snapshot.interested.map(i => i.id).includes(curUser.id)) {
+			console.log("MATCHED!");
+			updateField<DocumentReference[]>(DEFAULT_USER, MATCHED, rs =>
+				rs.concat([cards[cardIndex - 1]]),
+			);
+			updateField<DocumentReference[]>(cur, INTERESTED, rs =>
+				rs.filter(r => r.id !== curUser.id),
+			);
+		} else {
+			console.log("RECORDED INTEREST!");
+			updateField<DocumentReference[]>(DEFAULT_USER, INTERESTED, rs =>
+				rs.concat([cards[cardIndex - 1]]),
+			);
+		}
 		showNextCard();
 	}
 
@@ -138,7 +154,7 @@ const Finder = () => {
 					>
 						{">"}
 					</Button>
-					<Button onClick={() => resetDatabase(defaultDatabase)}>Reset Full!</Button>
+					<Button onClick={() => resetDatabase(defaultDatabase())}>Reset Full!</Button>
 				</Flex>
 			</GridItem>
 			<GridItem pl="2" area={"main"}>
