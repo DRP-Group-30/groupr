@@ -146,7 +146,7 @@ const Finder = () => {
 					>
 						{">"}
 					</Button>
-					<Button onClick={() => resetDatabase(defaultDatabase())}>Reset Full!</Button>
+					<Button onClick={() => resetDatabase(defaultDatabase())}>Reset!</Button>
 				</Flex>
 			</GridItem>
 			<GridItem pl="2" area={"main"}>
