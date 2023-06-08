@@ -13,6 +13,7 @@ import SwipeCard from "./SwipeCard";
 import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { db } from "./Firebase";
+import { updateField, updateFields } from "./FirebaseUtil";
 
 export const DEFAULT_USER_ID = "j9Rq6xiNHcDAVJftHbrQ";
 export const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
@@ -189,20 +190,3 @@ const Finder = () => {
 };
 
 export default Finder;
-
-const updateFields = (
-	d: DocumentReference<DocumentData>,
-	fs: [string, (x: any) => any][],
-): Promise<void> =>
-	getDoc(d)
-		.then(snapshot => fs.map(([f, _]) => snapshot.get(f)))
-		.then(n => updateDoc(d, Object.fromEntries(fs.map(([f, m], i) => [f, m(n[i])]))));
-
-const updateField = <T,>(
-	d: DocumentReference<DocumentData>,
-	f: string,
-	m: (x: T) => T,
-): Promise<void> =>
-	getDoc(d)
-		.then(snapshot => snapshot.get(f))
-		.then((n: T) => updateDoc(d, { [f]: m(n) }));

@@ -1,8 +1,9 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore"
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
+import { getFirestore } from "firebase/firestore";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
 
+import { getStorage } from "firebase/storage";
 
 // const firebaseConfig = {
 //     apiKey: "AIzaSyDXfjUuI5_Zkx_aHnG3K83Hr24_Kd4HKtA",
@@ -16,15 +17,16 @@ import 'firebase/compat/auth';
 //   };
 
 const firebaseConfig = {
-  apiKey: "AIzaSyA9c0kmEhbCa0qRcaETlW4i6n4MnPRz2dc",
-  authDomain: "drp-test-fd4f1.firebaseapp.com",
-  projectId: "drp-test-fd4f1",
-  storageBucket: "drp-test-fd4f1.appspot.com",
-  messagingSenderId: "166892029221",
-  appId: "1:166892029221:web:b37e1ac2f98342431fc6cc"
+	apiKey: "AIzaSyA9c0kmEhbCa0qRcaETlW4i6n4MnPRz2dc",
+	authDomain: "drp-test-fd4f1.firebaseapp.com",
+	projectId: "drp-test-fd4f1",
+	storageBucket: "drp-test-fd4f1.appspot.com",
+	messagingSenderId: "166892029221",
+	appId: "1:166892029221:web:b37e1ac2f98342431fc6cc",
 };
 
 initializeApp(firebaseConfig);
 firebase.initializeApp(firebaseConfig);
 export const db = getFirestore();
 export const auth = firebase.auth();
+export const storage = getStorage();
