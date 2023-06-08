@@ -7,6 +7,17 @@
   align-items: center;
 }
 
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.Hidden {
+  opacity: 0%;
+  z-index: -1000;
+}
+
 .Dashboard {
   width: 100vw;
   height: 100vh;
@@ -86,7 +97,7 @@
 }
 
 .Released {
-  transition: transform 0.2s;
+  transition: opacity 0.2s, transform 0.2s;
 }
 
 .Danger {
