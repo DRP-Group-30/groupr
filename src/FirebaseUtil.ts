@@ -80,7 +80,7 @@ type FireValue =
  */
 export type FireCollection<D> = D extends FireDoc<infer C, infer F> ? FireDoc<C, F>[] : never;
 
-const toFireDoc = <F extends FireCollections, C extends FireFields>(
+export const toFireDoc = <F extends FireCollections, C extends FireFields>(
 	docSpec: FireDoc<F, C>,
 	snapshot: QueryDocumentSnapshot<DocumentData>,
 ): FireDoc<F, C> => ({
@@ -150,6 +150,7 @@ export const addAll = async (model: FireDatabase): Promise<void> => {
 export const resetDatabase = async (model: FireDatabase): Promise<void> => {
 	await deleteAll(model);
 	await addAll(model);
+	window.location.reload();
 };
 
 /**

@@ -26,8 +26,13 @@ const Sidebar = ({ sideElem, mainElem }: SidebarSlots) => {
 			}}
 		>
 			<GridItem pl="2" bg="gray.100" area={"nav"} zIndex="9999">
-				{sideElem}
-				<Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
+				<Flex
+					h="100%"
+					flexDirection="column"
+					justifyContent="space-between"
+					alignItems="center"
+				>
+					{sideElem}
 					<Button
 						onClick={toggleSideBar}
 						alignSelf="flex-end"
@@ -37,6 +42,7 @@ const Sidebar = ({ sideElem, mainElem }: SidebarSlots) => {
 					>
 						{">"}
 					</Button>
+					<div></div>
 				</Flex>
 			</GridItem>
 			<GridItem pl="2" area={"main"}>

@@ -37,7 +37,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			fields: {
 				name: "Six Nights at Bobs",
 				collaborators: [],
-				contactInfo: "",
+				contactInfo: "sixnights@gmail.com",
 				overview: "Spooky",
 				coverImage: null,
 				tags: ["Horror", "Unity", "C#"],
@@ -50,7 +50,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			fields: {
 				name: "Overstory",
 				collaborators: [],
-				contactInfo: "",
+				contactInfo: "bob@overstory.com",
 				overview: "It's like my favourite game, Undertale",
 				coverImage: null,
 				tags: ["RPG", "Retro", "Pixel Art", "Narrative Driven", "RPGMaker"],

@@ -63,11 +63,11 @@ const Finder = () => {
 			setTimeout(() => {
 				setCurrentCard(null);
 			}, 200);
+		} else {
+			let card = await getDoc(cards[cardIndex]);
+			setCurrentCard((currentCard = card.data() as Project["fields"]));
+			setCardIndex((cardIndex = cardIndex + 1));
 		}
-
-		let card = await getDoc(cards[cardIndex]);
-		setCurrentCard((currentCard = card.data() as Project["fields"]));
-		setCardIndex((cardIndex = cardIndex + 1));
 	}
 
 	function toggleSideBar() {
@@ -111,13 +111,6 @@ const Finder = () => {
 		showNextCard();
 	}
 
-	function resetLists() {
-		updateFields(
-			DEFAULT_USER,
-			USER_CARD_CATEGORIES.map(c => [c, () => []]),
-		).then(() => window.location.reload());
-	}
-
 	function showNextCard() {
 		setCardHidden(true);
 
@@ -144,7 +137,6 @@ const Finder = () => {
 		>
 			<GridItem pl="2" bg="gray.100" area={"nav"} zIndex="9999">
 				<Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
-					<Button onClick={resetLists}>Reset</Button>
 					<Button
 						onClick={toggleSideBar}
 						alignSelf="flex-end"
