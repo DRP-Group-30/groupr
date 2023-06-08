@@ -19,9 +19,11 @@ import {
 	SimpleGrid,
 } from "@chakra-ui/react";
 import Sidebar from "./Sidebar";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { DEFAULT_USER, Project } from "./Finder";
+import { DocumentData, DocumentReference, DocumentSnapshot, getDoc } from "firebase/firestore";
 
-const DashboardCard = ({ content }: { content: any }) => {
+const DashboardCard = ({ data }: { data: Project }) => {
 	return (
 		<Card direction={{ base: "column", sm: "row" }} overflow="hidden" variant="outline">
 			<Image
@@ -33,12 +35,9 @@ const DashboardCard = ({ content }: { content: any }) => {
 
 			<Stack>
 				<CardBody>
-					<Heading size="md">{content}</Heading>
+					<Heading size="md">{data.name}</Heading>
 
-					<Text py="2">
-						Caffè latte is a coffee beverage of Italian origin made with espresso and
-						steamed milk.
-					</Text>
+					<Text py="2">{data.overview}</Text>
 				</CardBody>
 
 				<CardFooter alignSelf="end">
@@ -54,40 +53,44 @@ const DashboardCard = ({ content }: { content: any }) => {
 	);
 };
 
-const DashboardList = ({ heading, children }: { heading: string; children: any[] }) => {
+const DashboardList = ({ heading, children }: { heading: string; children: Project[] }) => {
 	return (
 		<Container maxW="100%" maxH="" overflowY="auto" centerContent>
 			<Heading>{heading}</Heading>
 			<SimpleGrid columns={2} spacing={8}>
-				{children.map(link => (
-					<DashboardCard content={link}></DashboardCard>
+				{children.map(project => (
+					<DashboardCard key={project.name} data={project}></DashboardCard>
 				))}
 			</SimpleGrid>
 		</Container>
 	);
 };
 
-const DashboardColumn = ({ heading, children }: { heading: string; children: any[] }) => {
+const DashboardColumn = ({ heading, children }: { heading: string; children: Project[] }) => {
 	return (
 		<Container maxW="80%" maxH="" overflowY="auto" centerContent>
 			<Heading>{heading}</Heading>
 			<VStack spacing={5}>
-				{children.map(link => (
-					<DashboardCard content={link}></DashboardCard>
+				{children.map(project => (
+					<DashboardCard key={project.name} data={project}></DashboardCard>
 				))}
 			</VStack>
 		</Container>
 	);
 };
 
-const DashboardSidebar = ({ setMatched }: { setMatched: Dispatch<SetStateAction<boolean>> }) => {
+const DashboardSidebar = ({
+	setShowMatched,
+}: {
+	setShowMatched: Dispatch<SetStateAction<boolean>>;
+}) => {
 	return (
 		<Card w="90%" p="2">
 			<VStack>
-				<Button size="md" width="90%" onClick={() => setMatched(true)}>
+				<Button size="md" width="90%" onClick={() => setShowMatched(true)}>
 					Matched Projects
 				</Button>
-				<Button size="md" width="90%" onClick={() => setMatched(false)}>
+				<Button size="md" width="90%" onClick={() => setShowMatched(false)}>
 					Pending Projects
 				</Button>
 			</VStack>
@@ -96,28 +99,53 @@ const DashboardSidebar = ({ setMatched }: { setMatched: Dispatch<SetStateAction<
 };
 
 const DashboardNew = () => {
-	const [matched, setMatched] = useState(true);
+	const [showMatched, setShowMatched] = useState(true);
+	let [matched, setMatched] = useState<Project[]>([]);
+	let [interested, setInterested] = useState<Project[]>([]);
+	let [rejected, setRejected] = useState<Project[]>([]);
+
+	useEffect(() => {
+		getProjects();
+	}, []);
+
+	async function getProjects() {
+		let defaultUser = await getDoc(DEFAULT_USER);
+
+		let matchedRefs = defaultUser.get("matched");
+		let matchedDocs = await Promise.all(
+			matchedRefs.map((ref: DocumentReference) => getDoc(ref)),
+		);
+		setMatched((matched = matchedDocs.map(doc => doc.data() as Project)));
+
+		let interestedRefs = defaultUser.get("interested");
+		let interestedDocs = await Promise.all(
+			interestedRefs.map((ref: DocumentReference) => getDoc(ref)),
+		);
+		setInterested((interested = interestedDocs.map(doc => doc.data() as Project)));
+
+		let rejectedRefs = defaultUser.get("rejected");
+		let rejectedDocs = await Promise.all(
+			rejectedRefs.map((ref: DocumentReference) => getDoc(ref)),
+		);
+		setRejected((rejected = rejectedDocs.map(doc => doc.data() as Project)));
+	}
 
 	return (
 		<Sidebar
-			sideElem={<DashboardSidebar setMatched={setMatched}></DashboardSidebar>}
+			sideElem={<DashboardSidebar setShowMatched={setShowMatched}></DashboardSidebar>}
 			mainElem={
 				<Flex p="15" w="100%">
-					{" "}
-					{matched ? (
-						<DashboardList
-							heading="Matched"
-							children={["Test", "Test", "Test", "Test"]}
-						></DashboardList>
+					{showMatched ? (
+						<DashboardList heading="Matched" children={matched}></DashboardList>
 					) : (
 						<>
 							<DashboardColumn
 								heading="Interested"
-								children={["Test", "Test2"]}
+								children={interested}
 							></DashboardColumn>
 							<DashboardColumn
 								heading="Rejected"
-								children={["Test"]}
+								children={rejected}
 							></DashboardColumn>
 						</>
 					)}

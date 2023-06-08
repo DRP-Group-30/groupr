@@ -14,8 +14,8 @@ import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { db } from "./Firebase";
 
-const DEFAULT_USER_ID = "j9Rq6xiNHcDAVJftHbrQ";
-const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
+export const DEFAULT_USER_ID = "j9Rq6xiNHcDAVJftHbrQ";
+export const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
 
 const INTERESTED = "interested";
 const MATCHED = "matched";
@@ -23,7 +23,7 @@ const REJECTED = "rejected";
 
 const USER_CARD_CATEGORIES = [INTERESTED, MATCHED, REJECTED];
 
-export interface ProjectCard {
+export interface Project {
 	name: string;
 	overview: string;
 	hrs: number;
@@ -35,7 +35,7 @@ const Finder = () => {
 	let [sideBarWidth, setSideBarWidth] = useState(25);
 	const [cardAnchor, setCardAnchor] = useState(0);
 	let [cards, setCards] = useState<DocumentReference[]>([]);
-	let [currentCard, setCurrentCard] = useState<ProjectCard | null>(null);
+	let [currentCard, setCurrentCard] = useState<Project | null>(null);
 	const [cardHidden, setCardHidden] = useState(false);
 	let [cardIndex, setCardIndex] = useState(0);
 
@@ -69,7 +69,7 @@ const Finder = () => {
 		}
 
 		let card = await getDoc(cards[cardIndex]);
-		setCurrentCard((currentCard = card.data() as ProjectCard));
+		setCurrentCard((currentCard = card.data() as Project));
 		setCardIndex((cardIndex = cardIndex + 1));
 	}
 

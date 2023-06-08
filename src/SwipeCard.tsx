@@ -9,7 +9,7 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 import { MouseEvent, Dispatch, SetStateAction } from "react";
-import { ProjectCard } from "./Finder";
+import { Project } from "./Finder";
 
 interface SwipeCardProps {
 	offset: number;
@@ -19,7 +19,7 @@ interface SwipeCardProps {
 	cardAnchor: number;
 	acceptCard: () => void;
 	rejectCard: () => void;
-	data: ProjectCard;
+	data: Project;
 	cardHidden: boolean;
 }
 
