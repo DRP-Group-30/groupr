@@ -1,5 +1,6 @@
 // Backend data layout and logic
 
+import { DocumentReference } from "@firebase/firestore";
 import {} from "./Finder";
 import { DocId, FireCollection, FireMap } from "./FirebaseUtil";
 import { enumVals, inlineLog, makeArr } from "./Util";
@@ -81,6 +82,9 @@ type User = {
 		surname: string;
 		skillset: { [skill: string]: number };
 		availability: AvailSchedule;
+		rejected: DocumentReference[];
+		interested: DocumentReference[];
+		matched: DocumentReference[];
 	};
 };
 type GlobalTable = { id: DocId; collections: {}; fields: {} };
