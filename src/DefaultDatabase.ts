@@ -14,7 +14,8 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				name: "Natty B's Battlegrounds",
 				collaborators: [],
 				contactInfo: "",
-				overview: "Hol' up...",
+				overview:
+					"Hol' up... is this the largest Battle Royale ever? With over 500 players in a single game?!",
 				coverImage: null,
 				tags: [
 					"Multiplayer",
@@ -47,7 +48,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				name: "Overstory",
 				collaborators: [],
 				contactInfo: "",
-				overview: "",
+				overview: "It's like my favourite game, Undertale",
 				coverImage: null,
 				tags: ["RPG", "Retro", "Pixel Art", "Narrative Driven", "RPGMaker"],
 				interested: [DEFAULT_USER],
@@ -60,7 +61,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				name: "Universe of Battlebuild",
 				collaborators: [],
 				contactInfo: "",
-				overview: "",
+				overview: "Game where you can go anywhere and do anything!",
 				coverImage: null,
 				tags: [
 					"MMO",
@@ -70,6 +71,28 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"Sandbox",
 					"Roblox",
 					"Lua",
+				],
+				interested: [],
+			},
+		},
+		{
+			id: RANDOM,
+			collections: { boxes: [], roles: [] },
+			fields: {
+				name: "Afterstrife",
+				collaborators: [],
+				contactInfo: "Website: https://afterlifegames.gg/",
+				overview:
+					"5v5 Hero Shooter with a large focus on Melee combat, inspired by Gigantic",
+				coverImage: null,
+				tags: [
+					"Multiplayer",
+					"Hero Shooter",
+					"MOBA",
+					"Third Person",
+					"Stylised",
+					"Unreal Engine",
+					"C++",
 				],
 				interested: [],
 			},
