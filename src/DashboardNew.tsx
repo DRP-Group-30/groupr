@@ -27,16 +27,20 @@ import { MdClose, MdDone } from "react-icons/md";
 const DashboardCard = ({
 	data,
 	col,
-	moveButtonHandler,
+	moveProjectInto,
 	setDraggedProject,
 }: {
 	data: Project;
 	col: string;
-	moveButtonHandler: () => void;
+	moveProjectInto: (col: string, project?: Project) => void;
 	setDraggedProject: Dispatch<SetStateAction<Project | null>>;
 }) => {
 	function dragStart(e: DragEvent<HTMLDivElement>) {
 		setDraggedProject(data);
+	}
+
+	function moveProjectOut() {
+		moveProjectInto(col === "Rejected" ? "Interested" : "Rejected", data);
 	}
 
 	return (
@@ -67,7 +71,7 @@ const DashboardCard = ({
 						rightIcon={col === "Rejected" ? <MdDone /> : <MdClose />}
 						size="sm"
 						aria-label={""}
-						onClick={moveButtonHandler}
+						onClick={moveProjectOut}
 					>
 						{col === "Rejected" ? "Accept" : "Reject"}
 					</Button>
@@ -87,7 +91,7 @@ const DashboardList = ({ heading, children }: { heading: string; children: Proje
 						key={project.id}
 						data={project}
 						col="Matched"
-						moveButtonHandler={() => {}}
+						moveProjectInto={() => {}}
 						setDraggedProject={() => {}}
 					></DashboardCard>
 				))}
@@ -116,10 +120,6 @@ const DashboardColumn = ({
 		moveProjectInto(heading);
 	}
 
-	function moveProjectOut() {
-		moveProjectInto(heading === "Rejected" ? "Interested" : "Rejected");
-	}
-
 	return (
 		<Container
 			h="100%"
@@ -137,7 +137,7 @@ const DashboardColumn = ({
 						key={project.id}
 						col={heading}
 						data={project}
-						moveButtonHandler={moveProjectOut}
+						moveProjectInto={moveProjectInto}
 						setDraggedProject={setDraggedProject}
 					></DashboardCard>
 				))}
@@ -215,7 +215,9 @@ const DashboardNew = () => {
 		);
 	}
 
-	function moveProjectInto(col: string) {
+	function moveProjectInto(col: string, project?: Project | null) {
+		if (project === undefined) project = null;
+		if (draggedProject === null) draggedProject = project;
 		if (draggedProject === null) return;
 
 		setInterested((interested = interested.filter(p => p != draggedProject)));
