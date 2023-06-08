@@ -7,9 +7,12 @@ import {
 	Stack,
 	Avatar,
 	useColorModeValue,
+	Flex,
+	Tag,
 } from "@chakra-ui/react";
 import { MouseEvent, Dispatch, SetStateAction } from "react";
 import { Project } from "./Backend";
+import { map } from "./Util";
 
 interface SwipeCardProps {
 	offset: number;
@@ -115,13 +118,17 @@ const SwipeCard = ({
 					</Heading>
 					<Text color={"gray.500"}>{data.overview}</Text>
 				</Stack>
-				<Stack mt={6} direction={"row"} spacing={4} align={"center"}>
-					<Avatar src={"https://avatars0.githubusercontent.com/u/1164541?v=4"} />
-					<Stack direction={"column"} spacing={0} fontSize={"sm"}>
-						<Text fontWeight={600}>Achim Rolle</Text>
-						<Text color={"gray.500"}>Feb 08, 2021 · 6min read</Text>
-					</Stack>
-				</Stack>
+
+				<Box backgroundColor="gray.100" borderRadius="md" padding="16px" marginTop="16px">
+					<Text>Because you're interested in</Text>
+					<Flex flexWrap="wrap">
+						{data.tags.map(tag => (
+							<Tag variant="solid" colorScheme="teal" margin="2px">
+								{tag}
+							</Tag>
+						))}
+					</Flex>
+				</Box>
 			</Box>
 		</Center>
 	);

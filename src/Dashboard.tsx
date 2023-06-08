@@ -83,18 +83,33 @@ const DashboardCard = ({
 
 const DashboardList = ({ heading, children }: { heading: string; children: Project[] }) => {
 	return (
-		<Container maxW="100%" maxH="" overflowY="auto" centerContent>
+		<Container
+			maxW="100%"
+			maxH=""
+			overflowY="auto"
+			centerContent
+			backgroundColor="gray.100"
+			borderRadius="xl"
+			padding="32px"
+			margin="16px"
+		>
 			<Heading>{heading}</Heading>
-			<SimpleGrid columns={2} spacing={8}>
-				{children.map(project => (
-					<DashboardCard
-						key={project.id}
-						data={project}
-						col="Matched"
-						moveProjectInto={() => {}}
-						setDraggedProject={() => {}}
-					></DashboardCard>
-				))}
+			<SimpleGrid columns={children.length > 0 ? 2 : 1} spacing={8}>
+				{children.length > 0 ? (
+					children.map(project => (
+						<DashboardCard
+							key={project.id}
+							data={project}
+							col="Matched"
+							moveProjectInto={() => {}}
+							setDraggedProject={() => {}}
+						></DashboardCard>
+					))
+				) : (
+					<Center>
+						<Text fontSize="lg">Nothing here for now!</Text>
+					</Center>
+				)}
 			</SimpleGrid>
 		</Container>
 	);
@@ -132,15 +147,22 @@ const DashboardColumn = ({
 		>
 			<Heading m="16px">{heading}</Heading>
 			<VStack h="100%" spacing={5}>
-				{children.map(project => (
-					<DashboardCard
-						key={project.id}
-						col={heading}
-						data={project}
-						moveProjectInto={moveProjectInto}
-						setDraggedProject={setDraggedProject}
-					></DashboardCard>
-				))}
+				{children.length > 0 ? (
+					children.map(project => (
+						<DashboardCard
+							key={project.id}
+							col={heading}
+							data={project}
+							moveProjectInto={moveProjectInto}
+							setDraggedProject={setDraggedProject}
+						></DashboardCard>
+					))
+				) : (
+					<Text fontSize="lg">
+						Nothing yet! Projects you {heading === "Rejected" ? "reject" : "accept"}{" "}
+						will show up here.
+					</Text>
+				)}
 			</VStack>
 		</Container>
 	);
