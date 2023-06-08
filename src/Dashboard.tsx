@@ -145,7 +145,7 @@ const DashboardList = ({
 			margin="16px"
 		>
 			<Heading margin="16px">{heading}</Heading>
-			<SimpleGrid columns={children.length > 0 ? 2 : 1} spacing={8}>
+			<SimpleGrid width="100%" columns={children.length > 0 ? 2 : 1} spacing={8}>
 				{children.length > 0 ? (
 					children.map(project => (
 						<DashboardCard
