@@ -1,4 +1,5 @@
-import { GrouprDatabase, RANDOM, Skill, emptyAvailability } from "./Finder";
+import { GrouprDatabase, Skill, emptyAvailability } from "./Backend";
+import { RANDOM } from "./FirebaseUtil";
 
 const defaultDatabase: GrouprDatabase = {
   projects: [

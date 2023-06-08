@@ -15,7 +15,7 @@ import { useEffect, useState } from "react";
 import { db } from "./Firebase";
 import { updateField, updateFields } from "./FirebaseUtil";
 
-export const DEFAULT_USER_ID = "j9Rq6xiNHcDAVJftHbrQ";
+export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
 
 const INTERESTED = "interested";

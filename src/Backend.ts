@@ -44,7 +44,7 @@ type Globals = [GlobalTable];
  * TODO:
  * - Should `contactInfo`/`collaborators` be more structured?
  */
-type Project = {
+export type Project = {
   id: DocId;
   collections: { boxes: Box<BoxType>[]; roles: Role[] };
   fields: {
