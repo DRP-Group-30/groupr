@@ -40,11 +40,11 @@ const SwipeCard = ({
 		setOffset(e.pageX - cardAnchor);
 	}
 
-	function dragEnd(e: MouseEvent<HTMLDivElement>) {
+	function dragEnd(e: MouseEvent<HTMLDivElement>, released: boolean) {
 		e.preventDefault();
 		setDragging(false);
 
-		if (Math.abs(offset) >= 300) {
+		if (released && Math.abs(offset) >= 300) {
 			if (offset > 0) {
 				acceptCard();
 			} else {
@@ -80,9 +80,9 @@ const SwipeCard = ({
 				overflow={"hidden"}
 				className={`${dragging ? "" : "Released"}`}
 				onMouseDown={e => dragStart(e)}
-				onMouseUp={e => dragEnd(e)}
+				onMouseUp={e => dragEnd(e, true)}
 				onMouseMove={e => dragMove(e)}
-				onMouseLeave={e => dragEnd(e)}
+				onMouseLeave={e => dragEnd(e, false)}
 				style={{
 					transform: `translate(${offset}px, 0) rotate(${offset / 20}deg)`,
 					userSelect: "none",

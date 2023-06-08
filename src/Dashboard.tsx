@@ -2,7 +2,7 @@ import "./App.css";
 import { Link } from "react-router-dom";
 import { DocumentReference, doc, getDoc } from "firebase/firestore";
 import { db } from "./Firebase";
-import { DEFAULT_USER_ID } from "./Card";
+import { DEFAULT_USER_ID } from "./Finder";
 import { useState } from "react";
 
 const Dashboard = () => {
