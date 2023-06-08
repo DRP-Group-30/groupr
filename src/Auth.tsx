@@ -1,6 +1,7 @@
 import { Center } from "@chakra-ui/react";
 import firebase from "firebase/compat/app";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
+import { DEFAULT_USER } from "./Finder";
 
 // Configure FirebaseUI.
 const uiConfig = {
@@ -14,7 +15,7 @@ const uiConfig = {
 			provider: firebase.auth.EmailAuthProvider.PROVIDER_ID,
 			requireDisplayName: false,
 		},
-    firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+		firebase.auth.GoogleAuthProvider.PROVIDER_ID,
 	],
 };
 
@@ -25,5 +26,7 @@ const SignInScreen = () => {
 		</Center>
 	);
 };
+
+export const currentUser = () => DEFAULT_USER;
 
 export default SignInScreen;

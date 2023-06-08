@@ -1,15 +1,15 @@
 import {
-  Image,
-  Box,
-  Center,
-  Heading,
-  Text,
-  Stack,
-  Avatar,
-  useColorModeValue,
+	Image,
+	Box,
+	Center,
+	Heading,
+	Text,
+	Stack,
+	Avatar,
+	useColorModeValue,
 } from "@chakra-ui/react";
 import { MouseEvent, Dispatch, SetStateAction } from "react";
-import { Project } from "./Finder";
+import { Project } from "./Backend";
 
 interface SwipeCardProps {
 	offset: number;
@@ -19,7 +19,7 @@ interface SwipeCardProps {
 	cardAnchor: number;
 	acceptCard: () => void;
 	rejectCard: () => void;
-	data: Project;
+	data: Project["fields"];
 	cardHidden: boolean;
 }
 

@@ -49,7 +49,7 @@ const DashboardCard = ({
 			overflow="hidden"
 			boxShadow={"xl"}
 			draggable={true}
-			onDragStart={e => dragStart(e)}
+			onDragStart={dragStart}
 		>
 			<Image
 				objectFit="cover"
@@ -127,8 +127,8 @@ const DashboardColumn = ({
 			bgColor="gray.100"
 			borderRadius="lg"
 			centerContent
-			onDragOver={e => dragOver(e)}
-			onDrop={e => drop(e)}
+			onDragOver={dragOver}
+			onDrop={drop}
 		>
 			<Heading m="16px">{heading}</Heading>
 			<VStack h="100%" spacing={5}>
@@ -209,6 +209,8 @@ const DashboardNew = () => {
 						overview:
 							"This is a description of the example game. The example game is very good. You will enjoy working on the example game. You are going ot have a great time developing for it.",
 						coverImage: null,
+						tags: [],
+						interested: [],
 					},
 				},
 			]),
@@ -220,8 +222,8 @@ const DashboardNew = () => {
 		if (draggedProject === null) draggedProject = project;
 		if (draggedProject === null) return;
 
-		setInterested((interested = interested.filter(p => p != draggedProject)));
-		setRejected((rejected = rejected.filter(p => p != draggedProject)));
+		setInterested((interested = interested.filter(p => p !== draggedProject)));
+		setRejected((rejected = rejected.filter(p => p !== draggedProject)));
 
 		if (col.toLowerCase() === "interested") {
 			interested.push(draggedProject);

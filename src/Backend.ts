@@ -3,7 +3,7 @@
 import { DocumentReference } from "@firebase/firestore";
 import {} from "./Finder";
 import { DocId, FireCollection, FireMap } from "./FirebaseUtil";
-import { enumVals, inlineLog, makeArr } from "./Util";
+import { enumVals, makeArr } from "./Util";
 
 /**
  * Models the structure of the data stored in Groupr
@@ -33,10 +33,6 @@ enum Availability {
 	Available,
 }
 
-const USERS = "users";
-const PROJECTS = "projects";
-const GLOBALS = "globals";
-
 type Projects = FireCollection<Project>;
 type Users = FireCollection<User>;
 type Globals = [GlobalTable];
@@ -54,6 +50,8 @@ export type Project = {
 		contactInfo: string;
 		overview: string;
 		coverImage: string | null;
+		tags: string[];
+		interested: DocumentReference[];
 	};
 };
 /**
@@ -80,7 +78,7 @@ type User = {
 		username: string;
 		givenNames: string[];
 		surname: string;
-		skillset: { [skill: string]: number };
+		skillset: Skillset;
 		availability: AvailSchedule;
 		rejected: DocumentReference[];
 		interested: DocumentReference[];

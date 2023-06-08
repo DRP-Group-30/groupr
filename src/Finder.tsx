@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 import { db } from "./Firebase";
 import { resetDatabase, updateField, updateFields } from "./FirebaseUtil";
 import defaultDatabase from "./DefaultDatabase";
+import { Project } from "./Backend";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
@@ -25,19 +26,13 @@ const REJECTED = "rejected";
 
 const USER_CARD_CATEGORIES = [INTERESTED, MATCHED, REJECTED];
 
-export interface Project {
-	name: string;
-	overview: string;
-	hrs: number;
-}
-
 const Finder = () => {
 	const [offset, setOffset] = useState(0);
 	const [dragging, setDragging] = useState(false);
 	let [sideBarWidth, setSideBarWidth] = useState(25);
 	const [cardAnchor, setCardAnchor] = useState(0);
 	let [cards, setCards] = useState<DocumentReference[]>([]);
-	let [currentCard, setCurrentCard] = useState<Project | null>(null);
+	let [currentCard, setCurrentCard] = useState<Project["fields"] | null>(null);
 	const [cardHidden, setCardHidden] = useState(false);
 	let [cardIndex, setCardIndex] = useState(0);
 
@@ -67,11 +62,10 @@ const Finder = () => {
 			setTimeout(() => {
 				setCurrentCard(null);
 			}, 200);
-			return;
 		}
 
 		let card = await getDoc(cards[cardIndex]);
-		setCurrentCard((currentCard = card.data() as Project));
+		setCurrentCard((currentCard = card.data() as Project["fields"]));
 		setCardIndex((cardIndex = cardIndex + 1));
 	}
 

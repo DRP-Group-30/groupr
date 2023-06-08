@@ -1,30 +1,12 @@
+import { doc } from "firebase/firestore";
 import { GrouprDatabase, Skill, emptyAvailability } from "./Backend";
 import { RANDOM } from "./FirebaseUtil";
+import { DEFAULT_USER } from "./Finder";
+
+const USERS = "users";
 
 export const defaultDatabase: GrouprDatabase = {
 	projects: [
-		{
-			id: RANDOM,
-			collections: { boxes: [], roles: [] },
-			fields: {
-				name: "Six Nights at Bobs",
-				collaborators: [],
-				contactInfo: "",
-				overview: "Spooky",
-				coverImage: null,
-			},
-		},
-		{
-			id: RANDOM,
-			collections: { boxes: [], roles: [] },
-			fields: {
-				name: "Gremlins",
-				collaborators: [],
-				contactInfo: "",
-				overview: "Spooky",
-				coverImage: null,
-			},
-		},
 		{
 			id: RANDOM,
 			collections: { boxes: [], roles: [] },
@@ -34,6 +16,21 @@ export const defaultDatabase: GrouprDatabase = {
 				contactInfo: "",
 				overview: "Hol' up...",
 				coverImage: null,
+				tags: [],
+				interested: [],
+			},
+		},
+		{
+			id: RANDOM,
+			collections: { boxes: [], roles: [] },
+			fields: {
+				name: "Six Nights at Bobs",
+				collaborators: [],
+				contactInfo: "",
+				overview: "Spooky",
+				coverImage: null,
+				tags: [],
+				interested: [DEFAULT_USER],
 			},
 		},
 		{
@@ -45,6 +42,8 @@ export const defaultDatabase: GrouprDatabase = {
 				contactInfo: "",
 				overview: "DRP",
 				coverImage: null,
+				tags: [],
+				interested: [],
 			},
 		},
 	],
@@ -56,7 +55,12 @@ export const defaultDatabase: GrouprDatabase = {
 				username: "Default",
 				givenNames: ["Jeff"],
 				surname: "Default",
-				skillset: {},
+				skillset: {
+					[Skill.PROGRAMMING]: 0,
+					[Skill.MUSIC_AND_SOUND]: 0,
+					[Skill.ART]: 0,
+					[Skill.PROJECT_MANAGEMENT]: 0,
+				},
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -70,7 +74,12 @@ export const defaultDatabase: GrouprDatabase = {
 				username: "LordQuaggan",
 				givenNames: ["Nathaniel", "Robert"],
 				surname: "Burke",
-				skillset: { [Skill.PROGRAMMING]: 3 },
+				skillset: {
+					[Skill.PROGRAMMING]: 3,
+					[Skill.MUSIC_AND_SOUND]: 0,
+					[Skill.ART]: 0,
+					[Skill.PROJECT_MANAGEMENT]: 0,
+				},
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -84,7 +93,12 @@ export const defaultDatabase: GrouprDatabase = {
 				username: "Xx_NoscopeCow_xX",
 				givenNames: ["Gary"],
 				surname: "Rodriguez",
-				skillset: { [Skill.MUSIC_AND_SOUND]: 2, [Skill.ART]: 4 },
+				skillset: {
+					[Skill.PROGRAMMING]: 0,
+					[Skill.MUSIC_AND_SOUND]: 2,
+					[Skill.ART]: 4,
+					[Skill.PROJECT_MANAGEMENT]: 0,
+				},
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -98,7 +112,12 @@ export const defaultDatabase: GrouprDatabase = {
 				username: "TheCarrot",
 				givenNames: ["Mark"],
 				surname: "Pintos",
-				skillset: { [Skill.PROJECT_MANAGEMENT]: 5, [Skill.PROGRAMMING]: 5 },
+				skillset: {
+					[Skill.PROGRAMMING]: 5,
+					[Skill.MUSIC_AND_SOUND]: 0,
+					[Skill.ART]: 0,
+					[Skill.PROJECT_MANAGEMENT]: 5,
+				},
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
