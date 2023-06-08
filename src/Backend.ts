@@ -1,35 +1,35 @@
 // Backend data layout and logic
 
 import {} from "./Finder";
-import { DocId, FireCollection } from "./FirebaseUtil";
-import { enumVals, makeArr } from "./Util";
+import { DocId, FireCollection, FireMap } from "./FirebaseUtil";
+import { enumVals, inlineLog, makeArr } from "./Util";
 
 /**
  * Models the structure of the data stored in Groupr
  * Domain-specific
  */
 export type GrouprDatabase = {
-  projects: Projects;
-  users: Users;
-  globals: Globals;
+	projects: Projects;
+	users: Users;
+	globals: Globals;
 };
 
 enum Day {
-  Monday,
-  Tuesday,
-  Wednesday,
-  Thursday,
-  Friday,
-  Saturday,
-  Sundary,
+	Monday,
+	Tuesday,
+	Wednesday,
+	Thursday,
+	Friday,
+	Saturday,
+	Sundary,
 }
 
 const HOURS_PER_DAY = 24;
 const DAYS_PER_WEEK = enumVals(Day).length;
 
 enum Availability {
-  NotAvailable,
-  Available,
+	NotAvailable,
+	Available,
 }
 
 const USERS = "users";
@@ -45,77 +45,74 @@ type Globals = [GlobalTable];
  * - Should `contactInfo`/`collaborators` be more structured?
  */
 export type Project = {
-  id: DocId;
-  collections: { boxes: Box<BoxType>[]; roles: Role[] };
-  fields: {
-    name: string;
-    collaborators: string[];
-    contactInfo: string;
-    overview: string;
-    coverImage: string | null;
-  };
+	id: DocId;
+	collections: { boxes: Box<BoxType>[]; roles: Role[] };
+	fields: {
+		name: string;
+		collaborators: string[];
+		contactInfo: string;
+		overview: string;
+		coverImage: string | null;
+	};
 };
 /**
  * TODO: What type should experience be?
  */
 type Role = {
-  id: DocId;
-  collections: {};
-  fields: {
-    skillset: Skillset;
-    experience: string;
-    approxPay: number;
-    commitment: number;
-  };
+	id: DocId;
+	collections: {};
+	fields: {
+		skillset: Skillset;
+		experience: string;
+		approxPay: number;
+		commitment: number;
+	};
 };
 
 /**
  * TODO: Lots of potential for additional fields here
  */
 type User = {
-  id: DocId;
-  collections: {};
-  fields: {
-    username: string;
-    givenNames: string[];
-    surname: string;
-    skillset: Skillset;
-    availability: AvailSchedule;
-  };
+	id: DocId;
+	collections: {};
+	fields: {
+		username: string;
+		givenNames: string[];
+		surname: string;
+		skillset: { [skill: string]: number };
+		availability: AvailSchedule;
+	};
 };
 type GlobalTable = { id: DocId; collections: {}; fields: {} };
 
 export const emptyAvailability = (): AvailSchedule =>
-  makeArr(
-    () => makeArr(() => Availability.NotAvailable, HOURS_PER_DAY),
-    DAYS_PER_WEEK
-  );
+	makeArr(() => Availability.NotAvailable, HOURS_PER_DAY * DAYS_PER_WEEK);
 
-type AvailSchedule = Availability[][];
+type AvailSchedule = Availability[];
 
 type Hour = number;
 
 type Time = { hour: Hour; day: Day };
 
 const setAvail = (s: AvailSchedule, { hour, day }: Time, a: Availability) => {
-  s[day][hour] = a;
+	s[day * HOURS_PER_DAY + hour] = a;
 };
 
-const getAvail = (s: AvailSchedule, { hour, day }: Time) => s[day][hour];
+const getAvail = (s: AvailSchedule, { hour, day }: Time) => s[day * HOURS_PER_DAY + hour];
 
 /**
  * Project pages can be built out of boxes
  * Perhaps user pages could also be built out of boxes - TODO
  */
 type Box<T extends BoxType> = {
-  id: DocId;
-  type: T;
-  collections: {};
-  fields: T extends BoxType.IMAGE ? ImageContents : TextContents;
+	id: DocId;
+	type: T;
+	collections: {};
+	fields: T extends BoxType.IMAGE ? ImageContents : TextContents;
 };
 enum BoxType {
-  IMAGE = "Image",
-  TEXT = "Text",
+	IMAGE = "image",
+	TEXT = "text",
 }
 
 type ImageContents = { path: string };
@@ -127,10 +124,10 @@ type TextContents = { title: string; body: string };
  * `ENGINE_PROGRAMMING`, `SHADERS`, `PHYSICS`, `NETWORKING` etc...
  */
 export enum Skill {
-  PROGRAMMING = "Programming",
-  ART = "Art",
-  MUSIC_AND_SOUND = "Music and Sound",
-  PROJECT_MANAGEMENT = "Project Management",
+	PROGRAMMING = "programming",
+	ART = "art",
+	MUSIC_AND_SOUND = "musicAndSound",
+	PROJECT_MANAGEMENT = "projectManagement",
 }
 
 /**
@@ -139,4 +136,4 @@ export enum Skill {
  */
 export type Rating = 0 | 1 | 2 | 3 | 4 | 5;
 
-type Skillset = Map<Skill, Rating>;
+type Skillset = FireMap<Skill, Rating>;

@@ -13,7 +13,8 @@ import SwipeCard from "./SwipeCard";
 import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { db } from "./Firebase";
-import { updateField, updateFields } from "./FirebaseUtil";
+import { resetDatabase, updateField, updateFields } from "./FirebaseUtil";
+import defaultDatabase from "./DefaultDatabase";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
@@ -143,6 +144,7 @@ const Finder = () => {
 					>
 						{">"}
 					</Button>
+					<Button onClick={() => resetDatabase(defaultDatabase)}>Reset Full!</Button>
 				</Flex>
 			</GridItem>
 			<GridItem pl="2" area={"main"}>

@@ -6,10 +6,13 @@ import {
 	GeoPoint,
 	QueryDocumentSnapshot,
 	Timestamp,
+	addDoc,
 	collection,
 	deleteDoc,
+	doc,
 	getDoc,
 	getDocs,
+	setDoc,
 	updateDoc,
 } from "firebase/firestore";
 import { range, safeHead } from "./Util";
@@ -55,11 +58,16 @@ type FireDoc<C extends FireCollections, F extends FireFields> = {
 	collections: C;
 	fields: F;
 };
+
+/**
+ * The field corresponding to `FireMap<string, FireValue>` has been inlined to
+ * avoid circular reference errors
+ */
 type FireValue =
 	| string
 	| number
 	| boolean
-	| Map<string, FireValue>
+	| { [key: string]: FireValue } // FireMap<string, FireValue>
 	| FireValue[]
 	| null
 	| Timestamp
@@ -91,15 +99,12 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
 			await deleteCollection(currentPath + n, cs[n]);
 		}
 	};
-	const deleteCollection = async <D extends AbstractFireDoc>(
-		collectionPath: string,
-		c: FireCollection<D>,
-	) => {
+	const deleteCollection = async (collectionPath: string, c: FireCollection<AbstractFireDoc>) => {
 		const snapshot = await getDocs(collection(db, collectionPath));
 		const arbDoc = safeHead(c); // Used to view the structure of the documents
-		await Promise.all(snapshot.docs.map(d => deleteFullDoc(arbDoc, d)));
+		await Promise.all(snapshot.docs.map(d => deleteFireDoc(arbDoc, d)));
 	};
-	const deleteFullDoc = async (
+	const deleteFireDoc = async (
 		modelDoc: AbstractFireDoc | null,
 		snapshot: QueryDocumentSnapshot<DocumentData>,
 	) => {
@@ -112,7 +117,30 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
 		await deleteCollections(snapshot.ref.path + "/", modelDoc.collections);
 	};
 
-	deleteCollections("", model);
+	await deleteCollections("", model);
+};
+
+export const addAll = async (model: FireDatabase): Promise<void> => {
+	const addCollections = async (currentPath: string, cs: FireCollections): Promise<void> => {
+		for (const n in cs) {
+			await addCollection(currentPath + n, cs[n]);
+		}
+	};
+	const addCollection = async (
+		collectionPath: string,
+		c: FireCollection<AbstractFireDoc>,
+	): Promise<unknown> => Promise.all(c.map(d => addFireDoc(collectionPath, d)));
+
+	const addFireDoc = async (pathToDoc: string, { id, collections, fields }: AbstractFireDoc) => {
+		if (id === RANDOM) {
+			await addDoc(collection(db, pathToDoc), fields);
+		} else {
+			await setDoc(doc(db, pathToDoc, id), fields);
+		}
+		addCollections(pathToDoc + "/" + id, collections);
+	};
+
+	await addCollections("", model);
 };
 
 /**
@@ -121,17 +149,13 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
  */
 export const resetDatabase = async (model: FireDatabase): Promise<void> => {
 	await deleteAll(model);
+	await addAll(model);
 };
 
-const DOC_ID_LENGTH = 20;
-
 /**
- * Generates a random document ID vaguely similar to the ones that Firebase can
- * create automatically
+ * We use an interface rather than a direct type alias to avoid errors with
+ * circular references
  */
-const randomId = (): string => {
-	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-	return range(0, DOC_ID_LENGTH)
-		.map(() => chars[Math.floor(Math.random() * chars.length)])
-		.join();
+export type FireMap<K extends string, V> = {
+	[key in K]: V;
 };
