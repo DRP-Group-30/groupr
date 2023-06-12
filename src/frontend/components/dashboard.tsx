@@ -1,4 +1,4 @@
-import { CheckCircleIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 import {
 	Container,
 	Heading,
@@ -8,14 +8,11 @@ import {
 	Text,
 	Link,
 	Image,
-	Badge,
 	Button,
 	Center,
 	Stack,
-	useColorModeValue,
 	CardBody,
 	CardFooter,
-	IconButton,
 	SimpleGrid,
 	useToast,
 	Tag,
@@ -25,21 +22,18 @@ import {
 	LinkOverlay,
 	Box,
 } from "@chakra-ui/react";
-import Sidebar from "./Sidebar";
+import Sidebar from "./sidebar";
 import { Dispatch, DragEvent, SetStateAction, useEffect, useState } from "react";
-import { Project } from "./Backend";
+import { Project } from "../../backend";
 import {
-	DocumentData,
 	DocumentReference,
-	DocumentSnapshot,
 	doc,
 	getDoc,
-	setDoc,
 	updateDoc,
 } from "firebase/firestore";
 import { MdClose, MdDone } from "react-icons/md";
-import { DEFAULT_USER } from "./Finder";
-import { db } from "./Firebase";
+import { DEFAULT_USER } from "./finder";
+import { Firebase } from "../../backend/firebase";
 
 const DashboardCard = ({
 	data,
@@ -64,7 +58,7 @@ const DashboardCard = ({
 		<Card
 			direction={{ base: "column", sm: "row" }}
 			boxShadow={"xl"}
-			draggable={col != "Matched"}
+			draggable={col !== "Matched"}
 			onDragStart={dragStart}
 			width="100%"
 		>
@@ -338,9 +332,9 @@ const Dashboard = () => {
 		}
 
 		updateDoc(DEFAULT_USER, {
-			matched: matched.map(p => doc(db, "projects", p.id)),
-			interested: interested.map(p => doc(db, "projects", p.id)),
-			rejected: rejected.map(p => doc(db, "projects", p.id)),
+			matched: matched.map(p => doc(Firebase.db, "projects", p.id)),
+			interested: interested.map(p => doc(Firebase.db, "projects", p.id)),
+			rejected: rejected.map(p => doc(Firebase.db, "projects", p.id)),
 		});
 	}
 

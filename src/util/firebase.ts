@@ -1,4 +1,7 @@
-// Utility functions specifically for interacting with Firebase Firestore
+/**
+ * A utility file containting functions for interacting with the Firebase database
+ * 
+ */
 
 import {
 	DocumentData,
@@ -15,8 +18,8 @@ import {
 	setDoc,
 	updateDoc,
 } from "firebase/firestore";
-import { range, safeHead } from "./Util";
-import { db } from "./Firebase";
+import { safeHead } from ".";
+import { Firebase } from "../backend/firebase"
 
 export const updateFields = async (
 	d: DocumentReference<DocumentData>,
@@ -45,6 +48,7 @@ export type DocId = string | Random;
  * Not domain-specific
  */
 type FireDatabase = FireCollections;
+
 type FireCollections = {
 	[name: string]: FireCollection<AbstractFireDoc>;
 };
@@ -100,7 +104,7 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
 		}
 	};
 	const deleteCollection = async (collectionPath: string, c: FireCollection<AbstractFireDoc>) => {
-		const snapshot = await getDocs(collection(db, collectionPath));
+		const snapshot = await getDocs(collection(Firebase.db, collectionPath));
 		const arbDoc = safeHead(c); // Used to view the structure of the documents
 		await Promise.all(snapshot.docs.map(d => deleteFireDoc(arbDoc, d)));
 	};
@@ -133,9 +137,9 @@ export const addAll = async (model: FireDatabase): Promise<void> => {
 
 	const addFireDoc = async (pathToDoc: string, { id, collections, fields }: AbstractFireDoc) => {
 		if (id === RANDOM) {
-			await addDoc(collection(db, pathToDoc), fields);
+			await addDoc(collection(Firebase.db, pathToDoc), fields);
 		} else {
-			await setDoc(doc(db, pathToDoc, id), fields);
+			await setDoc(doc(Firebase.db, pathToDoc, id), fields);
 		}
 		addCollections(pathToDoc + "/" + id, collections);
 	};

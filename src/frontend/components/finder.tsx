@@ -4,22 +4,20 @@ import {
 	getDoc,
 	getDocs,
 	collection,
-	DocumentData,
-	updateDoc,
 } from "firebase/firestore";
-import "./App.css";
+import "../app.css";
 import { MdDone, MdClose } from "react-icons/md";
-import SwipeCard from "./SwipeCard";
+import SwipeCard from "./swipe_card";
 import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { db } from "./Firebase";
-import { resetDatabase, updateField, updateFields } from "./FirebaseUtil";
-import defaultDatabase from "./DefaultDatabase";
-import { Project } from "./Backend";
-import { currentUser } from "./Auth";
+import { Firebase } from "../../backend/firebase";
+import { resetDatabase, updateField } from "../../util/firebase";
+import defaultDatabase from "../../backend/default_database";
+import { Project } from "../../backend";
+import { getCurrentUser } from "./auth";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
-export const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
+export const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);
 
 const INTERESTED = "interested";
 const MATCHED = "matched";
@@ -53,7 +51,7 @@ const Finder = () => {
 			defaultUser.get(d),
 		).map(r => r.id);
 
-		const ds = await getDocs(collection(db, "projects"));
+		const ds = await getDocs(collection(Firebase.db, "projects"));
 
 		setCards((cards = ds.docs.map(d => d.ref).filter(r => !seenBefore.includes(r.id))));
 	}
@@ -84,7 +82,7 @@ const Finder = () => {
 		const cur = cards[cardIndex - 1];
 		const snapshot = (await getDoc(cur)).data() as Project["fields"];
 		console.log(snapshot.interested);
-		const curUser = currentUser();
+		const curUser = getCurrentUser();
 		if (snapshot.interested.map(i => i.id).includes(curUser.id)) {
 			console.log("MATCHED!");
 			updateField<DocumentReference[]>(DEFAULT_USER, MATCHED, rs =>

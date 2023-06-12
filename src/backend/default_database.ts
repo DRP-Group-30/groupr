@@ -1,12 +1,12 @@
 import { doc } from "firebase/firestore";
-import { GrouprDatabase, Skill, emptyAvailability } from "./Backend";
-import { RANDOM } from "./FirebaseUtil";
-import { db } from "./Firebase";
+import { GrouprDatabase, Skill, emptyAvailability } from ".";
+import { RANDOM } from "../util/firebase";
+import { Firebase } from "./firebase";
 
-const USERS = "users";
+// const USERS = "users";
 
 const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
-const DEFAULT_USER = doc(db, "users", DEFAULT_USER_ID);
+const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);
 
 export const defaultDatabase = (): GrouprDatabase => ({
 	projects: [

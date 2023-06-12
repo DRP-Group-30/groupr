@@ -1,8 +1,7 @@
 import { render, screen } from "@testing-library/react";
-import { getDoc } from "@firebase/firestore";
-import { DEFAULT_USER } from "./Finder";
-import App from "./App";
+import App from "./app";
 import { BrowserRouter } from "react-router-dom";
+import React from "react";
 
 test("renders dashboard link", () => {
   render(
