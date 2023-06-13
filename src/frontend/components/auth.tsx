@@ -1,10 +1,13 @@
 import { Center } from "@chakra-ui/react";
 import firebase from "firebase/compat/app";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
-import { DEFAULT_USER } from "./Finder";
+import { DEFAULT_USER } from "./finder";
+import firebaseui from "firebaseui";
 
-// Configure FirebaseUI.
-const uiConfig = {
+/**
+ * Configuration for the UI.
+ */
+const SIGN_IN_CONFIG: firebaseui.auth.Config = {
 	// Popup signin flow rather than redirect flow.
 	signInFlow: "popup",
 	// Redirect to /signedIn after sign in is successful. Alternatively you can provide a callbacks.signInSuccess function.
@@ -19,14 +22,12 @@ const uiConfig = {
 	],
 };
 
-const SignInScreen = () => {
+export function getCurrentUser() { return DEFAULT_USER }
+
+export default function SignInScreen() {
 	return (
 		<Center>
-			<StyledFirebaseAuth uiConfig={uiConfig} firebaseAuth={firebase.auth()} />
+			<StyledFirebaseAuth uiConfig={SIGN_IN_CONFIG} firebaseAuth={firebase.auth()} />
 		</Center>
 	);
 };
-
-export default SignInScreen;
-
-export const currentUser = () => DEFAULT_USER;

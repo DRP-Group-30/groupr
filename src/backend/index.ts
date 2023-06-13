@@ -1,9 +1,8 @@
 // Backend data layout and logic
 
 import { DocumentReference } from "@firebase/firestore";
-import {} from "./Finder";
-import { DocId, FireCollection, FireMap } from "./FirebaseUtil";
-import { enumVals, makeArr } from "./Util";
+import { DocId, FireCollection, FireMap } from "../util/firebase";
+import { enumVals, makeArr } from "../util";
 
 /**
  * Models the structure of the data stored in Groupr
@@ -92,15 +91,15 @@ export const emptyAvailability = (): AvailSchedule =>
 
 type AvailSchedule = Availability[];
 
-type Hour = number;
+// type Hour = number;
 
-type Time = { hour: Hour; day: Day };
+// type Time = { hour: Hour; day: Day };
 
-const setAvail = (s: AvailSchedule, { hour, day }: Time, a: Availability) => {
-	s[day * HOURS_PER_DAY + hour] = a;
-};
+// const setAvail = (s: AvailSchedule, { hour, day }: Time, a: Availability) => {
+// 	s[day * HOURS_PER_DAY + hour] = a;
+// };
 
-const getAvail = (s: AvailSchedule, { hour, day }: Time) => s[day * HOURS_PER_DAY + hour];
+// const getAvail = (s: AvailSchedule, { hour, day }: Time) => s[day * HOURS_PER_DAY + hour];
 
 /**
  * Project pages can be built out of boxes

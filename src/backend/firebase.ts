@@ -5,7 +5,7 @@ import "firebase/compat/auth";
 
 import { getStorage } from "firebase/storage";
 
-const firebaseConfig = {
+const FIREBASE_CONFIG = {
 	apiKey: "AIzaSyDXfjUuI5_Zkx_aHnG3K83Hr24_Kd4HKtA",
 	authDomain: "drp-group-30.firebaseapp.com",
 	databaseURL: "https://drp-group-30-default-rtdb.europe-west1.firebasedatabase.app",
@@ -24,8 +24,11 @@ const firebaseConfig = {
 // 	appId: "1:166892029221:web:b37e1ac2f98342431fc6cc",
 // };
 
-initializeApp(firebaseConfig);
-firebase.initializeApp(firebaseConfig);
-export const db = getFirestore();
-export const auth = firebase.auth();
-export const storage = getStorage();
+initializeApp(FIREBASE_CONFIG);
+firebase.initializeApp(FIREBASE_CONFIG);
+
+export namespace Firebase {
+    export const db = getFirestore();
+    export const auth = firebase.auth();
+    export const storage = getStorage();
+}

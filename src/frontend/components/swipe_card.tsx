@@ -5,14 +5,12 @@ import {
 	Heading,
 	Text,
 	Stack,
-	Avatar,
 	useColorModeValue,
 	Flex,
 	Tag,
 } from "@chakra-ui/react";
 import { MouseEvent, Dispatch, SetStateAction } from "react";
-import { Project } from "./Backend";
-import { map } from "./Util";
+import { Project } from "../../backend";
 
 interface SwipeCardProps {
 	offset: number;
