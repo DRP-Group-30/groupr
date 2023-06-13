@@ -3,6 +3,9 @@ import Dashboard from "./components/dashboard";
 import Navbar from "./components/navbar";
 import Finder from "./components/finder";
 
+/**
+ * The main app component.
+ */
 function App() {
 	return (
 		<>
