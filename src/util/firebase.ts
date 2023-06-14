@@ -1,6 +1,6 @@
 /**
  * A utility file containting functions for interacting with the Firebase database
- * 
+ *
  */
 
 import {
@@ -19,7 +19,7 @@ import {
 	updateDoc,
 } from "firebase/firestore";
 import { safeHead } from ".";
-import { Firebase } from "../backend/firebase"
+import { Firebase } from "../backend/firebase";
 
 export const updateFields = async (
 	d: DocumentReference<DocumentData>,
@@ -157,10 +157,6 @@ export const resetDatabase = async (model: FireDatabase): Promise<void> => {
 	window.location.reload();
 };
 
-/**
- * We use an interface rather than a direct type alias to avoid errors with
- * circular references
- */
 export type FireMap<K extends string, V> = {
 	[key in K]: V;
 };

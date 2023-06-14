@@ -1,21 +1,16 @@
-import {
-	Container,
-	Heading,
-	Text,
-	Center,
-	SimpleGrid,
-} from "@chakra-ui/react";
+import { Container, Heading, Text, Center, SimpleGrid } from "@chakra-ui/react";
 import DashboardCard from "./card";
 import { Project } from "../../../backend";
 import { CardStatus } from "./types";
+import React from "react";
 
 export type listProps = {
 	heading: CardStatus;
 	children: Project[];
 	moveInto: (col: string, project?: Project) => void;
-}
+};
 
-const DBList = ({heading, children, moveInto}: listProps) => {
+const DBList = ({ heading, children, moveInto }: listProps) => {
 	return (
 		<Container
 			maxW="100%"

@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { MouseEvent, Dispatch, SetStateAction } from "react";
 import { Project } from "../../backend";
+import React from "react";
 
 interface SwipeCardProps {
 	offset: number;
