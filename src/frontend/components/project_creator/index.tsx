@@ -20,7 +20,7 @@ import {
 	AutoCompleteList,
 	AutoCompleteTag,
 } from "@choc-ui/chakra-autocomplete";
-import { nubWith, upperFirst, upperWords } from "../../../util";
+import { inlineLog, nubWith, upperFirst, upperWords } from "../../../util";
 
 type Fields = "fields";
 
@@ -49,7 +49,7 @@ const ProjectCreator = () => {
 	});
 
 	const [allTags, setAllTags] = useState<string[]>([]);
-	const initTagTable = async () => setAllTags(await getAllTags());
+	const initTagTable = async () => setAllTags(inlineLog(await getAllTags()));
 
 	useEffect(() => {
 		initTagTable();

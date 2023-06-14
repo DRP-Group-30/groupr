@@ -18,7 +18,7 @@ import {
 	setDoc,
 	updateDoc,
 } from "firebase/firestore";
-import { safeHead, ANY, getOrZero } from ".";
+import { safeHead, ANY, getOrZero, nub } from ".";
 import { Firebase } from "../backend/firebase";
 import { Project } from "../backend";
 
@@ -154,9 +154,9 @@ export const getAllTags = async (): Promise<string[]> => {
 	const projects = await getDocs(collection(Firebase.db, "projects"));
 	const allTags = projects.docs.flatMap(d => toFireDoc(d, ANY as Project).fields.tags);
 	const ranked = new Map<string, number>();
-	for (const tag in allTags) ranked.set(tag, getOrZero(ranked, tag) + 1);
-	allTags.sort((t1, t2) => getOrZero(ranked, t1) - getOrZero(ranked, t2) ?? 0);
-	return allTags;
+	allTags.forEach(t => ranked.set(t, getOrZero(ranked, t) + 1));
+	allTags.sort((t1, t2) => getOrZero(ranked, t2) - getOrZero(ranked, t1));
+	return nub(allTags);
 };
 
 /**

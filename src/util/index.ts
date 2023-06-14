@@ -1,3 +1,5 @@
+import { T } from "@chakra-ui/toast/dist/toast.types-f226a101";
+
 export const range = (min: number, max: number) =>
 	Array.from(Array(max - min).keys()).map(x => x + min);
 
@@ -58,3 +60,5 @@ export const nubBy = <T>(l: T[], p: (x: T, y: T) => boolean): T[] =>
  * Could optimise with Schwartzian transform
  */
 export const nubWith = <T, U>(l: T[], f: (x: T) => U): T[] => nubBy(l, (x, y) => f(x) === f(y));
+
+export const nub = <T>(l: T[]) => nubWith(l, x => x);
