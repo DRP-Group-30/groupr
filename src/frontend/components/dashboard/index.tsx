@@ -50,9 +50,7 @@ const Dashboard = () => {
 		);
 
 		let interestedRefs = defaultUser.get("interested");
-		let interestedDocs = await Promise.all(
-			interestedRefs.map((ref: DocumentReference) => getDoc(ref)),
-		);
+		let interestedDocs = await Promise.all(interestedRefs.map(getDoc));
 		setInterested(
 			(interested = interestedDocs.map(
 				doc =>
