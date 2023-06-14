@@ -38,7 +38,23 @@ export const inlineLog = <T>(x: T): T => {
 };
 
 /**
- * Creates something of type `T` from thin air (otherwise known as `null`)
+ * Something of type `any` created from thin air (otherwise known as `null`)
  * Obviously unsafe
  */
-export const unsafeNew = <T>(): T => null as unknown as T;
+export const ANY: any = null as any;
+
+export const getOrZero = <K>(m: Map<K, number>, k: K) => getOrDefault(m, k, 0);
+
+export const getOrDefault = <K, V>(m: Map<K, V>, k: K, d: V) => m.get(k) ?? d;
+
+export const upperFirst = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+export const upperWords = (s: string) => s.split(" ").map(upperFirst).join(" ");
+
+export const nubBy = <T>(l: T[], p: (x: T, y: T) => boolean): T[] =>
+	l.filter((x, i, s) => i === s.findIndex(y => p(x, y)));
+
+/**
+ * Could optimise with Schwartzian transform
+ */
+export const nubWith = <T, U>(l: T[], f: (x: T) => U): T[] => nubBy(l, (x, y) => f(x) === f(y));

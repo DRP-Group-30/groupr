@@ -5,6 +5,7 @@
   "dependencies": {
     "@chakra-ui/icons": "^2.0.19",
     "@chakra-ui/react": "^2.7.0",
+    "@choc-ui/chakra-autocomplete": "^5.1.5",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
     "@testing-library/jest-dom": "^5.16.5",

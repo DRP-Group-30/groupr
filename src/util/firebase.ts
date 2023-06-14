@@ -18,7 +18,7 @@ import {
 	setDoc,
 	updateDoc,
 } from "firebase/firestore";
-import { safeHead, unsafeNew } from ".";
+import { safeHead, ANY, getOrZero } from ".";
 import { Firebase } from "../backend/firebase";
 import { Project } from "../backend";
 
@@ -92,7 +92,7 @@ export const toFireDoc = <F extends FireCollections, C extends FireFields>(
 	id: snapshot.id,
 	// Unsafe!! Current modelling of `collections` as parts of ordinary
 	// `FireDoc`s breaks down pretty quick...
-	collections: docSpec.collections,
+	collections: ANY, //docSpec.collections,
 	fields: snapshot.data() as C,
 });
 
@@ -150,12 +150,13 @@ export const addAll = async (model: FireDatabase): Promise<void> => {
 	await addCollections("", model);
 };
 
-export const allTags = async (): Promise<Map<string, number>> => {
+export const getAllTags = async (): Promise<string[]> => {
 	const projects = await getDocs(collection(Firebase.db, "projects"));
-	const allTags = projects.docs.flatMap(d => toFireDoc(d, unsafeNew<Project>()).fields.tags);
+	const allTags = projects.docs.flatMap(d => toFireDoc(d, ANY as Project).fields.tags);
 	const ranked = new Map<string, number>();
-	for (const tag in allTags) ranked.set(tag, (ranked.get(tag) ?? 0) + 1);
-	return ranked;
+	for (const tag in allTags) ranked.set(tag, getOrZero(ranked, tag) + 1);
+	allTags.sort((t1, t2) => getOrZero(ranked, t1) - getOrZero(ranked, t2) ?? 0);
+	return allTags;
 };
 
 /**

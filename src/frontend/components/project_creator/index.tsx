@@ -11,8 +11,20 @@ import { Select } from "@chakra-ui/select";
 import { Image } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { MdUploadFile } from "react-icons/md";
+import { getAllTags } from "../../../util/firebase";
+import {
+	AutoComplete,
+	AutoCompleteCreatable,
+	AutoCompleteInput,
+	AutoCompleteItem,
+	AutoCompleteList,
+	AutoCompleteTag,
+} from "@choc-ui/chakra-autocomplete";
+import { nubWith, upperFirst, upperWords } from "../../../util";
 
 type Fields = "fields";
+
+const MAX_TAG_SUGGESTIONS = 5;
 
 const ProjectCreator = () => {
 	const [tempCoverImage, setTempCoverImage] = useState<File | null>(null);
@@ -35,6 +47,13 @@ const ProjectCreator = () => {
 			// Add project to database
 		},
 	});
+
+	const [allTags, setAllTags] = useState<string[]>([]);
+	const initTagTable = async () => setAllTags(await getAllTags());
+
+	useEffect(() => {
+		initTagTable();
+	}, []);
 
 	return (
 		<Flex bg="gray.100" align="center" justify="center" h="100vh">
@@ -74,33 +93,70 @@ const ProjectCreator = () => {
 							</Flex>
 						</FormControl>
 						<FormControl>
-							<FormLabel htmlFor="project name">Project Name</FormLabel>
+							<FormLabel>Project Name</FormLabel>
 							<Input
-								id="project name"
+								id="project_name"
 								name="name"
 								type="project name"
 								variant="filled"
 								onChange={formik.handleChange}
-								value={formik.values.name}
 							/>
 						</FormControl>
 						<FormControl>
-							<FormLabel htmlFor="overview">Overview</FormLabel>
+							<FormLabel>Overview</FormLabel>
 							<Input
 								id="overview"
 								name="overview"
 								type="overview"
 								variant="filled"
 								onChange={formik.handleChange}
-								value={formik.values.overview}
 							/>
 						</FormControl>
-						<Select placeholder="tags">
-							<option value="option1">Option 1</option>
-							<option value="option2">Option 2</option>
-							<option value="option3">Option 3</option>
-						</Select>
-
+						<FormControl>
+							<FormLabel>Tags</FormLabel>
+							<AutoComplete
+								openOnFocus
+								multiple
+								creatable={true}
+								maxSuggestions={MAX_TAG_SUGGESTIONS}
+								onChange={(ts, i) => {}}
+							>
+								<AutoCompleteInput variant="filled">
+									{({ tags }) =>
+										nubWith(
+											tags.map((tag, tid) => ({
+												tid: tid,
+												onRemove: tag.onRemove,
+												label: (tag.label as string).toUpperCase(),
+											})),
+											t => t.label,
+										).map(({ label, tid, onRemove }) => (
+											<AutoCompleteTag
+												key={tid}
+												label={label}
+												onRemove={onRemove}
+											/>
+										))
+									}
+								</AutoCompleteInput>
+								<AutoCompleteList>
+									{allTags.map(t => (
+										<AutoCompleteItem
+											key={t}
+											value={t}
+											textTransform="capitalize"
+											_selected={{ bg: "whiteAlpha.50" }}
+											_focus={{ bg: "whiteAlpha.100" }}
+										>
+											{t}
+										</AutoCompleteItem>
+									))}
+									<AutoCompleteCreatable>
+										{({ value }) => <span>New Tag: {value.toUpperCase()}</span>}
+									</AutoCompleteCreatable>
+								</AutoCompleteList>
+							</AutoComplete>
+						</FormControl>
 						<Button type="submit" colorScheme="purple" width="full">
 							Create Project
 						</Button>
