@@ -91,15 +91,15 @@ export const emptyAvailability = (): AvailSchedule =>
 
 type AvailSchedule = Availability[];
 
-// type Hour = number;
+type Hour = number;
 
-// type Time = { hour: Hour; day: Day };
+type Time = { hour: Hour; day: Day };
 
-// const setAvail = (s: AvailSchedule, { hour, day }: Time, a: Availability) => {
-// 	s[day * HOURS_PER_DAY + hour] = a;
-// };
+export const setAvail = (s: AvailSchedule, { hour, day }: Time, a: Availability) => {
+	s[day * HOURS_PER_DAY + hour] = a;
+};
 
-// const getAvail = (s: AvailSchedule, { hour, day }: Time) => s[day * HOURS_PER_DAY + hour];
+export const getAvail = (s: AvailSchedule, { hour, day }: Time) => s[day * HOURS_PER_DAY + hour];
 
 /**
  * Project pages can be built out of boxes
