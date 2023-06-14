@@ -19,6 +19,7 @@ import {
 	AutoCompleteItem,
 	AutoCompleteList,
 	AutoCompleteTag,
+	ItemTag,
 } from "@choc-ui/chakra-autocomplete";
 import { inlineLog, nubWith, upperFirst, upperWords } from "../../../util";
 
@@ -48,6 +49,7 @@ const ProjectCreator = () => {
 
 	const [allTags, setAllTags] = useState<string[]>([]);
 	const initTagTable = async () => setAllTags(inlineLog(await getAllTags()));
+	const [tempTags, setTempTags] = useState<ItemTag[]>([]);
 
 	useEffect(() => {
 		initTagTable();
@@ -124,42 +126,53 @@ const ProjectCreator = () => {
 						</FormControl>
 						<FormControl>
 							<FormLabel>Tags</FormLabel>
+							<Flex maxWidth="600px" flexWrap="wrap" marginBottom="0.5rem">
+								{nubWith(
+									tempTags.map((tag, tid) => ({
+										tid: tid,
+										onRemove: tag.onRemove,
+										label: (tag.label as string).toUpperCase(),
+									})),
+									t => t.label,
+								).map(({ label, tid, onRemove }) => (
+									<AutoCompleteTag
+										key={tid}
+										label={label}
+										onRemove={onRemove}
+										variant="solid"
+										colorScheme="teal"
+										marginRight="3px"
+										marginBottom="3px"
+									/>
+								))}
+							</Flex>
 							<AutoComplete
 								openOnFocus
 								multiple
 								creatable={true}
 								maxSuggestions={MAX_TAG_SUGGESTIONS}
+								onReady={({ tags }) => {
+									setTempTags(tags);
+								}}
 							>
-								<AutoCompleteInput variant="filled">
-									{({ tags }) =>
-										nubWith(
-											tags.map((tag, tid) => ({
-												tid: tid,
-												onRemove: tag.onRemove,
-												label: (tag.label as string).toUpperCase(),
-											})),
-											t => t.label,
-										).map(({ label, tid, onRemove }) => (
-											<AutoCompleteTag
-												key={tid}
-												label={label}
-												onRemove={onRemove}
-											/>
-										))
-									}
-								</AutoCompleteInput>
+								<AutoCompleteInput
+									placeholder="Search for tags..."
+									variant="filled"
+								></AutoCompleteInput>
 								<AutoCompleteList>
-									{allTags.map(t => (
-										<AutoCompleteItem
-											key={t}
-											value={t}
-											textTransform="capitalize"
-											_selected={{ bg: "whiteAlpha.50" }}
-											_focus={{ bg: "whiteAlpha.100" }}
-										>
-											{t}
-										</AutoCompleteItem>
-									))}
+									{allTags
+										.filter(t => !tempTags.map(tt => tt.label).includes(t))
+										.map(t => (
+											<AutoCompleteItem
+												key={t}
+												value={t}
+												textTransform="capitalize"
+												_selected={{ bg: "whiteAlpha.50" }}
+												_focus={{ bg: "whiteAlpha.100" }}
+											>
+												{t}
+											</AutoCompleteItem>
+										))}
 									<AutoCompleteCreatable>
 										{({ value }) => <span>New Tag: {value.toUpperCase()}</span>}
 									</AutoCompleteCreatable>

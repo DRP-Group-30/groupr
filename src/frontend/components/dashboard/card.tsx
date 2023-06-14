@@ -52,6 +52,7 @@ function DBCard({ project, status, moveInto, setDragged }: cardProps) {
 			width="100%"
 		>
 			<Image
+				roundedLeft="md"
 				objectFit="cover"
 				maxW={{ base: "100%", sm: "200px" }}
 				src={`https://picsum.photos/seed/${project.fields.name}/800`}

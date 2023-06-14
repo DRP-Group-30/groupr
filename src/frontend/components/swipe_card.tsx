@@ -122,7 +122,7 @@ const SwipeCard = ({
 					<Text>Because you're interested in</Text>
 					<Flex flexWrap="wrap">
 						{data.tags.map(tag => (
-							<Tag variant="solid" colorScheme="teal" margin="2px">
+							<Tag variant="solid" key={tag} colorScheme="teal" margin="2px">
 								{tag}
 							</Tag>
 						))}
