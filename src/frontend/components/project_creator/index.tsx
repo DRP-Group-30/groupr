@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Project } from "../../../backend";
+import { Project, addProject } from "../../../backend";
 import { getCurrentUser } from "../auth";
 import { useFormik } from "formik";
 import { Box, Flex, VStack } from "@chakra-ui/layout";
@@ -11,7 +11,7 @@ import { Select } from "@chakra-ui/select";
 import { Image } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { MdUploadFile } from "react-icons/md";
-import { getAllTags } from "../../../util/firebase";
+import { Fields, getAllTags } from "../../../util/firebase";
 import {
 	AutoComplete,
 	AutoCompleteCreatable,
@@ -21,8 +21,6 @@ import {
 	AutoCompleteTag,
 } from "@choc-ui/chakra-autocomplete";
 import { inlineLog, nubWith, upperFirst, upperWords } from "../../../util";
-
-type Fields = "fields";
 
 const MAX_TAG_SUGGESTIONS = 3;
 
@@ -44,7 +42,7 @@ const ProjectCreator = () => {
 			collaborators: [],
 		},
 		onSubmit: projectData => {
-			// Add project to database
+			addProject(projectData);
 		},
 	});
 

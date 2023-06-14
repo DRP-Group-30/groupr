@@ -58,6 +58,8 @@ type FireFields = { [name: string]: FireValue };
 
 type AbstractFireDoc = FireDoc<FireCollections, FireFields>;
 
+export type Fields = "fields";
+
 type FireDoc<C extends FireCollections, F extends FireFields> = {
 	id: DocId;
 	collections: C;
@@ -127,26 +129,29 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
 	await deleteCollections("", model);
 };
 
+export const addCollections = async (currentPath: string, cs: FireCollections): Promise<void> => {
+	for (const n in cs) {
+		await addCollection(currentPath + n, cs[n]);
+	}
+};
+export const addCollection = async (
+	collectionPath: string,
+	c: FireCollection<AbstractFireDoc>,
+): Promise<unknown> => Promise.all(c.map(d => addFireDoc(collectionPath, d)));
+
+export const addFireDoc = async (
+	pathToDoc: string,
+	{ id, collections, fields }: AbstractFireDoc,
+) => {
+	if (id === RANDOM) {
+		await addDoc(collection(Firebase.db, pathToDoc), fields);
+	} else {
+		await setDoc(doc(Firebase.db, pathToDoc, id), fields);
+	}
+	addCollections(pathToDoc + "/" + id, collections);
+};
+
 export const addAll = async (model: FireDatabase): Promise<void> => {
-	const addCollections = async (currentPath: string, cs: FireCollections): Promise<void> => {
-		for (const n in cs) {
-			await addCollection(currentPath + n, cs[n]);
-		}
-	};
-	const addCollection = async (
-		collectionPath: string,
-		c: FireCollection<AbstractFireDoc>,
-	): Promise<unknown> => Promise.all(c.map(d => addFireDoc(collectionPath, d)));
-
-	const addFireDoc = async (pathToDoc: string, { id, collections, fields }: AbstractFireDoc) => {
-		if (id === RANDOM) {
-			await addDoc(collection(Firebase.db, pathToDoc), fields);
-		} else {
-			await setDoc(doc(Firebase.db, pathToDoc, id), fields);
-		}
-		addCollections(pathToDoc + "/" + id, collections);
-	};
-
 	await addCollections("", model);
 };
 
