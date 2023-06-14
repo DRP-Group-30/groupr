@@ -36,3 +36,9 @@ export const inlineLog = <T>(x: T): T => {
 	console.log(x);
 	return x;
 };
+
+/**
+ * Creates something of type `T` from thin air (otherwise known as `null`)
+ * Obviously unsafe
+ */
+export const unsafeNew = <T>(): T => null as unknown as T;
