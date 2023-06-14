@@ -57,8 +57,16 @@ const ProjectCreator = () => {
 
 	return (
 		<Flex bg="gray.100" align="center" justify="center" h="100vh">
-			<Box bg="white" minWidth="400px" p={6} rounded="md" overflow="hidden">
-				<Box backgroundColor="teal.400" height="210px" mt={-6} mx={-6} position="relative">
+			<Box bg="white" minWidth="400px" p={6} rounded="md">
+				<Box
+					backgroundColor="teal.400"
+					height="210px"
+					mt={-6}
+					mx={-6}
+					position="relative"
+					roundedTop="md"
+					overflow="hidden"
+				>
 					{tempCoverImage !== null && (
 						<Image
 							src={URL.createObjectURL(tempCoverImage)}
