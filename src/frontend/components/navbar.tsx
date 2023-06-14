@@ -18,8 +18,8 @@ import {
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { Link as RouteLink} from "react-router-dom";
 
-const Links = ["Dashboard", "Find Projects", "Sign In"];
-const LinksRoutes: {[key: string]: string} = {"Dashboard" : "/Dashboard", "Find Projects" : "/", "Sign In" : "/auth"}
+const Links = ["Dashboard", "Find Projects", "Sign In", "Your Projects"];
+const LinksRoutes: {[key: string]: string} = {"Dashboard" : "/Dashboard", "Find Projects" : "/", "Sign In" : "/auth", "Your Projects" : "/projects"}
 
 const NavLink = ({ children }: { children: string }) => (
   <Link

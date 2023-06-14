@@ -1,21 +1,17 @@
-import {
-	Container,
-	Heading,
-	Text,
-	Center,
-	SimpleGrid,
-} from "@chakra-ui/react";
+import { Container, Heading, Text, Center, SimpleGrid } from "@chakra-ui/react";
 import DashboardCard from "./card";
 import { Project } from "../../../backend";
 import { CardStatus } from "./types";
+import NewProjectCard from "../projectsPage/newProjectCard";
 
 export type listProps = {
-	heading: CardStatus;
+	heading: CardStatus | string;
 	children: Project[];
 	moveInto: (col: string, project?: Project) => void;
-}
+	hasAddNewProject?: boolean;
+};
 
-const DBList = ({heading, children, moveInto}: listProps) => {
+const DBList = ({ heading, children, moveInto, hasAddNewProject = false }: listProps) => {
 	return (
 		<Container
 			maxW="100%"
@@ -24,10 +20,14 @@ const DBList = ({heading, children, moveInto}: listProps) => {
 			centerContent
 			backgroundColor="gray.100"
 			borderRadius="xl"
-			margin="16px"
 		>
 			<Heading margin="16px">{heading}</Heading>
-			<SimpleGrid width="100%" columns={children.length > 0 ? 2 : 1} spacing={8}>
+			<SimpleGrid
+				width="100%"
+				columns={children.length > 0 || hasAddNewProject ? 2 : 1}
+				spacing={8}
+				p="10pt"
+			>
 				{children.length > 0 ? (
 					children.map(project => (
 						<DashboardCard
@@ -38,6 +38,8 @@ const DBList = ({heading, children, moveInto}: listProps) => {
 							setDragged={() => {}}
 						></DashboardCard>
 					))
+				) : hasAddNewProject ? (
+					<NewProjectCard></NewProjectCard>
 				) : (
 					<Center>
 						<Text fontSize="lg">Nothing here for now!</Text>
