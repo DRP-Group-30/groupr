@@ -5,13 +5,25 @@ import { DocumentReference, doc, getDoc, updateDoc } from "firebase/firestore";
 import { DEFAULT_USER } from "../finder";
 import { Firebase } from "../../../backend/firebase";
 
-import { Flex, Text, Center, Stack, useToast, Tag, TagLeftIcon, TagLabel, LinkBox, LinkOverlay } from "@chakra-ui/react";
+import {
+	Flex,
+	Text,
+	Center,
+	Stack,
+	useToast,
+	Tag,
+	TagLeftIcon,
+	TagLabel,
+	LinkBox,
+	LinkOverlay,
+} from "@chakra-ui/react";
 import Sidebar from "../sidebar";
 
 import DashboardColumn from "./column";
 import DashboardList from "./list";
 import DashboardSidebar from "./sidebar";
 import { CardStatus } from "./types";
+import React from "react";
 
 const Dashboard = () => {
 	const toast = useToast();

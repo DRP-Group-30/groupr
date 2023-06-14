@@ -12,10 +12,11 @@ import {
 	Tag,
 	Box,
 } from "@chakra-ui/react";
-import { Dispatch, DragEvent, SetStateAction} from "react";
+import { Dispatch, DragEvent, SetStateAction } from "react";
 import { MdClose, MdDone } from "react-icons/md";
 import { CardStatus } from "./types";
 import { Project } from "../../../backend";
+import React from "react";
 
 const PROMPTS: Map<CardStatus, string> = new Map([
 	[CardStatus.INTERESTED, "Revoke Interest"],
@@ -24,23 +25,26 @@ const PROMPTS: Map<CardStatus, string> = new Map([
 ]);
 
 export type cardProps = {
-    project: Project;
+	project: Project;
 	status: CardStatus;
 	moveInto: (status: CardStatus, project?: Project) => void;
 	setDragged: Dispatch<SetStateAction<Project | null>>;
-}
+};
 
-function DBCard({project, status, moveInto, setDragged}: cardProps) {
-    function dragStart(e: DragEvent<HTMLDivElement>) {
+function DBCard({ project, status, moveInto, setDragged }: cardProps) {
+	function dragStart(e: DragEvent<HTMLDivElement>) {
 		setDragged(project);
 	}
 
 	function moveProject() {
-		moveInto(status === CardStatus.REJECTED ? CardStatus.INTERESTED : CardStatus.REJECTED, project);
+		moveInto(
+			status === CardStatus.REJECTED ? CardStatus.INTERESTED : CardStatus.REJECTED,
+			project,
+		);
 	}
 
-    return (
-        <Card
+	return (
+		<Card
 			direction={{ base: "column", sm: "row" }}
 			boxShadow={"xl"}
 			draggable={status !== CardStatus.MATCHED}
@@ -97,7 +101,7 @@ function DBCard({project, status, moveInto, setDragged}: cardProps) {
 				</CardFooter>
 			</Stack>
 		</Card>
-    )    
+	);
 }
 
 export default DBCard;

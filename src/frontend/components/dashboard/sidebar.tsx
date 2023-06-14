@@ -1,15 +1,12 @@
-import {
-	VStack,
-	Card,
-	Button,
-} from "@chakra-ui/react";
+import { VStack, Card, Button } from "@chakra-ui/react";
+import React from "react";
 import { Dispatch, SetStateAction } from "react";
 
 export type sidebarProps = {
 	setShowMatched: Dispatch<SetStateAction<boolean>>;
-}
+};
 
-const DBSidebar = ({setShowMatched}: sidebarProps) => {
+const DBSidebar = ({ setShowMatched }: sidebarProps) => {
 	return (
 		<Card w="90%" p="2">
 			<VStack>

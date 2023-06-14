@@ -1,45 +1,51 @@
 import {
-  Box,
-  Flex,
-  Avatar,
-  HStack,
-  Link,
-  IconButton,
-  Button,
-  Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  MenuDivider,
-  useDisclosure,
-  useColorModeValue,
-  Stack,
+	Box,
+	Flex,
+	Avatar,
+	HStack,
+	Link,
+	IconButton,
+	Button,
+	Menu,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	MenuDivider,
+	useDisclosure,
+	useColorModeValue,
+	Stack,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
-import { Link as RouteLink} from "react-router-dom";
+import { Link as RouteLink } from "react-router-dom";
+import React from "react";
 
 const Links = ["Dashboard", "Find Projects", "Sign In"];
-const LinksRoutes: {[key: string]: string} = {"Dashboard" : "/Dashboard", "Find Projects" : "/", "Sign In" : "/auth"}
+const LinksRoutes: { [key: string]: string } = {
+	Dashboard: "/Dashboard",
+	"Find Projects": "/",
+	"Sign In": "/auth",
+};
 
 const NavLink = ({ children }: { children: string }) => (
-  <Link
-    px={2}
-    py={1}
-    rounded={"md"}
-    _hover={{
-      textDecoration: "none",
-      bg: useColorModeValue("gray.200", "gray.700"),
-    }}
-    as={RouteLink} to={LinksRoutes[children]}
-  >
-    {children}
-  </Link>
+	<Link
+		px={2}
+		py={1}
+		rounded={"md"}
+		_hover={{
+			textDecoration: "none",
+			bg: useColorModeValue("gray.200", "gray.700"),
+		}}
+		as={RouteLink}
+		to={LinksRoutes[children]}
+	>
+		{children}
+	</Link>
 );
 
 const Navbar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+	const { isOpen, onOpen, onClose } = useDisclosure();
 
-  return (
+	return (
 		<>
 			<Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
 				<Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
@@ -104,7 +110,7 @@ const Navbar = () => {
 				) : null}
 			</Box>
 		</>
-  );
+	);
 };
 
 export default Navbar;

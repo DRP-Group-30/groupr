@@ -1,4 +1,5 @@
 import { Button, Flex, Grid, GridItem } from "@chakra-ui/react";
+import React from "react";
 import { ReactNode, useState } from "react";
 
 interface SidebarSlots {

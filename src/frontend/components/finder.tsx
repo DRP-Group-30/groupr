@@ -1,10 +1,4 @@
-import {
-	DocumentReference,
-	doc,
-	getDoc,
-	getDocs,
-	collection,
-} from "firebase/firestore";
+import { DocumentReference, doc, getDoc, getDocs, collection } from "firebase/firestore";
 import "../app.css";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "./swipe_card";
@@ -15,6 +9,7 @@ import { resetDatabase, updateField } from "../../util/firebase";
 import defaultDatabase from "../../backend/default_database";
 import { Project } from "../../backend";
 import { getCurrentUser } from "./auth";
+import React from "react";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);

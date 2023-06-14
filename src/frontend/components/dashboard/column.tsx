@@ -1,22 +1,18 @@
-import {
-	Container,
-	Heading,
-	VStack,
-	Text,
-} from "@chakra-ui/react";
+import { Container, Heading, VStack, Text } from "@chakra-ui/react";
 import DashboardCard from "./card";
 import { Dispatch, DragEvent, SetStateAction } from "react";
 import { Project } from "../../../backend";
 import { CardStatus } from "./types";
+import React from "react";
 
 export type columnProps = {
-    heading: CardStatus;
-    children: Project[];
-    moveProject: (col: string) => void;
-    setDragged: Dispatch<SetStateAction<Project | null>>;
-}
+	heading: CardStatus;
+	children: Project[];
+	moveProject: (col: string) => void;
+	setDragged: Dispatch<SetStateAction<Project | null>>;
+};
 
-const DBColumn = ({heading, children, moveProject, setDragged}: columnProps) => {
+const DBColumn = ({ heading, children, moveProject, setDragged }: columnProps) => {
 	function dragOver(e: DragEvent<HTMLDivElement>) {
 		e.preventDefault();
 	}

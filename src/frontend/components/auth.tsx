@@ -3,6 +3,7 @@ import firebase from "firebase/compat/app";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
 import { DEFAULT_USER } from "./finder";
 import firebaseui from "firebaseui";
+import React from "react";
 
 /**
  * Configuration for the UI.
@@ -22,7 +23,9 @@ const SIGN_IN_CONFIG: firebaseui.auth.Config = {
 	],
 };
 
-export function getCurrentUser() { return DEFAULT_USER }
+export function getCurrentUser() {
+	return DEFAULT_USER;
+}
 
 export default function SignInScreen() {
 	return (
@@ -30,4 +33,4 @@ export default function SignInScreen() {
 			<StyledFirebaseAuth uiConfig={SIGN_IN_CONFIG} firebaseAuth={firebase.auth()} />
 		</Center>
 	);
-};
+}
