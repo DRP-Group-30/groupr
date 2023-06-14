@@ -150,13 +150,11 @@ export const addAll = async (model: FireDatabase): Promise<void> => {
 	await addCollections("", model);
 };
 
-export const allTags = async (model: FireDatabase): Promise<Map<string, number>> => {
+export const allTags = async (): Promise<Map<string, number>> => {
 	const projects = await getDocs(collection(Firebase.db, "projects"));
 	const allTags = projects.docs.flatMap(d => toFireDoc(d, unsafeNew<Project>()).fields.tags);
 	const ranked = new Map<string, number>();
-	for (const tag in allTags) {
-		ranked.set(tag, (ranked.get(tag) ?? 0) + 1);
-	}
+	for (const tag in allTags) ranked.set(tag, (ranked.get(tag) ?? 0) + 1);
 	return ranked;
 };
 

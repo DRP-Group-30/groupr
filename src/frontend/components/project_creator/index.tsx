@@ -39,7 +39,7 @@ const ProjectCreator = () => {
 							<FormLabel htmlFor="project name">Project Name</FormLabel>
 							<Input
 								id="project name"
-								name="project name"
+								name="name"
 								type="project name"
 								variant="filled"
 								onChange={formik.handleChange}
