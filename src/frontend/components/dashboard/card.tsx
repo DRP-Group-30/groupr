@@ -81,13 +81,15 @@ function DBCard({ project, status, moveInto, setDragged }: cardProps) {
 
 				<CardFooter>
 					<Flex width="100%" justifyContent="space-between" alignItems="center">
-						{status === CardStatus.MATCHED && (
+						{status === CardStatus.MATCHED ? (
 							<Link
 								href={`mailto:${project.fields.contactInfo}`}
 								textDecoration="underline"
 							>
 								{project.fields.contactInfo}
 							</Link>
+						) : (
+							<div></div>
 						)}
 						<Button
 							colorScheme="blue"

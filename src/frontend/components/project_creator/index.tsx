@@ -51,12 +51,14 @@ const ProjectCreator = () => {
 	const initTagTable = async () => setAllTags(inlineLog(await getAllTags()));
 	const [tempTags, setTempTags] = useState<ItemTag[]>([]);
 
+	HTMLElement.prototype.scrollIntoView = function () {};
+
 	useEffect(() => {
 		initTagTable();
 	}, []);
 
 	return (
-		<Flex bg="gray.100" align="center" justify="center" h="100vh">
+		<Flex bg="gray.100" align="center" justify="center" h="100%">
 			<Box bg="white" minWidth="400px" p={6} rounded="md">
 				<Box
 					backgroundColor="teal.400"
@@ -159,7 +161,7 @@ const ProjectCreator = () => {
 									placeholder="Search for tags..."
 									variant="filled"
 								></AutoCompleteInput>
-								<AutoCompleteList>
+								<AutoCompleteList overflow="scroll">
 									{allTags
 										.filter(t => !tempTags.map(tt => tt.label).includes(t))
 										.map(t => (
@@ -179,7 +181,7 @@ const ProjectCreator = () => {
 								</AutoCompleteList>
 							</AutoComplete>
 						</FormControl>
-						<Button type="submit" colorScheme="purple" width="full">
+						<Button type="submit" colorScheme="teal" width="full">
 							Create Project
 						</Button>
 					</VStack>
