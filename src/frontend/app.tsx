@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import Dashboard from "./components/dashboard";
 import Navbar from "./components/navbar";
 import Finder from "./components/finder";
+import ProfilePage from "./components/profile-page";
 
 /**
  * The main app component.
@@ -19,6 +20,7 @@ function App() {
 				*/}
 				<Route path="/" element={<Finder />} />
 				<Route path="/dashboard" element={<Dashboard />} />
+				<Route path="/profile" element={<ProfilePage />} />
 			</Routes>
 		</>
 	)
