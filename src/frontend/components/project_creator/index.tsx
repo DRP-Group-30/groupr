@@ -77,7 +77,11 @@ const ProjectCreator = () => {
 									type="file"
 									accept="image/*"
 									onChange={event => {
-										setTempCoverImage((event.currentTarget.files ?? [null])[0]);
+										let files = event.currentTarget.files;
+										if (files != null && files.length > 0) {
+											setTempCoverImage(files[0]);
+											formik.setFieldValue("coverImage", files[0]);
+										}
 									}}
 									ref={input => setImageInputElem(input)}
 									hidden
