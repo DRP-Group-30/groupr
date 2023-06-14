@@ -24,7 +24,7 @@ import { inlineLog, nubWith, upperFirst, upperWords } from "../../../util";
 
 type Fields = "fields";
 
-const MAX_TAG_SUGGESTIONS = 5;
+const MAX_TAG_SUGGESTIONS = 3;
 
 const ProjectCreator = () => {
 	const [tempCoverImage, setTempCoverImage] = useState<File | null>(null);
@@ -131,7 +131,6 @@ const ProjectCreator = () => {
 								multiple
 								creatable={true}
 								maxSuggestions={MAX_TAG_SUGGESTIONS}
-								onChange={(ts, i) => {}}
 							>
 								<AutoCompleteInput variant="filled">
 									{({ tags }) =>
