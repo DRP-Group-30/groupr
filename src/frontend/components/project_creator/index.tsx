@@ -66,6 +66,7 @@ const ProjectCreator = () => {
 				projectData.coverImage = file;
 			}
 			addProject(projectData);
+			window.location.assign("projects");
 		},
 	});
 
