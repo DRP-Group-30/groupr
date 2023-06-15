@@ -1,3 +1,5 @@
+import { T } from "@chakra-ui/toast/dist/toast.types-f226a101";
+
 export const range = (min: number, max: number) =>
 	Array.from(Array(max - min).keys()).map(x => x + min);
 
@@ -36,3 +38,33 @@ export const inlineLog = <T>(x: T): T => {
 	console.log(x);
 	return x;
 };
+
+/**
+ * Something of type `any` created from thin air (otherwise known as `null`)
+ * Obviously unsafe
+ */
+export const ANY: any = null as any;
+
+export const getOrZero = <K>(m: Map<K, number>, k: K) => getOrDefault(m, k, 0);
+
+export const getOrDefault = <K, V>(m: Map<K, V>, k: K, d: V) => m.get(k) ?? d;
+
+export const upperFirst = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
+
+export const upperWords = (s: string) => s.split(" ").map(upperFirst).join(" ");
+
+export const nubBy = <T>(l: T[], p: (x: T, y: T) => boolean): T[] =>
+	l.filter((x, i, s) => i === s.findIndex(y => p(x, y)));
+
+/**
+ * Could optimise with Schwartzian transform
+ */
+export const nubWith = <T, U>(l: T[], f: (x: T) => U): T[] => nubBy(l, (x, y) => f(x) === f(y));
+
+export const nub = <T>(l: T[]) => nubWith(l, x => x);
+
+/**
+ * Note: I believe swapping the other way around is impossible (would need to
+ * wait for the Promise to finish to know whether it returns null or not)
+ */
+export const swapPromiseNull = async <T>(p: Promise<T> | null): Promise<T | null> => p;

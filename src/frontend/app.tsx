@@ -3,6 +3,8 @@ import Dashboard from "./components/dashboard";
 import Navbar from "./components/navbar";
 import Finder from "./components/finder";
 import React from "react";
+import ProjectCreator from "./components/project_creator";
+import ProjectPage from "./components/projectsPage";
 
 /**
  * The main app component.
@@ -20,6 +22,8 @@ function App() {
 				 */}
 				<Route path="/" element={<Finder />} />
 				<Route path="/dashboard" element={<Dashboard />} />
+				<Route path="/project_creator" element={<ProjectCreator />} />
+				<Route path="/projects" element={<ProjectPage />} />
 			</Routes>
 		</>
 	);

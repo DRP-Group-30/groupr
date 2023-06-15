@@ -1,7 +1,7 @@
 // Backend data layout and logic
 
-import { DocumentReference } from "@firebase/firestore";
-import { DocId, FireCollection, FireMap } from "../util/firebase";
+import { DocumentReference, addDoc } from "@firebase/firestore";
+import { DocId, Fields, FireCollection, FireMap, RANDOM, addFireDoc } from "../util/firebase";
 import { enumVals, makeArr } from "../util";
 
 /**
@@ -138,3 +138,7 @@ export enum Skill {
 export type Rating = 0 | 1 | 2 | 3 | 4 | 5;
 
 type Skillset = FireMap<Skill, Rating>;
+
+export const addProject = (fields: Project[Fields]) => {
+	addFireDoc("projects", { id: RANDOM, fields, collections: {} });
+};

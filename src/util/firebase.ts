@@ -18,8 +18,11 @@ import {
 	setDoc,
 	updateDoc,
 } from "firebase/firestore";
-import { safeHead } from ".";
+import { safeHead, ANY, getOrZero, nub, range } from ".";
 import { Firebase } from "../backend/firebase";
+import { Project } from "../backend";
+import { StorageReference, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { FirebaseError } from "firebase/app";
 
 export const updateFields = async (
 	d: DocumentReference<DocumentData>,
@@ -57,6 +60,8 @@ type FireFields = { [name: string]: FireValue };
 
 type AbstractFireDoc = FireDoc<FireCollections, FireFields>;
 
+export type Fields = "fields";
+
 type FireDoc<C extends FireCollections, F extends FireFields> = {
 	id: DocId;
 	collections: C;
@@ -85,11 +90,13 @@ type FireValue =
 export type FireCollection<D> = D extends FireDoc<infer C, infer F> ? FireDoc<C, F>[] : never;
 
 export const toFireDoc = <F extends FireCollections, C extends FireFields>(
-	docSpec: FireDoc<F, C>,
 	snapshot: QueryDocumentSnapshot<DocumentData>,
+	docSpec: FireDoc<F, C>,
 ): FireDoc<F, C> => ({
 	id: snapshot.id,
-	collections: docSpec.collections,
+	// Unsafe!! Current modelling of `collections` as parts of ordinary
+	// `FireDoc`s breaks down pretty quick...
+	collections: ANY, //docSpec.collections,
 	fields: snapshot.data() as C,
 });
 
@@ -124,27 +131,39 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
 	await deleteCollections("", model);
 };
 
+export const addCollections = async (currentPath: string, cs: FireCollections): Promise<void> => {
+	for (const n in cs) {
+		await addCollection(currentPath + n, cs[n]);
+	}
+};
+export const addCollection = async (
+	collectionPath: string,
+	c: FireCollection<AbstractFireDoc>,
+): Promise<unknown> => Promise.all(c.map(d => addFireDoc(collectionPath, d)));
+
+export const addFireDoc = async (
+	pathToDoc: string,
+	{ id, collections, fields }: AbstractFireDoc,
+) => {
+	if (id === RANDOM) {
+		await addDoc(collection(Firebase.db, pathToDoc), fields);
+	} else {
+		await setDoc(doc(Firebase.db, pathToDoc, id), fields);
+	}
+	addCollections(pathToDoc + "/" + id, collections);
+};
+
 export const addAll = async (model: FireDatabase): Promise<void> => {
-	const addCollections = async (currentPath: string, cs: FireCollections): Promise<void> => {
-		for (const n in cs) {
-			await addCollection(currentPath + n, cs[n]);
-		}
-	};
-	const addCollection = async (
-		collectionPath: string,
-		c: FireCollection<AbstractFireDoc>,
-	): Promise<unknown> => Promise.all(c.map(d => addFireDoc(collectionPath, d)));
-
-	const addFireDoc = async (pathToDoc: string, { id, collections, fields }: AbstractFireDoc) => {
-		if (id === RANDOM) {
-			await addDoc(collection(Firebase.db, pathToDoc), fields);
-		} else {
-			await setDoc(doc(Firebase.db, pathToDoc, id), fields);
-		}
-		addCollections(pathToDoc + "/" + id, collections);
-	};
-
 	await addCollections("", model);
+};
+
+export const getAllTags = async (): Promise<string[]> => {
+	const projects = await getDocs(collection(Firebase.db, "projects"));
+	const allTags = projects.docs.flatMap(d => toFireDoc(d, ANY as Project).fields.tags);
+	const ranked = new Map<string, number>();
+	allTags.forEach(t => ranked.set(t, getOrZero(ranked, t) + 1));
+	allTags.sort((t1, t2) => getOrZero(ranked, t2) - getOrZero(ranked, t1));
+	return nub(allTags);
 };
 
 /**
@@ -160,3 +179,38 @@ export const resetDatabase = async (model: FireDatabase): Promise<void> => {
 export type FireMap<K extends string, V> = {
 	[key in K]: V;
 };
+
+const IMG_ID_LEN = 20;
+
+/**
+ * Generates a random ID vaguely similar to the ones that Firebase can
+ * create automatically for documents (intended for images)
+ */
+const randomId = (): string => {
+	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	return range(0, IMG_ID_LEN)
+		.map(() => chars[Math.floor(Math.random() * chars.length)])
+		.join("");
+};
+
+const mimeExt = (mimeTy: String) => mimeTy.split("/")[1];
+
+export const storeImg = async (img: File): Promise<string> => {
+	const ext = mimeExt(img.type);
+	let imgRef: StorageReference, imgId: string;
+	while (true) {
+		imgId = randomId();
+		imgRef = ref(Firebase.storage, imgId + "." + ext);
+		try {
+			await getDownloadURL(imgRef);
+		} catch (e: unknown) {
+			if (e instanceof FirebaseError && e.code === "storage/object-not-found") break;
+			throw e;
+		}
+	}
+	await uploadBytes(imgRef, await img.arrayBuffer());
+	return imgRef.fullPath;
+};
+
+export const getImg = (path: string): Promise<string> =>
+	getDownloadURL(ref(Firebase.storage, path));
