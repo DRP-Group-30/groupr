@@ -263,12 +263,12 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 											min={0}
 											max={100}
 											step={1}
-											height="30px"
+											height="60px"
 											onChange={v => {
 												formik.setFieldValue(`roles[${i}].approxPay`, v);
 											}}
 										>
-											<SliderTrack bg="gold.100" mt="5">
+											<SliderTrack bg="gold.100" mt="2">
 												<Box position="relative" right={10}></Box>
 												<SliderFilledTrack bg="tomato" />
 											</SliderTrack>
@@ -277,14 +277,43 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 												textAlign="center"
 												bg="orange.500"
 												color="white"
-												mt="-5"
-												ml="-5"
-												w="15"
+												mt="-4"
+												ml="-10"
+												w="20"
 											>
 												{x.approxPay} $/hr
 											</SliderMark>
-											<SliderThumb boxSize={6} mt="5" />
+											<SliderThumb boxSize={6} mt="2" />
 										</Slider>
+
+										<Slider
+											defaultValue={0}
+											min={0}
+											max={40}
+											step={1}
+											height="50px"
+											onChange={v => {
+												formik.setFieldValue(`roles[${i}].commitment`, v);
+											}}
+										>
+											<SliderTrack bg="blue.100" mt="2">
+												<Box position="relative" right={10}></Box>
+												<SliderFilledTrack bg="purple" />
+											</SliderTrack>
+											<SliderMark
+												value={x.commitment}
+												textAlign="center"
+												bg="blue.500"
+												color="white"
+												mt="-5"
+												ml="-10"
+												w="20"
+											>
+												{x.commitment} hr/wk
+											</SliderMark>
+											<SliderThumb boxSize={6} mt="2" />
+										</Slider>
+
 										<Flex
 											maxWidth="600px"
 											flexWrap="wrap"
