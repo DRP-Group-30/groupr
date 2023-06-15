@@ -41,7 +41,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }): JSX.E
 
 	useEffect(() => {
 		const unsubscribe = Firebase.auth.onAuthStateChanged(user => {
-			console.log(user);
+			console.log(JSON.stringify(user));
 			return setCurrentUser(user);
 		});
 		return unsubscribe;

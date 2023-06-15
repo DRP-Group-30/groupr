@@ -5,6 +5,7 @@ import Finder from "./components/finder";
 import ProfilePage from "./components/profile-page";
 import LoginPage from "./components/login";
 import { AuthProvider } from "../context/AuthContext";
+import SignupPage from "./signup";
 
 /**
  * The main app component.
@@ -25,6 +26,7 @@ function App() {
 					<Route path="/dashboard" element={<Dashboard />} />
 					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/login" element={<LoginPage />} />
+					<Route path="/signup" element={<SignupPage />} />
 				</Routes>
 			</AuthProvider>
 		</>

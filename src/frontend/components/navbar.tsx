@@ -15,11 +15,12 @@ import {
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { Link as RouteLink } from "react-router-dom";
 
-const Links = ["Dashboard", "Find Projects", "Sign In"];
+const Links = ["Dashboard", "Find Projects", "Sign In", "Sign Up"];
 const LinksRoutes: { [key: string]: string } = {
 	Dashboard: "/Dashboard",
 	"Find Projects": "/",
 	"Sign In": "/login",
+	"Sign Up": "/signup",
 };
 
 const NavLink = ({ children }: { children: string }) => (
@@ -43,7 +44,12 @@ const Navbar = () => {
 
 	return (
 		<>
-			<Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+			<Box
+				bg={useColorModeValue("gray.100", "gray.900")}
+				px={4}
+				outlineColor="gray.100"
+				outline="1px solid"
+			>
 				<Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
 					<IconButton
 						size={"md"}

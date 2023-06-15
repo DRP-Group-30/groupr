@@ -8,13 +8,11 @@ import {
 	FormLabel,
 	FormErrorMessage,
 	Input,
-	VStack,
 	useColorModeValue,
 	Heading,
 	Link,
 	Stack,
 	Text,
-	Center,
 } from "@chakra-ui/react";
 
 import { useAuth } from "../../../context/AuthContext";
@@ -52,6 +50,7 @@ const LoginPage = () => {
 						}}
 						onSubmit={(values: FormValues) => {
 							loginWithEmailAndPassword(values.email, values.password);
+
 							alert(JSON.stringify(values, null, 2));
 						}}
 					>
@@ -66,7 +65,7 @@ const LoginPage = () => {
 						}) => (
 							<form onSubmit={handleSubmit}>
 								<Stack spacing={4} align="flex-start" alignItems="center">
-									<FormControl id="email">
+									<FormControl id="email" isRequired>
 										<FormLabel htmlFor="email">Email Address</FormLabel>
 										<Field
 											as={Input}
@@ -76,7 +75,10 @@ const LoginPage = () => {
 											variant="filled"
 										/>
 									</FormControl>
-									<FormControl isInvalid={!!errors.password && touched.password}>
+									<FormControl
+										isInvalid={!!errors.password && touched.password}
+										isRequired
+									>
 										<FormLabel htmlFor="password">Password</FormLabel>
 										<Field
 											as={Input}
