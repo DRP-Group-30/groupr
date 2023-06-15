@@ -12,7 +12,6 @@ export const defaultDatabase = (): GrouprDatabase => ({
 	projects: [
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Natty B's Battlegrounds",
 				collaborators: [],
@@ -29,11 +28,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"C++",
 				],
 				interested: [],
+				roles: [],
 			},
 		},
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Six Nights at Bobs",
 				collaborators: [],
@@ -42,11 +41,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				coverImage: "0x0.webp",
 				tags: ["HORROR", "UNITY", "C#"],
 				interested: [DEFAULT_USER],
+				roles: [],
 			},
 		},
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Overstory",
 				collaborators: [],
@@ -55,11 +54,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				coverImage: "Overstory.png",
 				tags: ["RPG", "RETRO", "PIXEL ART", "NARRATIVE DRIVEN", "RPG MAKER"],
 				interested: [DEFAULT_USER],
+				roles: [],
 			},
 		},
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Universe of Battlebuild",
 				collaborators: [],
@@ -76,11 +75,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"LUA",
 				],
 				interested: [],
+				roles: [],
 			},
 		},
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Afterstrife",
 				collaborators: [],
@@ -98,23 +97,31 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"C++",
 				],
 				interested: [],
+				roles: [],
+			},
+		},
+		{
+			id: RANDOM,
+			fields: {
+				name: "Very Far Away Horse",
+				collaborators: [],
+				contactInfo: "Faraway@Horse.carr.ot",
+				overview: "Horse is now even farther away",
+				coverImage: "SmartSelect_20230612-164646_YouTube.png",
+				tags: ["REALISTIC", "OPEN-WORLD", "REMAKE"],
+				interested: [],
+				roles: [],
 			},
 		},
 	],
 	users: [
 		{
 			id: "uKSLFGA3qTuLmweXlv31",
-			collections: {},
 			fields: {
 				username: "Default",
 				givenNames: ["Jeff"],
 				surname: "Default",
-				skillset: {
-					[Skill.PROGRAMMING]: 0,
-					[Skill.MUSIC_AND_SOUND]: 0,
-					[Skill.ART]: 0,
-					[Skill.PROJECT_MANAGEMENT]: 0,
-				},
+				skillset: [],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -123,17 +130,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		},
 		{
 			id: RANDOM,
-			collections: {},
 			fields: {
 				username: "LordQuaggan",
 				givenNames: ["Nathaniel", "Robert"],
 				surname: "Burke",
-				skillset: {
-					[Skill.PROGRAMMING]: 3,
-					[Skill.MUSIC_AND_SOUND]: 0,
-					[Skill.ART]: 0,
-					[Skill.PROJECT_MANAGEMENT]: 0,
-				},
+				skillset: [Skill.PROGRAMMING],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -142,17 +143,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		},
 		{
 			id: RANDOM,
-			collections: {},
 			fields: {
 				username: "Xx_NoscopeCow_xX",
 				givenNames: ["Gary"],
 				surname: "Rodriguez",
-				skillset: {
-					[Skill.PROGRAMMING]: 0,
-					[Skill.MUSIC_AND_SOUND]: 2,
-					[Skill.ART]: 4,
-					[Skill.PROJECT_MANAGEMENT]: 0,
-				},
+				skillset: [Skill.MUSIC_AND_SOUND, Skill.ART],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -161,17 +156,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		},
 		{
 			id: RANDOM,
-			collections: {},
 			fields: {
 				username: "TheCarrot",
 				givenNames: ["Mark"],
 				surname: "Pintos",
-				skillset: {
-					[Skill.PROGRAMMING]: 5,
-					[Skill.MUSIC_AND_SOUND]: 0,
-					[Skill.ART]: 0,
-					[Skill.PROJECT_MANAGEMENT]: 5,
-				},
+				skillset: [Skill.PROGRAMMING, Skill.PROJECT_MANAGEMENT],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],

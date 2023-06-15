@@ -70,7 +70,7 @@ const Finder = () => {
 			setCardIndex((cardIndex = cardIndex + 1));
 			const iHateDRPSoMuchIActuallyWantToDieWTFIsThisShit = await map(
 				currentCard?.coverImage ?? null,
-				c => getImg(c),
+				getImg,
 			);
 			setCoverImg(iHateDRPSoMuchIActuallyWantToDieWTFIsThisShit);
 		}
@@ -141,7 +141,7 @@ const Finder = () => {
 				transition: "all 0.5s",
 			}}
 		>
-			<GridItem pl="2" bg="gray.100" area={"nav"} zIndex="9999">
+			<GridItem pl="2" bg="gray.100" area={"nav"} zIndex="9999" mt="1pt">
 				<Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
 					<Button
 						onClick={toggleSideBar}

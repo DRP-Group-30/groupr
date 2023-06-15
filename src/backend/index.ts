@@ -42,7 +42,6 @@ type Globals = [GlobalTable];
  */
 export type Project = {
 	id: DocId;
-	collections: { boxes: Box<BoxType>[]; roles: Role[] };
 	fields: {
 		name: string;
 		collaborators: string[];
@@ -51,20 +50,18 @@ export type Project = {
 		coverImage: string | null;
 		tags: string[];
 		interested: DocumentReference[];
+		roles: Role[];
 	};
 };
 /**
  * TODO: What type should experience be?
  */
-type Role = {
-	id: DocId;
-	collections: {};
-	fields: {
-		skillset: Skillset;
-		experience: string;
-		approxPay: number;
-		commitment: number;
-	};
+export type Role = {
+	name: string;
+	skillset: Skillset;
+	experience: string;
+	approxPay: number;
+	commitment: number;
 };
 
 /**
@@ -72,7 +69,6 @@ type Role = {
  */
 type User = {
 	id: DocId;
-	collections: {};
 	fields: {
 		username: string;
 		givenNames: string[];
@@ -125,10 +121,10 @@ type TextContents = { title: string; body: string };
  * `ENGINE_PROGRAMMING`, `SHADERS`, `PHYSICS`, `NETWORKING` etc...
  */
 export enum Skill {
-	PROGRAMMING = "programming",
-	ART = "art",
-	MUSIC_AND_SOUND = "musicAndSound",
-	PROJECT_MANAGEMENT = "projectManagement",
+	PROGRAMMING = "Programming",
+	ART = "Art",
+	MUSIC_AND_SOUND = "Music and Sound",
+	PROJECT_MANAGEMENT = "Project Management",
 }
 
 /**
@@ -137,8 +133,21 @@ export enum Skill {
  */
 export type Rating = 0 | 1 | 2 | 3 | 4 | 5;
 
-type Skillset = FireMap<Skill, Rating>;
+export type Skillset = Skill[];
 
-export const addProject = (fields: Project[Fields]) => {
-	addFireDoc("projects", { id: RANDOM, fields, collections: {} });
-};
+export const DEFAULT_SKILL_SET: Skillset = [];
+
+/**
+ * Written as a getter rather than a constant to try and reduce potential
+ * aliasing errors
+ */
+export const getDefaultRole = (i: number = 1): Role => ({
+	name: `Role ${i}`,
+	skillset: [],
+	experience: "",
+	approxPay: 0,
+	commitment: 0,
+});
+
+export const addProject = (fields: Project[Fields]) =>
+	addFireDoc("projects", { id: RANDOM, fields });
