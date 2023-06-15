@@ -5,12 +5,7 @@ import {
 	HStack,
 	IconButton,
 	Button,
-	Menu,
 	Link,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	MenuDivider,
 	useDisclosure,
 	useColorModeValue,
 	Stack,
@@ -24,7 +19,7 @@ const Links = ["Dashboard", "Find Projects", "Sign In"];
 const LinksRoutes: { [key: string]: string } = {
 	Dashboard: "/Dashboard",
 	"Find Projects": "/",
-	"Sign In": "/auth",
+	"Sign In": "/login",
 };
 
 const NavLink = ({ children }: { children: string }) => (

@@ -1,13 +1,10 @@
 import { TimeIcon } from "@chakra-ui/icons";
 import {
-	Avatar,
 	Grid,
 	GridItem,
-	SimpleGrid,
 	VStack,
 	Image,
 	Box,
-	Center,
 	Flex,
 	Text,
 	HStack,
@@ -16,7 +13,6 @@ import {
 	CardBody,
 	CardHeader,
 	Heading,
-	Divider,
 	StackDivider,
 	Tag,
 	Button,
@@ -115,17 +111,6 @@ const ProfileHeader = () => (
 	</Container>
 );
 
-const ImageWithAvatar = () => {
-	return (
-		<Center w="80%" h="200pt" justifySelf="center">
-			<Image
-				src={`https://picsum.photos/seed/woohoo/800`}
-				height="500pt"
-				objectFit="contain"
-			></Image>
-		</Center>
-	);
-};
 
 const ProfileSide = () => {
 	return (
