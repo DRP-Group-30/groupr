@@ -12,11 +12,14 @@ import {
 	Tag,
 	Box,
 } from "@chakra-ui/react";
-import { Dispatch, DragEvent, SetStateAction } from "react";
+import { Dispatch, DragEvent, SetStateAction, useEffect, useState } from "react";
 import { MdClose, MdDone } from "react-icons/md";
 import { CardStatus } from "./types";
 import { Project } from "../../../backend";
 import React from "react";
+import { getImg } from "../../../util/firebase";
+import { map, swapPromiseNull } from "../../../util";
+import { useAsync } from "../../../util/react";
 
 const PROMPTS: Map<CardStatus, string> = new Map([
 	[CardStatus.INTERESTED, "Revoke Interest"],
@@ -32,6 +35,10 @@ export type cardProps = {
 };
 
 function DBCard({ project, status, moveInto, setDragged }: cardProps) {
+	const coverImageURL = useAsync<string | null>(() =>
+		swapPromiseNull(map(project.fields.coverImage, getImg)),
+	);
+
 	function dragStart(e: DragEvent<HTMLDivElement>) {
 		setDragged(project);
 	}
@@ -54,8 +61,8 @@ function DBCard({ project, status, moveInto, setDragged }: cardProps) {
 			<Image
 				objectFit="cover"
 				maxW={{ base: "100%", sm: "200px" }}
-				src={`https://picsum.photos/seed/${project.fields.name}/800`}
-				alt="Caffe Latte"
+				src={coverImageURL ?? ""}
+				alt="Project Cover Image"
 			/>
 
 			<Stack width="100%">

@@ -11,7 +11,7 @@ import { Select } from "@chakra-ui/select";
 import { Image } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { MdUploadFile } from "react-icons/md";
-import { Fields, getAllTags } from "../../../util/firebase";
+import { Fields, getAllTags, storeImg } from "../../../util/firebase";
 import {
 	AutoComplete,
 	AutoCompleteCreatable,
@@ -41,7 +41,11 @@ const ProjectCreator = () => {
 			// Should `collaborators` be initialised to include the project creator?
 			collaborators: [],
 		},
-		onSubmit: projectData => {
+		onSubmit: async projectData => {
+			if (tempCoverImage !== null) {
+				const file = await storeImg(tempCoverImage);
+				projectData.coverImage = file;
+			}
 			addProject(projectData);
 		},
 	});

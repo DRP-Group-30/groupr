@@ -12,6 +12,9 @@ import {
 import { MouseEvent, Dispatch, SetStateAction } from "react";
 import { Project } from "../../backend";
 import React from "react";
+import { useAsync } from "../../util/react";
+import { map, swapPromiseNull } from "../../util";
+import { getImg } from "../../util/firebase";
 
 interface SwipeCardProps {
 	offset: number;
@@ -36,6 +39,10 @@ const SwipeCard = ({
 	data,
 	cardHidden,
 }: SwipeCardProps) => {
+	const coverImageURL = useAsync<string | null>(() =>
+		swapPromiseNull(map(data.coverImage, getImg)),
+	);
+
 	function dragStart(e: MouseEvent<HTMLDivElement>) {
 		e.preventDefault();
 		setDragging(true);
@@ -92,7 +99,7 @@ const SwipeCard = ({
 			>
 				<Box h={"210px"} bg={"gray.100"} mt={-6} mx={-6} mb={6} pos={"relative"}>
 					<Image
-						src={`https://picsum.photos/seed/${data.name}/800`}
+						src={coverImageURL ?? ""}
 						boxSize="100%"
 						objectFit="fill"
 						draggable="false"

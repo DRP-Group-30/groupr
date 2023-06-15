@@ -52,7 +52,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				collaborators: [],
 				contactInfo: "bob@overstory.com",
 				overview: "It's like my favourite game, Undertale",
-				coverImage: null,
+				coverImage: "Overstory.png",
 				tags: ["RPG", "RETRO", "PIXEL ART", "NARRATIVE DRIVEN", "RPG MAKER"],
 				interested: [DEFAULT_USER],
 			},

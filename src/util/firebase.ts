@@ -18,9 +18,11 @@ import {
 	setDoc,
 	updateDoc,
 } from "firebase/firestore";
-import { safeHead, ANY, getOrZero, nub } from ".";
+import { safeHead, ANY, getOrZero, nub, range } from ".";
 import { Firebase } from "../backend/firebase";
 import { Project } from "../backend";
+import { StorageReference, getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { FirebaseError } from "firebase/app";
 
 export const updateFields = async (
 	d: DocumentReference<DocumentData>,
@@ -177,3 +179,38 @@ export const resetDatabase = async (model: FireDatabase): Promise<void> => {
 export type FireMap<K extends string, V> = {
 	[key in K]: V;
 };
+
+const IMG_ID_LEN = 20;
+
+/**
+ * Generates a random ID vaguely similar to the ones that Firebase can
+ * create automatically for documents (intended for images)
+ */
+const randomId = (): string => {
+	const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+	return range(0, IMG_ID_LEN)
+		.map(() => chars[Math.floor(Math.random() * chars.length)])
+		.join("");
+};
+
+const mimeExt = (mimeTy: String) => mimeTy.split("/")[1];
+
+export const storeImg = async (img: File): Promise<string> => {
+	const ext = mimeExt(img.type);
+	let imgRef: StorageReference, imgId: string;
+	while (true) {
+		imgId = randomId();
+		imgRef = ref(Firebase.storage, imgId + "." + ext);
+		try {
+			await getDownloadURL(imgRef);
+		} catch (e: unknown) {
+			if (e instanceof FirebaseError && e.code === "storage/object-not-found") break;
+			throw e;
+		}
+	}
+	await uploadBytes(imgRef, await img.arrayBuffer());
+	return imgRef.fullPath;
+};
+
+export const getImg = (path: string): Promise<string> =>
+	getDownloadURL(ref(Firebase.storage, path));

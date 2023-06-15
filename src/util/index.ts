@@ -62,3 +62,10 @@ export const nubBy = <T>(l: T[], p: (x: T, y: T) => boolean): T[] =>
 export const nubWith = <T, U>(l: T[], f: (x: T) => U): T[] => nubBy(l, (x, y) => f(x) === f(y));
 
 export const nub = <T>(l: T[]) => nubWith(l, x => x);
+
+/**
+ * Note: I believe swapping the other way around is impossible (would need to
+ * wait for the Promise to finish to know whether it returns null or not)
+ */
+export const swapPromiseNull = <T>(p: Promise<T> | null): Promise<T | null> =>
+	p === null ? new Promise(f => f(null)) : p;
