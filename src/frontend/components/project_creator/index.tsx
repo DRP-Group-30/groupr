@@ -8,9 +8,9 @@ import { Input } from "@chakra-ui/input";
 import { Checkbox } from "@chakra-ui/checkbox";
 import { Button } from "@chakra-ui/button";
 import { Select } from "@chakra-ui/select";
-import { Image } from "@chakra-ui/react";
+import { Image, InputGroup, InputLeftElement, Radio, RadioGroup, Stack } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import { MdUploadFile } from "react-icons/md";
+import { MdEmail, MdLink, MdUploadFile } from "react-icons/md";
 import { Fields, getAllTags, storeImg } from "../../../util/firebase";
 import {
 	AutoComplete,
@@ -22,12 +22,22 @@ import {
 	ItemTag,
 } from "@choc-ui/chakra-autocomplete";
 import { inlineLog, nubWith, upperFirst, upperWords } from "../../../util";
+import { ContactMethod } from "./types";
+import discord from "../../static/discord.png";
+import slack from "../../static/slack.png";
+import whatsapp from "../../static/whatsapp.png";
 
+const contactIcons = {
+	discord: discord,
+	slack: slack,
+	whatsapp: whatsapp,
+};
 const MAX_TAG_SUGGESTIONS = 3;
 
 const ProjectCreator = () => {
 	const [tempCoverImage, setTempCoverImage] = useState<File | null>(null);
 	const [imageInputElem, setImageInputElem] = useState<HTMLInputElement | null>(null);
+	const [contactMethod, setContactMethod] = useState<ContactMethod>(ContactMethod.EMAIL);
 
 	const formik = useFormik<Project[Fields]>({
 		initialValues: {
@@ -115,9 +125,10 @@ const ProjectCreator = () => {
 							<Input
 								id="project_name"
 								name="name"
-								type="project name"
+								type="text"
 								variant="filled"
 								onChange={formik.handleChange}
+								placeholder="Give your project a catchy name..."
 							/>
 						</FormControl>
 						<FormControl>
@@ -125,14 +136,19 @@ const ProjectCreator = () => {
 							<Input
 								id="overview"
 								name="overview"
-								type="overview"
+								type="text"
 								variant="filled"
 								onChange={formik.handleChange}
+								placeholder="A short pitch for your project..."
 							/>
 						</FormControl>
 						<FormControl>
 							<FormLabel>Tags</FormLabel>
-							<Flex maxWidth="600px" flexWrap="wrap" marginBottom="0.5rem">
+							<Flex
+								maxWidth="600px"
+								flexWrap="wrap"
+								marginBottom={tempTags.length > 0 ? "3px" : "0px"}
+							>
 								{nubWith(
 									tempTags.map((tag, tid) => ({
 										tid: tid,
@@ -148,7 +164,7 @@ const ProjectCreator = () => {
 										variant="solid"
 										colorScheme="teal"
 										marginRight="3px"
-										marginBottom="3px"
+										marginBottom="6px"
 									/>
 								))}
 							</Flex>
@@ -156,16 +172,15 @@ const ProjectCreator = () => {
 								openOnFocus
 								multiple
 								creatable={true}
-								maxSuggestions={MAX_TAG_SUGGESTIONS}
 								onReady={({ tags }) => {
 									setTempTags(tags);
 								}}
 							>
 								<AutoCompleteInput
-									placeholder="Search for tags..."
+									placeholder="Search for tags that describe it..."
 									variant="filled"
 								></AutoCompleteInput>
-								<AutoCompleteList overflow="scroll">
+								<AutoCompleteList height="200px" overflow="scroll">
 									{allTags
 										.filter(t => !tempTags.map(tt => tt.label).includes(t))
 										.map(t => (
@@ -185,7 +200,80 @@ const ProjectCreator = () => {
 								</AutoCompleteList>
 							</AutoComplete>
 						</FormControl>
+						<FormControl>
+							<FormLabel>Contact Method</FormLabel>
+							<RadioGroup
+								value={contactMethod}
+								onChange={s => setContactMethod(s as ContactMethod)}
+							>
+								<Stack direction="row" spacing={4}>
+									<Radio
+										id="contactMethodEmail"
+										name="contactMethod"
+										value={ContactMethod.EMAIL}
+									>
+										Email
+									</Radio>
+									<Radio
+										id="contactMethodURL"
+										name="contactMethod"
+										value={ContactMethod.URL}
+									>
+										Invite Link
+									</Radio>
+								</Stack>
+							</RadioGroup>
+						</FormControl>
+						{contactMethod === ContactMethod.EMAIL ? (
+							<FormControl>
+								<FormLabel>Email Address</FormLabel>
+								<InputGroup>
+									<InputLeftElement>
+										<MdEmail fontSize="24px"></MdEmail>
+									</InputLeftElement>
+									<Input
+										id="contactEmail"
+										name="contactInfo"
+										type="email"
+										variant="filled"
+										onChange={formik.handleChange}
+										placeholder="Email address for matched users to use..."
+									/>
+								</InputGroup>
+							</FormControl>
+						) : (
+							<FormControl>
+								<FormLabel>Contact URL</FormLabel>
+								<InputGroup>
+									<InputLeftElement>
+										{Object.entries(contactIcons)
+											.map(([k, v]) =>
+												formik.values.contactInfo.includes(k) ? (
+													<Image
+														key="k"
+														maxWidth="24px"
+														maxHeight="24px"
+														src={v}
+													></Image>
+												) : null,
+											)
+											.reduce((l, r) => l ?? r) ?? (
+											<MdLink fontSize="24px"></MdLink>
+										)}
+									</InputLeftElement>
+									<Input
+										id="contactURL"
+										name="contactInfo"
+										type="url"
+										variant="filled"
+										onChange={formik.handleChange}
+										placeholder="E.g. Discord/Slack/WhatsApp Invite..."
+									/>
+								</InputGroup>
+							</FormControl>
+						)}
 						<Button type="submit" colorScheme="teal" width="full">
+							{" "}
 							Create Project
 						</Button>
 					</VStack>
