@@ -25,6 +25,7 @@ const DBColumn = ({ heading, children, moveProject, setDragged }: columnProps) =
 	return (
 		<Container
 			h="100%"
+			w="100%"
 			overflowY="auto"
 			bgColor="gray.100"
 			borderRadius="lg"
@@ -33,7 +34,7 @@ const DBColumn = ({ heading, children, moveProject, setDragged }: columnProps) =
 			onDrop={drop}
 		>
 			<Heading m="16px">{heading}</Heading>
-			<VStack h="100%" spacing={5}>
+			<VStack h="100%" w="100%" spacing={5} scrollMarginBottom="100px">
 				{children.length > 0 ? (
 					children.map(project => (
 						<DashboardCard

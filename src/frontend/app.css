@@ -1,3 +1,5 @@
+@import url("https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined");
+
 .App {
     width: 100vw;
     height: 100vh;
@@ -107,6 +109,13 @@
 
 .Accepting {
     background-color: green;
+}
+
+.EditPreview::after {
+    content: "\F88D";
+    margin-left: 10px;
+    font-family: "Material Symbols Outlined";
+    color: #2D3748;
 }
 
 @keyframes Throw-left {

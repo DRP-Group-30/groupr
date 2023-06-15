@@ -9,15 +9,20 @@ import { Checkbox } from "@chakra-ui/checkbox";
 import { Button } from "@chakra-ui/button";
 import { Select } from "@chakra-ui/select";
 import {
+	Editable,
+	EditableInput,
+	EditablePreview,
+	EditableTextarea,
 	Image,
 	InputGroup,
 	InputLeftElement,
+	InputRightElement,
 	Radio,
 	RadioGroup,
 	Stack,
 	Textarea,
 } from "@chakra-ui/react";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon } from "@chakra-ui/icons";
 import { MdEmail, MdLink, MdUploadFile } from "react-icons/md";
 import { Fields, getAllTags, storeImg } from "../../../util/firebase";
 import {
@@ -27,6 +32,7 @@ import {
 	AutoCompleteItem,
 	AutoCompleteList,
 	AutoCompleteTag,
+	Item,
 	ItemTag,
 } from "@choc-ui/chakra-autocomplete";
 import { inlineLog, nub, nubWith, upperFirst, upperWords } from "../../../util";
@@ -46,12 +52,14 @@ const ProjectCreator = () => {
 	const [tempCoverImage, setTempCoverImage] = useState<File | null>(null);
 	const [imageInputElem, setImageInputElem] = useState<HTMLInputElement | null>(null);
 	const [contactMethod, setContactMethod] = useState<ContactMethod>(ContactMethod.EMAIL);
+	const [editMode, setEditMode] = useState(true);
 
 	const formik = useFormik<Project[Fields]>({
 		initialValues: {
-			name: "",
-			contactInfo: "Project Contact Info (Shown on Match)",
-			overview: "...",
+			name: "Your Project Name",
+			contactInfo: "Project Contact Details",
+			overview:
+				"Your project's overview - a short sales pitch to explain what your project is and why users should join.",
 			coverImage: null,
 			tags: [],
 			// Should there be a type for only the document data fields that are
@@ -69,14 +77,36 @@ const ProjectCreator = () => {
 			)
 				return;
 
-			if (tempCoverImage !== null) {
-				const file = await storeImg(tempCoverImage);
-				projectData.coverImage = file;
+			if (editMode) {
+				if (tempCoverImage !== null) {
+					const file = await storeImg(tempCoverImage);
+					projectData.coverImage = file;
+				}
+				await addProject(projectData);
+				window.location.assign("projects");
+			} else {
+				setEditMode(true);
 			}
-			addProject(projectData);
-			window.location.assign("projects");
 		},
 	});
+
+	function submitName() {
+		if (formik.values.name.trim().length === 0) {
+			formik.setFieldValue("name", formik.initialValues.name);
+		}
+	}
+
+	function submitOverview() {
+		if (formik.values.overview.trim().length === 0) {
+			formik.setFieldValue("overview", formik.initialValues.overview);
+		}
+	}
+
+	function submitContactInfo() {
+		if (formik.values.contactInfo.trim().length === 0) {
+			formik.setFieldValue("contactInfo", formik.initialValues.contactInfo);
+		}
+	}
 
 	const [allTags, setAllTags] = useState<string[]>([]);
 	const initTagTable = async () => setAllTags(inlineLog(await getAllTags()));
@@ -127,186 +157,220 @@ const ProjectCreator = () => {
 									ref={input => setImageInputElem(input)}
 									hidden
 								/>
-								<Button
-									colorScheme="teal"
-									fontWeight="400"
-									leftIcon={<MdUploadFile />}
-									onClick={() => imageInputElem?.click()}
-									boxShadow="lg"
-								>
-									{tempCoverImage ? "Change image" : "Upload cover image"}
-								</Button>
-							</Flex>
-						</FormControl>
-						<FormControl marginTop="-36px">
-							<FormLabel>Project Name</FormLabel>
-							<Input
-								id="project_name"
-								name="project name"
-								type="text"
-								variant="filled"
-								onChange={formik.handleChange}
-								placeholder="Give your project a catchy name..."
-							/>
-						</FormControl>
-						<FormControl>
-							<FormLabel>Overview</FormLabel>
-							<Textarea
-								id="overview"
-								name="overview"
-								variant="filled"
-								onChange={formik.handleChange}
-								placeholder="A short pitch for your project..."
-							/>
-						</FormControl>
-						<VStack>
-							<Box bg="gray.100" minWidth="400px" rounded="md">
-								Role 1
-							</Box>
-							<Box bg="gray.100" minWidth="400px" rounded="md">
-								Role 2
-							</Box>
-							<Box bg="gray.100" minWidth="400px" rounded="md">
-								Add Role
-							</Box>
-						</VStack>
-						<FormControl>
-							<FormLabel>Tags</FormLabel>
-							<Flex
-								maxWidth="600px"
-								flexWrap="wrap"
-								marginBottom={tempTags.length > 0 ? "3px" : "0px"}
-							>
-								{nubWith(
-									tempTags.map((tag, tid) => ({
-										tid: tid,
-										onRemove: tag.onRemove,
-										label: (tag.label as string).toUpperCase(),
-									})),
-									t => t.label,
-								).map(({ label, tid, onRemove }) => (
-									<AutoCompleteTag
-										key={tid}
-										label={label}
-										onRemove={onRemove}
-										variant="solid"
+								{editMode && (
+									<Button
 										colorScheme="teal"
-										marginRight="3px"
-										marginBottom="6px"
-									/>
-								))}
+										fontWeight="400"
+										leftIcon={<MdUploadFile />}
+										onClick={() => imageInputElem?.click()}
+										boxShadow="lg"
+									>
+										{tempCoverImage ? "Change image" : "Upload cover image"}
+									</Button>
+								)}
 							</Flex>
-							<AutoComplete
-								openOnFocus
-								multiple
-								creatable={true}
-								onReady={({ tags }) => {
-									setTempTags(tags);
-								}}
-								onChange={(ts: string[]) =>
-									formik.setFieldValue(
-										"tags",
-										nub(ts.map(t => t.toUpperCase())),
-										false,
-									)
-								}
+						</FormControl>
+						<FormControl marginTop={editMode ? "-24px" : "0px"}>
+							<Editable
+								value={formik.values.name}
+								onSubmit={submitName}
+								onCancel={submitName}
+								isDisabled={!editMode}
 							>
-								<AutoCompleteInput
-									placeholder="Search for tags that describe it..."
+								<EditablePreview
+									className={editMode ? "EditPreview" : ""}
+									fontSize="2xl"
+									fontWeight="bold"
+									cursor={editMode ? "pointer" : ""}
+								/>
+								<Input
+									as={EditableInput}
+									id="project_name"
+									name="name"
+									type="text"
+									variant="flushed"
+									onChange={formik.handleChange}
+									fontSize="2xl"
+									fontWeight="bold"
+								/>
+							</Editable>
+						</FormControl>
+						<FormControl marginTop={editMode ? "0px" : "-12px"}>
+							<Editable
+								value={formik.values.overview}
+								onSubmit={submitOverview}
+								onCancel={submitOverview}
+								isDisabled={!editMode}
+							>
+								<EditablePreview
+									width="600px"
+									className={editMode ? "EditPreview" : ""}
+									cursor={editMode ? "pointer" : ""}
+									lineHeight="5"
+								/>
+								<Textarea
+									as={EditableTextarea}
+									width="600px"
+									id="overview"
+									name="overview"
 									variant="filled"
-								></AutoCompleteInput>
-								<AutoCompleteList height="200px" overflow="scroll">
-									{allTags
-										.filter(t => !tempTags.map(tt => tt.label).includes(t))
-										.map(t => (
-											<AutoCompleteItem
-												key={t}
-												value={t}
-												textTransform="capitalize"
-												_selected={{ bg: "whiteAlpha.50" }}
-												_focus={{ bg: "whiteAlpha.100" }}
-											>
-												{t}
-											</AutoCompleteItem>
-										))}
-									<AutoCompleteCreatable>
-										{({ value }) => <span>New Tag: {value.toUpperCase()}</span>}
-									</AutoCompleteCreatable>
-								</AutoCompleteList>
-							</AutoComplete>
+									onChange={formik.handleChange}
+								/>
+							</Editable>
 						</FormControl>
-						<FormControl>
-							<FormLabel>Contact Method</FormLabel>
-							<RadioGroup
-								value={contactMethod}
-								onChange={s => setContactMethod(s as ContactMethod)}
+						{(editMode || tempTags.length !== 0) && (
+							<Box
+								backgroundColor="gray.100"
+								width="100%"
+								borderRadius="md"
+								padding="16px"
 							>
-								<Stack direction="row" spacing={4}>
-									<Radio
-										id="contactMethodEmail"
-										name="contactMethod"
-										value={ContactMethod.EMAIL}
+								<FormControl>
+									<FormLabel fontWeight="bold">Tags</FormLabel>
+									<Flex
+										maxWidth="600px"
+										flexWrap="wrap"
+										marginBottom={
+											editMode
+												? tempTags.length > 0
+													? "3px"
+													: "0px"
+												: "-6px"
+										}
 									>
-										Email
-									</Radio>
-									<Radio
-										id="contactMethodURL"
-										name="contactMethod"
-										value={ContactMethod.URL}
-									>
-										Invite Link
-									</Radio>
-								</Stack>
-							</RadioGroup>
-						</FormControl>
-						{contactMethod === ContactMethod.EMAIL ? (
+										{nubWith(
+											tempTags.map((tag, tid) => ({
+												tid: tid,
+												onRemove: tag.onRemove,
+												label: (tag.label as string).toUpperCase(),
+											})),
+											t => t.label,
+										).map(({ label, tid, onRemove }) => (
+											<AutoCompleteTag
+												key={tid}
+												label={label}
+												onRemove={onRemove}
+												variant="solid"
+												colorScheme="teal"
+												marginRight="3px"
+												marginBottom="6px"
+											/>
+										))}
+									</Flex>
+									{editMode && (
+										<AutoComplete
+											openOnFocus
+											multiple
+											creatable={true}
+											onReady={({ tags }) => {
+												setTempTags(tags);
+											}}
+											onChange={(ts: string[]) => {
+												formik.setFieldValue(
+													"tags",
+													nub(ts.map(t => t.toUpperCase())),
+													false,
+												);
+											}}
+										>
+											<AutoCompleteInput
+												placeholder="Search for tags..."
+												backgroundColor="white"
+											></AutoCompleteInput>
+											<AutoCompleteList height="200px" overflow="scroll">
+												{allTags
+													.filter(
+														t =>
+															!tempTags
+																.map(tt => tt.label)
+																.includes(t),
+													)
+													.map(t => (
+														<AutoCompleteItem
+															key={t}
+															value={t}
+															textTransform="capitalize"
+															_selected={{ bg: "whiteAlpha.50" }}
+															_focus={{ bg: "whiteAlpha.100" }}
+														>
+															{t}
+														</AutoCompleteItem>
+													))}
+												<AutoCompleteCreatable>
+													{({ value }) => (
+														<span>New Tag: {value.toUpperCase()}</span>
+													)}
+												</AutoCompleteCreatable>
+											</AutoCompleteList>
+										</AutoComplete>
+									)}
+								</FormControl>
+							</Box>
+						)}
+						{editMode && (
 							<FormControl>
-								<FormLabel>Email Address</FormLabel>
-								<InputGroup>
-									<InputLeftElement>
-										<MdEmail fontSize="24px"></MdEmail>
-									</InputLeftElement>
-									<Input
-										id="contactEmail"
-										name="contactInfo"
-										type="email"
-										variant="filled"
-										onChange={formik.handleChange}
-										placeholder="Email address for matched users to use..."
-									/>
-								</InputGroup>
+								<FormLabel>Contact Method</FormLabel>
+								<RadioGroup
+									value={contactMethod}
+									onChange={s => setContactMethod(s as ContactMethod)}
+								>
+									<Stack direction="row" spacing={4}>
+										<Radio
+											id="contactMethodEmail"
+											name="contactMethod"
+											value={ContactMethod.EMAIL}
+										>
+											Email
+										</Radio>
+										<Radio
+											id="contactMethodURL"
+											name="contactMethod"
+											value={ContactMethod.URL}
+										>
+											Invite Link
+										</Radio>
+									</Stack>
+								</RadioGroup>
 							</FormControl>
-						) : (
-							<FormControl>
-								<FormLabel>Contact URL</FormLabel>
-								<InputGroup>
-									<InputLeftElement>
+						)}
+						<FormControl>
+							<Stack direction="row" alignItems="center">
+								{contactMethod === ContactMethod.EMAIL ? (
+									<MdEmail fontSize="24px"></MdEmail>
+								) : (
+									<>
 										{Object.entries(contactIcons)
 											.map(([k, v]) =>
 												formik.values.contactInfo.includes(k) ? (
-													<Image
-														key="k"
-														maxWidth="24px"
-														maxHeight="24px"
-														src={v}
-													></Image>
+													<Image key="k" maxHeight="24px" src={v}></Image>
 												) : null,
 											)
 											.reduce((l, r) => l ?? r) ?? (
 											<MdLink fontSize="24px"></MdLink>
 										)}
-									</InputLeftElement>
-									<Input
-										id="contactURL"
-										name="contactInfo"
-										type="url"
-										variant="filled"
-										onChange={formik.handleChange}
-										placeholder="E.g. Discord/Slack/WhatsApp Invite..."
+									</>
+								)}
+								<Editable
+									value={formik.values.contactInfo}
+									onSubmit={submitContactInfo}
+									onCancel={submitContactInfo}
+									isDisabled={!editMode}
+									width="100%"
+								>
+									<EditablePreview
+										className={editMode ? "EditPreview" : ""}
+										cursor={editMode ? "pointer" : ""}
 									/>
-								</InputGroup>
-							</FormControl>
-						)}
+									<Input
+										as={EditableInput}
+										name="contactInfo"
+										type={contactMethod}
+										variant="flushed"
+										onChange={formik.handleChange}
+									></Input>
+								</Editable>
+							</Stack>
+						</FormControl>
 						<Button type="submit" colorScheme="teal" width="full">
 							{" "}
 							Create Project

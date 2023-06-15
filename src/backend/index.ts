@@ -134,6 +134,6 @@ export type Rating = 0 | 1 | 2 | 3 | 4 | 5;
 
 type Skillset = FireMap<Skill, Rating>;
 
-export const addProject = (fields: Project[Fields]) => {
-	addFireDoc("projects", { id: RANDOM, fields });
+export const addProject = async (fields: Project[Fields]) => {
+	await addFireDoc("projects", { id: RANDOM, fields });
 };
