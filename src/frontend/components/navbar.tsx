@@ -12,10 +12,15 @@ import {
 	Stack,
 	LinkBox,
 	LinkOverlay,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	Menu,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
-import { Link as RouteLink } from "react-router-dom";
+import { Link as RouteLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoWName.svg";
+import { useAuth } from "../../context/AuthContext";
 
 const Links = ["Dashboard", "Find Projects", "Sign In", "Sign Up"];
 const LinksRoutes: { [key: string]: string } = {
@@ -42,7 +47,19 @@ const NavLink = ({ children }: { children: string }) => (
 );
 
 const Navbar = () => {
-	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { isOpen } = useDisclosure();
+	const { currentUser, logout } = useAuth();
+	const isLoggedIn = !!currentUser;
+	const navigate = useNavigate();
+
+	const handleLogout = async () => {
+		try {
+			await logout();
+			navigate("/");
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	return (
 		<>
@@ -72,38 +89,65 @@ const Navbar = () => {
 							))}
 						</HStack>
 					</HStack>
-					<Flex alignItems={"center"}>
-						<Button
-							variant={"solid"}
-							colorScheme={"teal"}
-							size={"sm"}
-							mr={4}
-							leftIcon={<AddIcon />}
-						>
-							Action
-						</Button>
-						<LinkBox>
-							<LinkOverlay href="/profile">
+					{isLoggedIn ? (
+						<Menu>
+							<MenuButton
+								as={Button}
+								rounded={"full"}
+								variant={"link"}
+								cursor={"pointer"}
+								minW={0}
+							>
 								<Avatar
 									size={"sm"}
 									src={
 										"https://images.unsplash.com/photo-1493666438817-866a91353ca9?ixlib=rb-0.3.5&q=80&fm=jpg&crop=faces&fit=crop&h=200&w=200&s=b616b2c5b373a80ffc9636ba24f7a4a9"
 									}
 								/>
-							</LinkOverlay>
-						</LinkBox>
-					</Flex>
+							</MenuButton>
+							<MenuList>
+								<MenuItem as="a" href="/profile">
+									Your Profile
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleLogout();
+									}}
+								>
+									Log Out
+								</MenuItem>
+							</MenuList>
+						</Menu>
+					) : (
+						<Flex alignItems={"center"}>
+							<LinkBox>
+								<LinkOverlay href="/login">
+									<Button
+										variant="outline"
+										colorScheme="teal"
+										size="sm"
+										mr={4}
+										cursor="pointer"
+									>
+										Sign In
+									</Button>
+								</LinkOverlay>
+							</LinkBox>
+							<LinkBox>
+								<LinkOverlay href="/signup">
+									<Button
+										variant="solid"
+										colorScheme="teal"
+										size="sm"
+										cursor="pointer"
+									>
+										Sign Up
+									</Button>
+								</LinkOverlay>
+							</LinkBox>
+						</Flex>
+					)}
 				</Flex>
-
-				{isOpen ? (
-					<Box pb={4} display={{ md: "none" }}>
-						<Stack as={"nav"} spacing={4}>
-							{Links.map(link => (
-								<NavLink key={link}>{link}</NavLink>
-							))}
-						</Stack>
-					</Box>
-				) : null}
 			</Box>
 		</>
 	);
