@@ -13,6 +13,7 @@ import {
 	Link,
 	Stack,
 	Text,
+	useToast,
 } from "@chakra-ui/react";
 
 import { useAuth } from "../../../context/AuthContext";
@@ -25,6 +26,7 @@ interface FormValues {
 
 const LoginPage = () => {
 	const { loginWithEmailAndPassword } = useAuth();
+	const toast = useToast();
 	return (
 		<Flex
 			minH={"100%"}
@@ -48,8 +50,16 @@ const LoginPage = () => {
 							password: "",
 							rememberMe: false,
 						}}
-						onSubmit={(values: FormValues) => {
-							loginWithEmailAndPassword(values.email, values.password);
+						onSubmit={(values, { resetForm }) => {
+							loginWithEmailAndPassword(values.email, values.password).catch(err => {
+								toast({
+									title: "Could not login account",
+									description: err.message,
+									status: "error",
+									isClosable: true,
+								});
+								resetForm();
+							});
 
 							alert(JSON.stringify(values, null, 2));
 						}}

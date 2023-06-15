@@ -22,12 +22,10 @@ import { Link as RouteLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoWName.svg";
 import { useAuth } from "../../context/AuthContext";
 
-const Links = ["Dashboard", "Find Projects", "Sign In", "Sign Up"];
+const Links = ["Dashboard", "Find Projects"];
 const LinksRoutes: { [key: string]: string } = {
 	Dashboard: "/Dashboard",
 	"Find Projects": "/finder",
-	"Sign In": "/login",
-	"Sign Up": "/signup",
 };
 
 const NavLink = ({ children }: { children: string }) => (
@@ -82,12 +80,13 @@ const Navbar = () => {
 								/>
 							</LinkOverlay>
 						</LinkBox>
-
-						<HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
-							{Links.map(link => (
-								<NavLink key={link}>{link}</NavLink>
-							))}
-						</HStack>
+						{isLoggedIn ? (
+							<HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
+								{Links.map(link => (
+									<NavLink key={link}>{link}</NavLink>
+								))}
+							</HStack>
+						) : null}
 					</HStack>
 					{isLoggedIn ? (
 						<Menu>
