@@ -100,6 +100,19 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				roles: [],
 			},
 		},
+		{
+			id: RANDOM,
+			fields: {
+				name: "Very Far Away Horse",
+				collaborators: [],
+				contactInfo: "Faraway@Horse.carr.ot",
+				overview: "Horse is now even farther away",
+				coverImage: "SmartSelect_20230612-164646_YouTube.png",
+				tags: ["Realistic", "Open-World", "Remake"],
+				interested: [],
+				roles: [],
+			},
+		},
 	],
 	users: [
 		{
