@@ -108,7 +108,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				contactInfo: "Faraway@Horse.carr.ot",
 				overview: "Horse is now even farther away",
 				coverImage: "SmartSelect_20230612-164646_YouTube.png",
-				tags: ["Realistic", "Open-World", "Remake"],
+				tags: ["REALISTIC", "OPEN-WORLD", "REMAKE"],
 				interested: [],
 				roles: [],
 			},
