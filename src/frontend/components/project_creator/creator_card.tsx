@@ -34,7 +34,7 @@ import { ContactMethod } from "./types";
 import { useFormik } from "formik";
 import { useState, useEffect } from "react";
 import { Project, Skill, Skillset, addProject, getDefaultRole } from "../../../backend";
-import { Fields, storeImg, getAllTags } from "../../../util/firebase";
+import { Fields, getImg, storeImg, getAllTags } from "../../../util/firebase";
 
 import discord from "../../static/discord.png";
 import slack from "../../static/slack.png";
@@ -47,26 +47,29 @@ const contactIcons = {
 	whatsapp: whatsapp,
 };
 
-const CreatorCard = ({ editMode }: { editMode: boolean }) => {
+const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Project | null }) => {
 	const [tempCoverImage, setTempCoverImage] = useState<File | null>(null);
 	const [imageInputElem, setImageInputElem] = useState<HTMLInputElement | null>(null);
 	const [contactMethod, setContactMethod] = useState<ContactMethod>(ContactMethod.EMAIL);
+	let [coverImageURL, setCoverImageURL] = useState<string>("");
 
 	const formik = useFormik<Project[Fields]>({
-		initialValues: {
-			name: "Your Project Name",
-			contactInfo: "Project Contact Details",
-			overview:
-				"Your project's overview - a short sales pitch to explain what your project is and why users should join.",
-			coverImage: null,
-			tags: [],
-			// Should there be a type for only the document data fields that are
-			// editable/shown?
-			interested: [],
-			// Should `collaborators` be initialised to include the project creator?
-			collaborators: [],
-			roles: [],
-		},
+		initialValues: project
+			? project.fields
+			: {
+					name: "Your Project Name",
+					contactInfo: "Project Contact Details",
+					overview:
+						"Your project's overview - a short sales pitch to explain what your project is and why users should join.",
+					coverImage: null,
+					tags: [],
+					// Should there be a type for only the document data fields that are
+					// editable/shown?
+					interested: [],
+					// Should `collaborators` be initialised to include the project creator?
+					collaborators: [],
+					roles: [],
+			  },
 		onSubmit: async projectData => {
 			console.log(projectData.name);
 			console.log(formik.values.name);
@@ -84,9 +87,21 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 				}
 				await addProject(projectData);
 				window.location.assign("projects");
+			} else {
+				window.location.assign("project_creator");
 			}
 		},
 	});
+
+	useEffect(() => {
+		if (project === null) return;
+
+		if (project.fields.coverImage !== null) {
+			getImg(project.fields.coverImage).then(url => {
+				setCoverImageURL((coverImageURL = url));
+			});
+		}
+	}, []);
 
 	function submitName() {
 		if (formik.values.name.trim().length === 0) {
@@ -118,15 +133,7 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 	}, []);
 
 	return (
-		<Box
-			bg="white"
-			minWidth="400px"
-			p={6}
-			rounded="md"
-			boxShadow="2xl"
-			marginTop="50px"
-			marginBottom="25px"
-		>
+		<Box bg="white" minWidth="400px" p={6} rounded="md" boxShadow="2xl" marginBottom="25px">
 			<Box
 				backgroundColor="gray.200"
 				height="210px"
@@ -136,12 +143,8 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 				roundedTop="md"
 				overflow="hidden"
 			>
-				{tempCoverImage !== null && (
-					<Image
-						src={URL.createObjectURL(tempCoverImage)}
-						objectFit="fill"
-						boxSize="100%"
-					></Image>
+				{coverImageURL !== "" && (
+					<Image src={coverImageURL} objectFit="fill" boxSize="100%"></Image>
 				)}
 			</Box>
 			<form onSubmit={formik.handleSubmit}>
@@ -157,7 +160,9 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 									let files = event.currentTarget.files;
 									if (files != null && files.length > 0) {
 										setTempCoverImage(files[0]);
-										formik.setFieldValue("coverImage", files[0]);
+										setCoverImageURL(
+											(coverImageURL = URL.createObjectURL(files[0])),
+										);
 									}
 								}}
 								ref={input => setImageInputElem(input)}
@@ -215,14 +220,14 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 									isDisabled={!editMode}
 								>
 									<EditablePreview
-										width="600px"
+										maxWidth="600px"
 										className={editMode ? "EditPreview" : ""}
 										cursor={editMode ? "pointer" : ""}
 										lineHeight="5"
 									/>
 									<Textarea
 										as={EditableTextarea}
-										width="600px"
+										maxWidth="600px"
 										id="overview"
 										name="overview"
 										variant="filled"
@@ -232,7 +237,7 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 							</FormControl>
 							<VStack>
 								{formik.values.roles.map((x, i) => (
-									<Box bg="gray.100" minWidth="600px" rounded="md" key={i}>
+									<Box bg="gray.100" maxWidth="600px" rounded="md" key={i}>
 										Role {i + 1}:
 										<Flex
 											maxWidth="600px"
@@ -287,10 +292,12 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 										</AutoComplete>
 									</Box>
 								))}
+							</VStack>
+							{editMode && (
 								<LinkBox
 									bgColor="gray.100"
 									border="dashed"
-									minWidth="600px"
+									width="100%"
 									rounded="md"
 									onClick={() =>
 										formik.setFieldValue(
@@ -301,12 +308,12 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 									//style={{ cursor: "pointer" }}
 									cursor="pointer"
 								>
-									<VStack>
+									<VStack padding="6px">
 										<Icon as={AddIcon} w="24px" h="24px" />
 										<Text>Add Role</Text>
 									</VStack>
 								</LinkBox>
-							</VStack>
+							)}
 
 							{(editMode || tempTags.length !== 0) && (
 								<Box
@@ -471,7 +478,7 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 					</FormControl>
 					<Button type="submit" colorScheme="teal" width="full">
 						{" "}
-						Create Project
+						{editMode ? "Save Project" : "Edit Project"}
 					</Button>
 				</VStack>
 			</form>
