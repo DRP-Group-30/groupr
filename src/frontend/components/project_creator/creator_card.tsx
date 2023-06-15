@@ -18,6 +18,7 @@ import {
 	Icon,
 	LinkBox,
 	Text,
+	Tag,
 } from "@chakra-ui/react";
 import {
 	AutoCompleteTag,
@@ -94,6 +95,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 	});
 
 	useEffect(() => {
+		initTagTable();
 		if (project === null) return;
 
 		if (project.fields.coverImage !== null) {
@@ -127,10 +129,6 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 	const [tempSkills, setTempSkills] = useState<ItemTag[][]>([]);
 
 	HTMLElement.prototype.scrollIntoView = function () {};
-
-	useEffect(() => {
-		initTagTable();
-	}, []);
 
 	return (
 		<Box bg="white" minWidth="400px" p={6} rounded="md" boxShadow="2xl" marginBottom="25px">
@@ -235,10 +233,17 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 									/>
 								</Editable>
 							</FormControl>
-							<VStack>
+							<VStack marginBottom="6px">
 								{formik.values.roles.map((x, i) => (
-									<Box bg="gray.100" maxWidth="600px" rounded="md" key={i}>
-										Role {i + 1}:
+									<Box
+										width="100%"
+										bg="gray.100"
+										maxWidth="600px"
+										rounded="md"
+										key={i}
+										padding="12px"
+									>
+										<Text fontWeight="bold">Role {i + 1}:</Text>
 										<Flex
 											maxWidth="600px"
 											flexWrap="wrap"
@@ -274,7 +279,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 										>
 											<AutoCompleteInput
 												placeholder="Search for skills that this role requires..."
-												variant="filled"
+												backgroundColor="white"
 											></AutoCompleteInput>
 											<AutoCompleteList height="200px" overflow="scroll">
 												{inlineLog(Object.values(Skill)).map(t => (
@@ -305,17 +310,17 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 											formik.values.roles.concat([getDefaultRole()]),
 										)
 									}
-									//style={{ cursor: "pointer" }}
 									cursor="pointer"
+									marginBottom="6px"
 								>
 									<VStack padding="6px">
 										<Icon as={AddIcon} w="24px" h="24px" />
-										<Text>Add Role</Text>
+										<Text>Add a role to tell us who you're looking for...</Text>
 									</VStack>
 								</LinkBox>
 							)}
 
-							{(editMode || tempTags.length !== 0) && (
+							{(editMode || formik.values.tags.length !== 0) && (
 								<Box
 									backgroundColor="gray.100"
 									width="100%"
@@ -323,7 +328,11 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 									padding="16px"
 								>
 									<FormControl>
-										<FormLabel fontWeight="bold">Tags</FormLabel>
+										<FormLabel fontWeight="bold">
+											Tags{" "}
+											{editMode &&
+												"- use these to describe your project's theme"}
+										</FormLabel>
 										<Flex
 											maxWidth="600px"
 											flexWrap="wrap"
@@ -342,71 +351,89 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 													label: (tag.label as string).toUpperCase(),
 												})),
 												t => t.label,
-											).map(({ label, tid, onRemove }) => (
-												<AutoCompleteTag
-													key={tid}
-													label={label}
-													onRemove={onRemove}
-													variant="solid"
-													colorScheme="teal"
-													marginRight="3px"
-													marginBottom="6px"
-												/>
-											))}
+											).map(({ label, tid, onRemove }) =>
+												editMode ? (
+													<AutoCompleteTag
+														key={tid}
+														label={label}
+														onRemove={onRemove}
+														variant="solid"
+														colorScheme="teal"
+														marginRight="3px"
+														marginBottom="6px"
+													/>
+												) : (
+													<Tag
+														key={tid}
+														variant="solid"
+														colorScheme="teal"
+														marginRight="3px"
+														marginBottom="6px"
+													>
+														{label}
+													</Tag>
+												),
+											)}
 										</Flex>
-										{editMode && (
-											<AutoComplete
-												openOnFocus
-												multiple
-												creatable={true}
-												onReady={({ tags }) => {
-													setTempTags(tags);
-												}}
-												onChange={(ts: string[]) => {
-													formik.setFieldValue(
-														"tags",
-														nub(ts.map(t => t.toUpperCase())),
-														false,
-													);
-												}}
-											>
-												<AutoCompleteInput
-													placeholder="Search for tags..."
-													backgroundColor="white"
-												></AutoCompleteInput>
-												<AutoCompleteList height="200px" overflow="scroll">
-													{allTags
-														.filter(
-															t =>
-																!tempTags
-																	.map(tt => tt.label)
-																	.includes(t),
-														)
-														.map(t => (
-															<AutoCompleteItem
-																key={t}
-																value={t}
-																textTransform="capitalize"
-																_selected={{
-																	bg: "whiteAlpha.50",
-																}}
-																_focus={{
-																	bg: "whiteAlpha.100",
-																}}
-															>
-																{t}
-															</AutoCompleteItem>
-														))}
-													<AutoCompleteCreatable>
-														{({ value }) => (
-															<span>
-																New Tag: {value.toUpperCase()}
-															</span>
-														)}
-													</AutoCompleteCreatable>
-												</AutoCompleteList>
-											</AutoComplete>
-										)}
+										<AutoComplete
+											openOnFocus
+											multiple
+											creatable={true}
+											onReady={({ tags }) => {
+												setTempTags(tags);
+											}}
+											onChange={(ts: string[]) => {
+												formik.setFieldValue(
+													"tags",
+													nub(ts.map(t => t.toUpperCase())),
+													false,
+												);
+											}}
+											defaultValues={formik.values.tags}
+										>
+											{editMode && (
+												<>
+													<AutoCompleteInput
+														placeholder="Search for tags..."
+														backgroundColor="white"
+													></AutoCompleteInput>
+													<AutoCompleteList
+														height="200px"
+														overflow="scroll"
+													>
+														{allTags
+															.filter(
+																t =>
+																	!tempTags
+																		.map(tt => tt.label)
+																		.includes(t),
+															)
+															.map(t => (
+																<AutoCompleteItem
+																	key={t}
+																	value={t}
+																	textTransform="capitalize"
+																	_selected={{
+																		bg: "whiteAlpha.50",
+																	}}
+																	_focus={{
+																		bg: "whiteAlpha.100",
+																	}}
+																>
+																	{t}
+																</AutoCompleteItem>
+															))}
+														<AutoCompleteCreatable>
+															{({ value }) => (
+																<span>
+																	New Tag: {value.toUpperCase()}
+																</span>
+															)}
+														</AutoCompleteCreatable>
+													</AutoCompleteList>
+												</>
+											)}
+										</AutoComplete>
 									</FormControl>
 								</Box>
 							)}
