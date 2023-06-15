@@ -83,7 +83,7 @@ const ProjectCreator = () => {
 		<Flex bg="gray.100" align="center" justify="center" h="100%">
 			<Box bg="white" minWidth="400px" p={6} rounded="md">
 				<Box
-					backgroundColor="teal.400"
+					backgroundColor="gray.200"
 					height="210px"
 					mt={-6}
 					mx={-6}
@@ -119,16 +119,17 @@ const ProjectCreator = () => {
 									hidden
 								/>
 								<Button
+									colorScheme="teal"
 									fontWeight="400"
 									leftIcon={<MdUploadFile />}
 									onClick={() => imageInputElem?.click()}
 									boxShadow="lg"
 								>
-									{tempCoverImage ? "Change cover image" : "Upload cover image"}
+									{tempCoverImage ? "Change image" : "Upload cover image"}
 								</Button>
 							</Flex>
 						</FormControl>
-						<FormControl>
+						<FormControl marginTop="-36px">
 							<FormLabel>Project Name</FormLabel>
 							<Input
 								id="project_name"
