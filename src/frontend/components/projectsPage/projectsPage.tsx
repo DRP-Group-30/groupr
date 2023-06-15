@@ -4,6 +4,7 @@ import { DocumentReference, getDocs, collection, getDoc } from "firebase/firesto
 import { Firebase } from "../../../backend/firebase";
 import { useEffect, useState } from "react";
 import { Project } from "../../../backend";
+import CreatorCard from "../project_creator/creator_card";
 
 const ProjectSelector = () => {
 	let [projectRefs, setProjectRefs] = useState<DocumentReference[]>([]);
@@ -29,6 +30,7 @@ const ProjectSelector = () => {
 			w="98%"
 			overflowY="initial"
 			marginTop="10pt"
+			marginBottom="10pt"
 			centerContent
 			backgroundColor="gray.100"
 			borderRadius="xl"
@@ -36,7 +38,7 @@ const ProjectSelector = () => {
 			<Heading margin="16px">{"Your Projects"}</Heading>
 			<SimpleGrid width="100%" columns={3} spacing={8} p="10pt">
 				{projects.map(p => (
-					<Box>{p.fields.name}</Box>
+					<CreatorCard editMode={false} project={p}></CreatorCard>
 				))}
 				<NewProjectCard />
 			</SimpleGrid>
