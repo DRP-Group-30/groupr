@@ -61,6 +61,13 @@ const ProjectCreator = () => {
 			collaborators: [],
 		},
 		onSubmit: async projectData => {
+			if (
+				projectData.name === "" ||
+				projectData.overview === "" ||
+				projectData.contactInfo === ""
+			)
+				return;
+
 			if (tempCoverImage !== null) {
 				const file = await storeImg(tempCoverImage);
 				projectData.coverImage = file;
