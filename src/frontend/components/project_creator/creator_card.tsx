@@ -18,6 +18,11 @@ import {
 	Icon,
 	LinkBox,
 	Text,
+	Slider,
+	SliderTrack,
+	SliderFilledTrack,
+	SliderThumb,
+	SliderMark,
 } from "@chakra-ui/react";
 import {
 	AutoCompleteTag,
@@ -29,7 +34,7 @@ import {
 	ItemTag,
 } from "@choc-ui/chakra-autocomplete";
 import { MdUploadFile, MdEmail, MdLink } from "react-icons/md";
-import { nubWith, nub, inlineLog } from "../../../util";
+import { nubWith, nub, inlineLog, or } from "../../../util";
 import { ContactMethod } from "./types";
 import { useFormik } from "formik";
 import { useState, useEffect } from "react";
@@ -70,10 +75,12 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 		onSubmit: async projectData => {
 			console.log(projectData.name);
 			console.log(formik.values.name);
+			// DATA VALIDATION
 			if (
 				projectData.name === "" ||
 				projectData.overview === "" ||
-				projectData.contactInfo === ""
+				projectData.contactInfo === "" ||
+				or(projectData.roles.map(r => r.skillset.length === 0))
 			)
 				return;
 
@@ -89,21 +96,18 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 	});
 
 	function submitName() {
-		if (formik.values.name.trim().length === 0) {
+		if (formik.values.name.trim().length === 0)
 			formik.setFieldValue("name", formik.initialValues.name);
-		}
 	}
 
 	function submitOverview() {
-		if (formik.values.overview.trim().length === 0) {
+		if (formik.values.overview.trim().length === 0)
 			formik.setFieldValue("overview", formik.initialValues.overview);
-		}
 	}
 
 	function submitContactInfo() {
-		if (formik.values.contactInfo.trim().length === 0) {
+		if (formik.values.contactInfo.trim().length === 0)
 			formik.setFieldValue("contactInfo", formik.initialValues.contactInfo);
-		}
 	}
 
 	const [allTags, setAllTags] = useState<string[]>([]);
@@ -233,7 +237,51 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 							<VStack>
 								{formik.values.roles.map((x, i) => (
 									<Box bg="gray.100" minWidth="600px" rounded="md" key={i}>
-										Role {i + 1}:
+										<Editable value={x.name}>
+											<EditablePreview
+												className={editMode ? "EditPreview" : ""}
+												fontSize="2xl"
+												fontWeight="bold"
+												cursor={editMode ? "pointer" : ""}
+											/>
+											<Input
+												as={EditableInput}
+												id="role_name"
+												name={`roles[${i}].name`}
+												type="text"
+												variant="flushed"
+												onChange={formik.handleChange}
+												fontSize="2xl"
+												fontWeight="bold"
+											/>
+										</Editable>
+										<Slider
+											defaultValue={0}
+											min={0}
+											max={100}
+											step={1}
+											height="30px"
+											onChange={v => {
+												formik.setFieldValue(`roles[${i}].approxPay`, v);
+											}}
+										>
+											<SliderTrack bg="gold.100" mt="5">
+												<Box position="relative" right={10}></Box>
+												<SliderFilledTrack bg="tomato" />
+											</SliderTrack>
+											<SliderMark
+												value={x.approxPay}
+												textAlign="center"
+												bg="orange.500"
+												color="white"
+												mt="-5"
+												ml="-5"
+												w="15"
+											>
+												{x.approxPay} $/hr
+											</SliderMark>
+											<SliderThumb boxSize={6} mt="5" />
+										</Slider>
 										<Flex
 											maxWidth="600px"
 											flexWrap="wrap"
@@ -295,7 +343,9 @@ const CreatorCard = ({ editMode }: { editMode: boolean }) => {
 									onClick={() =>
 										formik.setFieldValue(
 											"roles",
-											formik.values.roles.concat([getDefaultRole()]),
+											formik.values.roles.concat([
+												getDefaultRole(formik.values.roles.length),
+											]),
 										)
 									}
 									//style={{ cursor: "pointer" }}

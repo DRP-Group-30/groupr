@@ -68,3 +68,5 @@ export const nub = <T>(l: T[]) => nubWith(l, x => x);
  * wait for the Promise to finish to know whether it returns null or not)
  */
 export const swapPromiseNull = async <T>(p: Promise<T> | null): Promise<T | null> => p;
+
+export const or = (l: boolean[]): boolean => l.reduce((b, acc) => b || acc, false);

@@ -70,7 +70,7 @@ const Finder = () => {
 			setCardIndex((cardIndex = cardIndex + 1));
 			const iHateDRPSoMuchIActuallyWantToDieWTFIsThisShit = await map(
 				currentCard?.coverImage ?? null,
-				c => getImg(c),
+				getImg,
 			);
 			setCoverImg(iHateDRPSoMuchIActuallyWantToDieWTFIsThisShit);
 		}

@@ -57,6 +57,7 @@ export type Project = {
  * TODO: What type should experience be?
  */
 export type Role = {
+	name: string;
 	skillset: Skillset;
 	experience: string;
 	approxPay: number;
@@ -140,7 +141,8 @@ export const DEFAULT_SKILL_SET: Skillset = [];
  * Written as a getter rather than a constant to try and reduce potential
  * aliasing errors
  */
-export const getDefaultRole = (): Role => ({
+export const getDefaultRole = (i: number = 1): Role => ({
+	name: `Role ${i}`,
 	skillset: [],
 	experience: "",
 	approxPay: 0,
