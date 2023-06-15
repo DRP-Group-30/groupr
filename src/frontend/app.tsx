@@ -4,8 +4,10 @@ import Navbar from "./components/navbar";
 import Finder from "./components/finder";
 import ProfilePage from "./components/profile-page";
 import LoginPage from "./components/login";
-import { AuthProvider } from "../context/AuthContext";
+import { AuthProvider, useAuth } from "../context/AuthContext";
 import SignupPage from "./signup";
+import Landing from "./components/landing";
+import ProtectedRoute from "../protectedRoute";
 
 /**
  * The main app component.
@@ -22,11 +24,42 @@ function App() {
 					 * Follow the format: <Route path="/path" element={<Component />} />
 					 * Hidden: <Route path="/auth" element={<SignInScreen />} />
 					 */}
-					<Route path="/" element={<Finder />} />
-					<Route path="/dashboard" element={<Dashboard />} />
-					<Route path="/profile" element={<ProfilePage />} />
-					<Route path="/login" element={<LoginPage />} />
-					<Route path="/signup" element={<SignupPage />} />
+					<Route
+						path="/"
+						element={
+							<ProtectedRoute redirectPath="/finder" path={<Landing />} reverse />
+						}
+					/>
+					<Route
+						path="/finder"
+						element={
+							<ProtectedRoute redirectPath="/" path={<Finder />} reverse={false} />
+						}
+					/>
+					<Route
+						path="/dashboard"
+						element={
+							<ProtectedRoute redirectPath="/" path={<Dashboard />} reverse={false} />
+						}
+					/>
+					<Route
+						path="/profile"
+						element={
+							<ProtectedRoute
+								redirectPath="/"
+								path={<ProfilePage />}
+								reverse={false}
+							/>
+						}
+					/>
+					<Route
+						path="/login"
+						element={<ProtectedRoute redirectPath="/" path={<LoginPage />} reverse />}
+					/>
+					<Route
+						path="/signup"
+						element={<ProtectedRoute redirectPath="/" path={<SignupPage />} reverse />}
+					/>
 				</Routes>
 			</AuthProvider>
 		</>

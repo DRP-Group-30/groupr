@@ -5,6 +5,7 @@ import {
 	HStack,
 	IconButton,
 	Button,
+	Image,
 	Link,
 	useDisclosure,
 	useColorModeValue,
@@ -14,11 +15,12 @@ import {
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { Link as RouteLink } from "react-router-dom";
+import logo from "../../assets/LogoWName.svg";
 
 const Links = ["Dashboard", "Find Projects", "Sign In", "Sign Up"];
 const LinksRoutes: { [key: string]: string } = {
 	Dashboard: "/Dashboard",
-	"Find Projects": "/",
+	"Find Projects": "/finder",
 	"Sign In": "/login",
 	"Sign Up": "/signup",
 };
@@ -51,15 +53,19 @@ const Navbar = () => {
 				outline="1px solid"
 			>
 				<Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-					<IconButton
-						size={"md"}
-						icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-						aria-label={"Open Menu"}
-						display={{ md: "none" }}
-						onClick={isOpen ? onClose : onOpen}
-					/>
-					<HStack spacing={8} alignItems={"center"}>
-						<Box>Logo</Box>
+					<HStack spacing={8} alignItems={"center"} w="80%">
+						<LinkBox minH="100%" minW="80pt">
+							<LinkOverlay as={RouteLink} to="/">
+								<Image
+									src={logo}
+									h="100%"
+									objectFit="scale-down"
+									mt="-3pt"
+									mr="-4pt"
+								/>
+							</LinkOverlay>
+						</LinkBox>
+
 						<HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
 							{Links.map(link => (
 								<NavLink key={link}>{link}</NavLink>
