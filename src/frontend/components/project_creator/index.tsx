@@ -119,8 +119,8 @@ const ProjectCreator = () => {
 	}, []);
 
 	return (
-		<Flex bg="gray.100" align="center" justify="center" h="100%">
-			<Box bg="white" minWidth="400px" p={6} rounded="md">
+		<Flex bg="white" align="center" justify="center" h="100%">
+			<Box bg="white" minWidth="400px" p={6} rounded="md" boxShadow="2xl">
 				<Box
 					backgroundColor="gray.200"
 					height="210px"
