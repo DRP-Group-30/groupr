@@ -3,27 +3,29 @@ import {
 	Flex,
 	Avatar,
 	HStack,
-	Link,
 	IconButton,
 	Button,
-	Menu,
-	MenuButton,
-	MenuList,
-	MenuItem,
-	MenuDivider,
+	Image,
+	Link,
 	useDisclosure,
 	useColorModeValue,
 	Stack,
+	LinkBox,
+	LinkOverlay,
+	MenuButton,
+	MenuList,
+	MenuItem,
+	Menu,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
-import { Link as RouteLink } from "react-router-dom";
-import React from "react";
+import { Link as RouteLink, useNavigate } from "react-router-dom";
+import logo from "../../assets/LogoWName.svg";
+import { useAuth } from "../../context/AuthContext";
 
-const Links = ["Dashboard", "Find Projects", "Your Projects", "Sign In"];
+const Links = ["Dashboard", "Find Projects", "Your Projects"];
 const LinksRoutes: { [key: string]: string } = {
 	Dashboard: "/Dashboard",
-	"Find Projects": "/",
-	"Sign In": "/auth",
+	"Find Projects": "/finder",
 	"Your Projects": "/projects",
 };
 
@@ -44,37 +46,50 @@ const NavLink = ({ children }: { children: string }) => (
 );
 
 const Navbar = () => {
-	const { isOpen, onOpen, onClose } = useDisclosure();
+	const { isOpen } = useDisclosure();
+	const { currentUser, logout } = useAuth();
+	const isLoggedIn = !!currentUser;
+	const navigate = useNavigate();
+
+	const handleLogout = async () => {
+		try {
+			await logout();
+			navigate("/");
+		} catch (error) {
+			console.log(error);
+		}
+	};
 
 	return (
 		<>
-			<Box bg={useColorModeValue("gray.100", "gray.900")} px={4}>
+			<Box
+				bg={useColorModeValue("gray.100", "gray.900")}
+				px={4}
+				outlineColor="gray.100"
+				outline="1px solid"
+			>
 				<Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
-					<IconButton
-						size={"md"}
-						icon={isOpen ? <CloseIcon /> : <HamburgerIcon />}
-						aria-label={"Open Menu"}
-						display={{ md: "none" }}
-						onClick={isOpen ? onClose : onOpen}
-					/>
-					<HStack spacing={8} alignItems={"center"}>
-						<Box>Logo</Box>
-						<HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
-							{Links.map(link => (
-								<NavLink key={link}>{link}</NavLink>
-							))}
-						</HStack>
+					<HStack spacing={8} alignItems={"center"} w="80%">
+						<LinkBox minH="100%" minW="80pt">
+							<LinkOverlay as={RouteLink} to="/">
+								<Image
+									src={logo}
+									h="100%"
+									objectFit="scale-down"
+									mt="-3pt"
+									mr="-4pt"
+								/>
+							</LinkOverlay>
+						</LinkBox>
+						{isLoggedIn ? (
+							<HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>
+								{Links.map(link => (
+									<NavLink key={link}>{link}</NavLink>
+								))}
+							</HStack>
+						) : null}
 					</HStack>
-					<Flex alignItems={"center"}>
-						<Button
-							variant={"solid"}
-							colorScheme={"teal"}
-							size={"sm"}
-							mr={4}
-							leftIcon={<AddIcon />}
-						>
-							Action
-						</Button>
+					{isLoggedIn ? (
 						<Menu>
 							<MenuButton
 								as={Button}
@@ -91,24 +106,48 @@ const Navbar = () => {
 								/>
 							</MenuButton>
 							<MenuList>
-								<MenuItem>Link 1</MenuItem>
-								<MenuItem>Link 2</MenuItem>
-								<MenuDivider />
-								<MenuItem>Link 3</MenuItem>
+								<MenuItem as="a" href="/profile">
+									Your Profile
+								</MenuItem>
+								<MenuItem
+									onClick={() => {
+										handleLogout();
+									}}
+								>
+									Log Out
+								</MenuItem>
 							</MenuList>
 						</Menu>
-					</Flex>
+					) : (
+						<Flex alignItems={"center"}>
+							<LinkBox>
+								<LinkOverlay href="/login">
+									<Button
+										variant="outline"
+										colorScheme="teal"
+										size="sm"
+										mr={4}
+										cursor="pointer"
+									>
+										Sign In
+									</Button>
+								</LinkOverlay>
+							</LinkBox>
+							<LinkBox>
+								<LinkOverlay href="/signup">
+									<Button
+										variant="solid"
+										colorScheme="teal"
+										size="sm"
+										cursor="pointer"
+									>
+										Sign Up
+									</Button>
+								</LinkOverlay>
+							</LinkBox>
+						</Flex>
+					)}
 				</Flex>
-
-				{isOpen ? (
-					<Box pb={4} display={{ md: "none" }}>
-						<Stack as={"nav"} spacing={4}>
-							{Links.map(link => (
-								<NavLink key={link}>{link}</NavLink>
-							))}
-						</Stack>
-					</Box>
-				) : null}
 			</Box>
 		</>
 	);

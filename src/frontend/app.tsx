@@ -5,6 +5,12 @@ import Finder from "./components/finder";
 import React from "react";
 import ProjectCreator from "./components/project_creator";
 import ProjectPage from "./components/projectsPage";
+import ProfilePage from "./components/profile-page";
+import LoginPage from "./components/login";
+import { AuthProvider, useAuth } from "../context/AuthContext";
+import SignupPage from "./signup";
+import Landing from "./components/landing";
+import ProtectedRoute from "../protectedRoute";
 
 /**
  * The main app component.
@@ -12,19 +18,55 @@ import ProjectPage from "./components/projectsPage";
 function App() {
 	return (
 		<>
-			<Navbar></Navbar>
-			<Routes>
-				{/**
-				 * A list of routes, each with a path and an element.
-				 *
-				 * Follow the format: <Route path="/path" element={<Component />} />
-				 * Hidden: <Route path="/auth" element={<SignInScreen />} />
-				 */}
-				<Route path="/" element={<Finder />} />
-				<Route path="/dashboard" element={<Dashboard />} />
-				<Route path="/project_creator" element={<ProjectCreator />} />
-				<Route path="/projects" element={<ProjectPage />} />
-			</Routes>
+			<AuthProvider>
+				<Navbar></Navbar>
+				<Routes>
+					{/**
+					 * A list of routes, each with a path and an element.
+					 *
+					 * Follow the format: <Route path="/path" element={<Component />} />
+					 * Hidden: <Route path="/auth" element={<SignInScreen />} />
+					 */}
+					<Route
+						path="/"
+						element={
+							<ProtectedRoute redirectPath="/finder" path={<Landing />} reverse />
+						}
+					/>
+					<Route
+						path="/finder"
+						element={
+							<ProtectedRoute redirectPath="/" path={<Finder />} reverse={false} />
+						}
+					/>
+					<Route
+						path="/dashboard"
+						element={
+							<ProtectedRoute redirectPath="/" path={<Dashboard />} reverse={false} />
+						}
+					/>
+					<Route
+						path="/profile"
+						element={
+							<ProtectedRoute
+								redirectPath="/"
+								path={<ProfilePage />}
+								reverse={false}
+							/>
+						}
+					/>
+					<Route
+						path="/login"
+						element={<ProtectedRoute redirectPath="/" path={<LoginPage />} reverse />}
+					/>
+					<Route
+						path="/signup"
+						element={<ProtectedRoute redirectPath="/" path={<SignupPage />} reverse />}
+					/>
+					<Route path="/project_creator" element={<ProjectCreator />} />
+					<Route path="/projects" element={<ProjectPage />} />
+				</Routes>
+			</AuthProvider>
 		</>
 	);
 }
