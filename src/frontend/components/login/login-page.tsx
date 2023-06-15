@@ -60,8 +60,6 @@ const LoginPage = () => {
 								});
 								resetForm();
 							});
-
-							alert(JSON.stringify(values, null, 2));
 						}}
 					>
 						{({
@@ -77,13 +75,7 @@ const LoginPage = () => {
 								<Stack spacing={4} align="flex-start" alignItems="center">
 									<FormControl id="email" isRequired>
 										<FormLabel htmlFor="email">Email Address</FormLabel>
-										<Field
-											as={Input}
-											id="email"
-											name="email"
-											type="email"
-											variant="filled"
-										/>
+										<Field as={Input} id="email" name="email" type="email" />
 									</FormControl>
 									<FormControl
 										isInvalid={!!errors.password && touched.password}
@@ -95,7 +87,6 @@ const LoginPage = () => {
 											id="password"
 											name="password"
 											type="password"
-											variant="filled"
 											validate={(value: string) => {
 												let error;
 

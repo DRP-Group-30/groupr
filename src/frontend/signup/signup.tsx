@@ -69,7 +69,6 @@ const SignupPage = () => {
 									});
 									resetForm();
 								});
-							alert(JSON.stringify(values, null, 2));
 						}}
 					>
 						{({
@@ -122,7 +121,6 @@ const SignupPage = () => {
 												as={Input}
 												id="password"
 												name="password"
-												variant="filled"
 												validate={(value: string) => {
 													let error;
 
