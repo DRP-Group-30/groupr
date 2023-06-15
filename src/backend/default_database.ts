@@ -19,7 +19,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				contactInfo: "",
 				overview:
 					"Hol' up... is this the largest Battle Royale ever? With over 500 players in a single game?!",
-				coverImage: null,
+				coverImage: "x0psf22gvk801-cd18.jpg",
 				tags: [
 					"MULTIPLAYER",
 					"BATTLE-ROYALE",
@@ -39,7 +39,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				collaborators: [],
 				contactInfo: "sixnights@gmail.com",
 				overview: "SPOOKY",
-				coverImage: null,
+				coverImage: "0x0.webp",
 				tags: ["HORROR", "UNITY", "C#"],
 				interested: [DEFAULT_USER],
 			},
@@ -65,7 +65,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				collaborators: [],
 				contactInfo: "",
 				overview: "Game where you can go anywhere and do anything!",
-				coverImage: null,
+				coverImage: "Screenshot 2023-06-15 013346.png",
 				tags: [
 					"MMO",
 					"MULTIPLAYER",
@@ -87,7 +87,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				contactInfo: "Website: https://afterlifegames.gg/",
 				overview:
 					"5v5 Hero Shooter with a large focus on Melee combat, inspired by Gigantic",
-				coverImage: null,
+				coverImage: "image.png",
 				tags: [
 					"MULTIPLAYER",
 					"HERO SHOOTER",

@@ -11,7 +11,7 @@ export const useAsync = <T>(f: () => Promise<T | null>): T | null => {
 
 	useEffect(() => {
 		asyncSetV();
-	});
+	}, []);
 
 	return v;
 };

@@ -5,11 +5,12 @@ import SwipeCard from "./swipe_card";
 import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Firebase } from "../../backend/firebase";
-import { resetDatabase, updateField } from "../../util/firebase";
+import { getImg, resetDatabase, updateField } from "../../util/firebase";
 import defaultDatabase from "../../backend/default_database";
 import { Project } from "../../backend";
 import { getCurrentUser } from "./auth";
 import React from "react";
+import { map, swapPromiseNull } from "../../util";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);
@@ -29,6 +30,13 @@ const Finder = () => {
 	let [currentCard, setCurrentCard] = useState<Project["fields"] | null>(null);
 	const [cardHidden, setCardHidden] = useState(false);
 	let [cardIndex, setCardIndex] = useState(0);
+	const [coverImgURL, setCoverImg] = useState<string | null>(null);
+
+	useEffect(() => {
+		swapPromiseNull(map(currentCard?.coverImage ?? null, c => getImg(c))).then(u => {
+			return setCoverImg(u);
+		});
+	}, []);
 
 	useEffect(() => {
 		setCardAnchor(
@@ -60,6 +68,11 @@ const Finder = () => {
 			let card = await getDoc(cards[cardIndex]);
 			setCurrentCard((currentCard = card.data() as Project["fields"]));
 			setCardIndex((cardIndex = cardIndex + 1));
+			const iHateDRPSoMuchIActuallyWantToDieWTFIsThisShit = await map(
+				currentCard?.coverImage ?? null,
+				c => getImg(c),
+			);
+			setCoverImg(iHateDRPSoMuchIActuallyWantToDieWTFIsThisShit);
 		}
 	}
 
@@ -163,6 +176,7 @@ const Finder = () => {
 								rejectCard={rejectCard}
 								data={currentCard}
 								cardHidden={cardHidden}
+								coverImgURL={coverImgURL}
 							></SwipeCard>
 						) : (
 							<Text fontSize="xl">No projects! Come back later.</Text>

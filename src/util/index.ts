@@ -67,5 +67,4 @@ export const nub = <T>(l: T[]) => nubWith(l, x => x);
  * Note: I believe swapping the other way around is impossible (would need to
  * wait for the Promise to finish to know whether it returns null or not)
  */
-export const swapPromiseNull = <T>(p: Promise<T> | null): Promise<T | null> =>
-	p === null ? new Promise(f => f(null)) : p;
+export const swapPromiseNull = async <T>(p: Promise<T> | null): Promise<T | null> => p;
