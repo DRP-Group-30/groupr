@@ -8,7 +8,15 @@ import { Input } from "@chakra-ui/input";
 import { Checkbox } from "@chakra-ui/checkbox";
 import { Button } from "@chakra-ui/button";
 import { Select } from "@chakra-ui/select";
-import { Image, InputGroup, InputLeftElement, Radio, RadioGroup, Stack } from "@chakra-ui/react";
+import {
+	Image,
+	InputGroup,
+	InputLeftElement,
+	Radio,
+	RadioGroup,
+	Stack,
+	Textarea,
+} from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 import { MdEmail, MdLink, MdUploadFile } from "react-icons/md";
 import { Fields, getAllTags, storeImg } from "../../../util/firebase";
@@ -133,10 +141,9 @@ const ProjectCreator = () => {
 						</FormControl>
 						<FormControl>
 							<FormLabel>Overview</FormLabel>
-							<Input
+							<Textarea
 								id="overview"
 								name="overview"
-								type="text"
 								variant="filled"
 								onChange={formik.handleChange}
 								placeholder="A short pitch for your project..."
