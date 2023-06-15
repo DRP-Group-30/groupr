@@ -29,7 +29,7 @@ import {
 	AutoCompleteTag,
 	ItemTag,
 } from "@choc-ui/chakra-autocomplete";
-import { inlineLog, nubWith, upperFirst, upperWords } from "../../../util";
+import { inlineLog, nub, nubWith, upperFirst, upperWords } from "../../../util";
 import { ContactMethod } from "./types";
 import discord from "../../static/discord.png";
 import slack from "../../static/slack.png";
@@ -183,6 +183,13 @@ const ProjectCreator = () => {
 								onReady={({ tags }) => {
 									setTempTags(tags);
 								}}
+								onChange={(ts: string[]) =>
+									formik.setFieldValue(
+										"tags",
+										nub(ts.map(t => t.toUpperCase())),
+										false,
+									)
+								}
 							>
 								<AutoCompleteInput
 									placeholder="Search for tags that describe it..."

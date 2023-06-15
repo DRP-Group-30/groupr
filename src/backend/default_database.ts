@@ -86,7 +86,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				collaborators: [],
 				contactInfo: "Website: https://afterlifegames.gg/",
 				overview:
-					"5v5 Hero Shooter with a large focus on Melee combat, inspired by Gigantic",
+					"5v5 hero shooter with a large focus on melee combat, inspired by Gigantic",
 				coverImage: "image.png",
 				tags: [
 					"MULTIPLAYER",
