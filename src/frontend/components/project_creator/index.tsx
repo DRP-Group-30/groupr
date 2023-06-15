@@ -59,6 +59,7 @@ const ProjectCreator = () => {
 			interested: [],
 			// Should `collaborators` be initialised to include the project creator?
 			collaborators: [],
+			roles: [],
 		},
 		onSubmit: async projectData => {
 			if (
@@ -158,6 +159,17 @@ const ProjectCreator = () => {
 								placeholder="A short pitch for your project..."
 							/>
 						</FormControl>
+						<VStack>
+							<Box bg="gray.100" minWidth="400px" rounded="md">
+								Role 1
+							</Box>
+							<Box bg="gray.100" minWidth="400px" rounded="md">
+								Role 2
+							</Box>
+							<Box bg="gray.100" minWidth="400px" rounded="md">
+								Add Role
+							</Box>
+						</VStack>
 						<FormControl>
 							<FormLabel>Tags</FormLabel>
 							<Flex

@@ -58,13 +58,15 @@ type FireCollections = {
 
 type FireFields = { [name: string]: FireValue };
 
-type AbstractFireDoc = FireDoc<FireCollections, FireFields>;
+type AbstractFireDoc = FireDoc<FireFields>;
 
 export type Fields = "fields";
 
-type FireDoc<C extends FireCollections, F extends FireFields> = {
+type FireDoc<F extends FireFields> = {
 	id: DocId;
-	collections: C;
+	// Sub-collections are removed for now because they aren't really necessary
+	// and everything becomes a heck of a lot easier without them
+	//collections: C;
 	fields: F;
 };
 
@@ -87,17 +89,13 @@ type FireValue =
  * More restrictive than Firebase in reality (i.e: each document in a
  * collection can have different structure)
  */
-export type FireCollection<D> = D extends FireDoc<infer C, infer F> ? FireDoc<C, F>[] : never;
+export type FireCollection<D> = D extends FireDoc<infer F> ? FireDoc<F>[] : never;
 
-export const toFireDoc = <F extends FireCollections, C extends FireFields>(
+export const toFireDoc = <F extends FireFields>(
 	snapshot: QueryDocumentSnapshot<DocumentData>,
-	docSpec: FireDoc<F, C>,
-): FireDoc<F, C> => ({
+): FireDoc<F> => ({
 	id: snapshot.id,
-	// Unsafe!! Current modelling of `collections` as parts of ordinary
-	// `FireDoc`s breaks down pretty quick...
-	collections: ANY, //docSpec.collections,
-	fields: snapshot.data() as C,
+	fields: snapshot.data() as F,
 });
 
 /**
@@ -125,7 +123,7 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
 		// enough...
 		if (modelDoc === null) return;
 
-		await deleteCollections(snapshot.ref.path + "/", modelDoc.collections);
+		// await deleteCollections(snapshot.ref.path + "/", modelDoc.collections);
 	};
 
 	await deleteCollections("", model);
@@ -141,16 +139,13 @@ export const addCollection = async (
 	c: FireCollection<AbstractFireDoc>,
 ): Promise<unknown> => Promise.all(c.map(d => addFireDoc(collectionPath, d)));
 
-export const addFireDoc = async (
-	pathToDoc: string,
-	{ id, collections, fields }: AbstractFireDoc,
-) => {
+export const addFireDoc = async (pathToDoc: string, { id, fields }: AbstractFireDoc) => {
 	if (id === RANDOM) {
 		await addDoc(collection(Firebase.db, pathToDoc), fields);
 	} else {
 		await setDoc(doc(Firebase.db, pathToDoc, id), fields);
 	}
-	addCollections(pathToDoc + "/" + id, collections);
+	// addCollections(pathToDoc + "/" + id, collections);
 };
 
 export const addAll = async (model: FireDatabase): Promise<void> => {
@@ -159,7 +154,7 @@ export const addAll = async (model: FireDatabase): Promise<void> => {
 
 export const getAllTags = async (): Promise<string[]> => {
 	const projects = await getDocs(collection(Firebase.db, "projects"));
-	const allTags = projects.docs.flatMap(d => toFireDoc(d, ANY as Project).fields.tags);
+	const allTags = projects.docs.flatMap(d => toFireDoc<Project[Fields]>(d).fields.tags);
 	const ranked = new Map<string, number>();
 	allTags.forEach(t => ranked.set(t, getOrZero(ranked, t) + 1));
 	allTags.sort((t1, t2) => getOrZero(ranked, t2) - getOrZero(ranked, t1));

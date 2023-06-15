@@ -12,7 +12,6 @@ export const defaultDatabase = (): GrouprDatabase => ({
 	projects: [
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Natty B's Battlegrounds",
 				collaborators: [],
@@ -29,11 +28,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"C++",
 				],
 				interested: [],
+				roles: [],
 			},
 		},
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Six Nights at Bobs",
 				collaborators: [],
@@ -42,11 +41,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				coverImage: "0x0.webp",
 				tags: ["HORROR", "UNITY", "C#"],
 				interested: [DEFAULT_USER],
+				roles: [],
 			},
 		},
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Overstory",
 				collaborators: [],
@@ -55,11 +54,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				coverImage: "Overstory.png",
 				tags: ["RPG", "RETRO", "PIXEL ART", "NARRATIVE DRIVEN", "RPG MAKER"],
 				interested: [DEFAULT_USER],
+				roles: [],
 			},
 		},
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Universe of Battlebuild",
 				collaborators: [],
@@ -76,11 +75,11 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"LUA",
 				],
 				interested: [],
+				roles: [],
 			},
 		},
 		{
 			id: RANDOM,
-			collections: { boxes: [], roles: [] },
 			fields: {
 				name: "Afterstrife",
 				collaborators: [],
@@ -98,13 +97,13 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"C++",
 				],
 				interested: [],
+				roles: [],
 			},
 		},
 	],
 	users: [
 		{
 			id: "uKSLFGA3qTuLmweXlv31",
-			collections: {},
 			fields: {
 				username: "Default",
 				givenNames: ["Jeff"],
@@ -123,7 +122,6 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		},
 		{
 			id: RANDOM,
-			collections: {},
 			fields: {
 				username: "LordQuaggan",
 				givenNames: ["Nathaniel", "Robert"],
@@ -142,7 +140,6 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		},
 		{
 			id: RANDOM,
-			collections: {},
 			fields: {
 				username: "Xx_NoscopeCow_xX",
 				givenNames: ["Gary"],
@@ -161,7 +158,6 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		},
 		{
 			id: RANDOM,
-			collections: {},
 			fields: {
 				username: "TheCarrot",
 				givenNames: ["Mark"],

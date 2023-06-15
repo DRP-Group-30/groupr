@@ -42,7 +42,6 @@ type Globals = [GlobalTable];
  */
 export type Project = {
 	id: DocId;
-	collections: { boxes: Box<BoxType>[]; roles: Role[] };
 	fields: {
 		name: string;
 		collaborators: string[];
@@ -51,20 +50,17 @@ export type Project = {
 		coverImage: string | null;
 		tags: string[];
 		interested: DocumentReference[];
+		roles: Role[];
 	};
 };
 /**
  * TODO: What type should experience be?
  */
 type Role = {
-	id: DocId;
-	collections: {};
-	fields: {
-		skillset: Skillset;
-		experience: string;
-		approxPay: number;
-		commitment: number;
-	};
+	skillset: Skillset;
+	experience: string;
+	approxPay: number;
+	commitment: number;
 };
 
 /**
@@ -72,7 +68,6 @@ type Role = {
  */
 type User = {
 	id: DocId;
-	collections: {};
 	fields: {
 		username: string;
 		givenNames: string[];
@@ -140,5 +135,5 @@ export type Rating = 0 | 1 | 2 | 3 | 4 | 5;
 type Skillset = FireMap<Skill, Rating>;
 
 export const addProject = (fields: Project[Fields]) => {
-	addFireDoc("projects", { id: RANDOM, fields, collections: {} });
+	addFireDoc("projects", { id: RANDOM, fields });
 };
