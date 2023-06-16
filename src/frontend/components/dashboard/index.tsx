@@ -62,6 +62,11 @@ const Dashboard = () => {
 					} as Project),
 			)),
 		);
+		interested.map(project => {
+			if (project.fields.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")) {
+				moveProjectInto("interested", project);
+			}
+		});
 
 		let rejectedRefs = user.get("rejected");
 		let rejectedDocs = await Promise.all(
