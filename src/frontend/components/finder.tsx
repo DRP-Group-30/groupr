@@ -5,9 +5,9 @@ import SwipeCard from "./swipe_card";
 import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Firebase } from "../../backend/firebase";
-import { getImg, resetDatabase, updateField } from "../../util/firebase";
+import { Fields, getImg, resetDatabase, updateField } from "../../util/firebase";
 import defaultDatabase from "../../backend/default_database";
-import { Project } from "../../backend";
+import { Project, User } from "../../backend";
 import { getCurrentUser, getCurrentUserRef } from "./auth";
 import React from "react";
 import { map, swapPromiseNull } from "../../util";
@@ -53,13 +53,18 @@ const Finder = () => {
 
 	async function pollCards() {
 		let user = await getCurrentUser();
+		let userProjects = (user.data() as User[Fields]).projects.map(p => p.id);
 		const seenBefore = USER_CARD_CATEGORIES.flatMap<DocumentReference>(d => user.get(d)).map(
 			r => r.id,
 		);
 
 		const ds = await getDocs(collection(Firebase.db, "projects"));
 
-		setCards((cards = ds.docs.map(d => d.ref).filter(r => !seenBefore.includes(r.id))));
+		setCards(
+			(cards = ds.docs
+				.map(d => d.ref)
+				.filter(r => !seenBefore.includes(r.id) && !userProjects.includes(r.id))),
+		);
 	}
 
 	async function getNextCard() {

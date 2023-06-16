@@ -152,8 +152,9 @@ export const getDefaultRole = (i: number = 1): Role => ({
 	commitment: 0,
 });
 
-export const addProject = (fields: Project[Fields]) =>
-	addFireDoc("projects", { id: RANDOM, fields });
+export const addProject = async (fields: Project[Fields]): Promise<string> => {
+	return addFireDoc("projects", { id: RANDOM, fields });
+}
 
 export const updateProject = (id: string, fields: Project[Fields]) =>
 	addFireDoc("projects", { id, fields })

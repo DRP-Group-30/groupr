@@ -44,6 +44,7 @@ import {
 	Project,
 	Skill,
 	Skillset,
+	User,
 	addProject,
 	getDefaultRole,
 	updateProject,
@@ -55,6 +56,9 @@ import slack from "../../static/slack.png";
 import whatsapp from "../../static/whatsapp.png";
 import { AddIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
+import { doc, updateDoc } from "firebase/firestore";
+import { Firebase } from "../../../backend/firebase";
+import { getCurrentUser, getCurrentUserRef } from "../auth";
 
 const contactIcons = {
 	discord: discord,
@@ -103,7 +107,16 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 				}
 
 				if (project === null) {
-					await addProject(projectData);
+					let currentUser = await getCurrentUser();
+					let userData = currentUser.data() as User[Fields];
+
+					let id = await addProject(projectData);
+					let projects = userData.projects;
+					projects.push(doc(Firebase.db, "projects", id));
+
+					await updateDoc(getCurrentUserRef(), {
+						projects: projects,
+					});
 				} else {
 					await updateProject(project.id, projectData);
 				}
@@ -260,7 +273,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								/>
 							</Editable>
 						</FormControl>
-						<VStack marginBottom="6px">
+						{/* <VStack marginBottom="6px">
 							{formik.values.roles.map((x, i) => (
 								<Box bg="gray.100" minWidth="600px" rounded="md" key={i}>
 									<Editable value={x.name}>
@@ -361,30 +374,30 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 									</AutoComplete>
 								</Box>
 							))}
-						</VStack>
-						{editMode && (
-							<LinkBox
-								bgColor="gray.100"
-								border="dashed"
-								width="100%"
-								rounded="md"
-								onClick={() =>
-									formik.setFieldValue(
-										"roles",
-										formik.values.roles.concat([
-											getDefaultRole(formik.values.roles.length),
-										]),
-									)
-								}
-								cursor="pointer"
-								marginBottom="6px"
-							>
-								<VStack padding="6px">
-									<Icon as={AddIcon} w="24px" h="24px" />
-									<Text>Add a role to tell us who you're looking for...</Text>
-								</VStack>
-							</LinkBox>
-						)}
+							{editMode && (
+								<LinkBox
+									bgColor="gray.100"
+									border="dashed"
+									width="100%"
+									rounded="md"
+									onClick={() =>
+										formik.setFieldValue(
+											"roles",
+											formik.values.roles.concat([
+												getDefaultRole(formik.values.roles.length),
+											]),
+										)
+									}
+									cursor="pointer"
+									marginBottom="6px"
+								>
+									<VStack padding="6px">
+										<Icon as={AddIcon} w="24px" h="24px" />
+										<Text>Add a role to tell us who you're looking for...</Text>
+									</VStack>
+								</LinkBox>
+							)}
+						</VStack> */}
 
 						{(editMode || formik.values.tags.length !== 0) && (
 							<Box
