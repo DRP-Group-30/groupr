@@ -16,6 +16,7 @@ import {
 	Stack,
 	Radio,
 	Icon,
+	Link,
 	LinkBox,
 	Text,
 	Slider,
@@ -123,6 +124,9 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 				});
 			}
 		});
+		if (project.fields.contactInfo.startsWith("http")) {
+			setContactMethod(ContactMethod.URL);
+		}
 	}, [project]);
 
 	function submitName() {
@@ -554,6 +558,14 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								width="100%"
 							>
 								<EditablePreview
+									as={Link}
+									href={
+										editMode
+											? undefined
+											: (contactMethod === ContactMethod.EMAIL
+													? "mailto:"
+													: "") + formik.values.contactInfo
+									}
 									className={editMode ? "EditPreview" : ""}
 									cursor={editMode ? "pointer" : ""}
 								/>

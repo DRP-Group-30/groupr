@@ -83,7 +83,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			fields: {
 				name: "Afterstrife",
 				collaborators: [],
-				contactInfo: "Website: https://afterlifegames.gg/",
+				contactInfo: "https://afterlifegames.gg/",
 				overview:
 					"5v5 hero shooter with a large focus on melee combat, inspired by Gigantic",
 				coverImage: "image.png",
