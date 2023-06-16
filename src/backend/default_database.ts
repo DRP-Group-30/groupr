@@ -114,60 +114,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			},
 		},
 	],
-	users: [
-		{
-			id: "uKSLFGA3qTuLmweXlv31",
-			fields: {
-				username: "Default",
-				givenNames: ["Jeff"],
-				surname: "Default",
-				skillset: [],
-				availability: emptyAvailability(),
-				interested: [],
-				rejected: [],
-				matched: [],
-			},
-		},
-		{
-			id: RANDOM,
-			fields: {
-				username: "LordQuaggan",
-				givenNames: ["Nathaniel", "Robert"],
-				surname: "Burke",
-				skillset: [Skill.PROGRAMMING],
-				availability: emptyAvailability(),
-				interested: [],
-				rejected: [],
-				matched: [],
-			},
-		},
-		{
-			id: RANDOM,
-			fields: {
-				username: "Xx_NoscopeCow_xX",
-				givenNames: ["Gary"],
-				surname: "Rodriguez",
-				skillset: [Skill.MUSIC_AND_SOUND, Skill.ART],
-				availability: emptyAvailability(),
-				interested: [],
-				rejected: [],
-				matched: [],
-			},
-		},
-		{
-			id: RANDOM,
-			fields: {
-				username: "TheCarrot",
-				givenNames: ["Mark"],
-				surname: "Pintos",
-				skillset: [Skill.PROGRAMMING, Skill.PROJECT_MANAGEMENT],
-				availability: emptyAvailability(),
-				interested: [],
-				rejected: [],
-				matched: [],
-			},
-		},
-	],
+	users: [],
 	globals: [
 		{
 			id: "globals",

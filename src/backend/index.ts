@@ -53,6 +53,8 @@ export type Project = {
 		roles: Role[];
 	};
 };
+
+
 /**
  * TODO: What type should experience be?
  */
@@ -67,19 +69,20 @@ export type Role = {
 /**
  * TODO: Lots of potential for additional fields here
  */
-type User = {
+export type User = {
 	id: DocId;
 	fields: {
-		username: string;
-		givenNames: string[];
-		surname: string;
-		skillset: Skillset;
+		bio: string;
+		pronouns: string;
 		availability: AvailSchedule;
+		tags: string[];
+		projects: DocumentReference[];
 		rejected: DocumentReference[];
 		interested: DocumentReference[];
 		matched: DocumentReference[];
 	};
 };
+
 type GlobalTable = { id: DocId; collections: {}; fields: {} };
 
 export const emptyAvailability = (): AvailSchedule =>
@@ -151,3 +154,4 @@ export const getDefaultRole = (i: number = 1): Role => ({
 
 export const addProject = (fields: Project[Fields]) =>
 	addFireDoc("projects", { id: RANDOM, fields });
+

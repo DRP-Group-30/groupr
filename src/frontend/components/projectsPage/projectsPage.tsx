@@ -5,6 +5,7 @@ import { Firebase } from "../../../backend/firebase";
 import { useEffect, useState } from "react";
 import { Project } from "../../../backend";
 import CreatorCard from "../project_creator/creator_card";
+import { getCurrentUser } from "../auth";
 
 const ProjectSelector = () => {
 	let [projectRefs, setProjectRefs] = useState<DocumentReference[]>([]);
@@ -15,8 +16,14 @@ const ProjectSelector = () => {
 	}, []);
 
 	async function pollProjects() {
-		const ds = await getDocs(collection(Firebase.db, "projects"));
-		setProjectRefs((projectRefs = ds.docs.map(d => d.ref)));
+		const user = await getCurrentUser();
+		const projects = user.get("projects");
+		// const projecDocs = await Promise.all(
+		// 	projectRefs.map((ref: DocumentReference) => getDoc(ref)),
+		// );
+
+		// const ds = await getDocs(collection(Firebase.db, "projects"));
+		setProjectRefs((projectRefs = projects));
 	}
 
 	async function getProjects() {
