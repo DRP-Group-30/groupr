@@ -37,10 +37,10 @@ const ProjectSelector = () => {
 		>
 			<Heading margin="16px">{"Your Projects"}</Heading>
 			<SimpleGrid width="100%" columns={3} spacing={8} p="10pt">
+				<NewProjectCard />
 				{projects.map(p => (
 					<CreatorCard editMode={false} project={p}></CreatorCard>
 				))}
-				<NewProjectCard />
 			</SimpleGrid>
 		</Container>
 	);

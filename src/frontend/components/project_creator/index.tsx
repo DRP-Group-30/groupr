@@ -25,7 +25,7 @@ const ProjectEditor = ({ isNew }: { isNew: boolean }) => {
 	}, []);
 
 	return (
-		<Flex bg="white" align="center" justify="center" h="100%" paddingTop="50px">
+		<Flex bg="white" align="center" justify="center" h="100%">
 			<CreatorCard editMode project={project}></CreatorCard>
 		</Flex>
 	);
