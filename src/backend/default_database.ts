@@ -15,7 +15,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			fields: {
 				name: "Natty B's Battlegrounds",
 				collaborators: [],
-				contactInfo: "",
+				contactInfo: "natty@b.com",
 				overview:
 					"Hol' up... is this the largest Battle Royale ever? With over 500 players in a single game?!",
 				coverImage: "x0psf22gvk801-cd18.jpg",
@@ -62,7 +62,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			fields: {
 				name: "Universe of Battlebuild",
 				collaborators: [],
-				contactInfo: "",
+				contactInfo: "https://discord.gg/battlebuild",
 				overview: "Game where you can go anywhere and do anything!",
 				coverImage: "Screenshot 2023-06-15 013346.png",
 				tags: [
