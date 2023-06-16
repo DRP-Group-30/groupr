@@ -44,9 +44,7 @@ const Dashboard = () => {
 			matchedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
 		setMatched(
-			(matched = matchedDocs.map(
-				doc => ({ id: doc.id, collections: {}, fields: doc.data() } as Project),
-			)),
+			(matched = matchedDocs.map(doc => ({ id: doc.id, fields: doc.data() } as Project))),
 		);
 
 		let interestedRefs = defaultUser.get("interested");
@@ -56,7 +54,6 @@ const Dashboard = () => {
 				doc =>
 					({
 						id: doc.id,
-						collections: {},
 						fields: doc.data(),
 					} as Project),
 			)),
@@ -71,7 +68,6 @@ const Dashboard = () => {
 				doc =>
 					({
 						id: doc.id,
-						collections: {},
 						fields: doc.data(),
 					} as Project),
 			)),

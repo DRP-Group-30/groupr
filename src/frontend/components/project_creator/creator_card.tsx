@@ -39,13 +39,21 @@ import { nubWith, nub, inlineLog, or } from "../../../util";
 import { ContactMethod } from "./types";
 import { useFormik } from "formik";
 import { useState, useEffect } from "react";
-import { Project, Skill, Skillset, addProject, getDefaultRole } from "../../../backend";
+import {
+	Project,
+	Skill,
+	Skillset,
+	addProject,
+	getDefaultRole,
+	updateProject,
+} from "../../../backend";
 import { Fields, getImg, storeImg, getAllTags } from "../../../util/firebase";
 
 import discord from "../../static/discord.png";
 import slack from "../../static/slack.png";
 import whatsapp from "../../static/whatsapp.png";
 import { AddIcon } from "@chakra-ui/icons";
+import { useNavigate } from "react-router-dom";
 
 const contactIcons = {
 	discord: discord,
@@ -59,6 +67,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 	const [contactMethod, setContactMethod] = useState<ContactMethod>(ContactMethod.EMAIL);
 	let [coverImageURL, setCoverImageURL] = useState<string>("");
 
+	const navigate = useNavigate();
 	const formik = useFormik<Project[Fields]>({
 		initialValues: project
 			? project.fields
@@ -77,8 +86,6 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					roles: [],
 			  },
 		onSubmit: async projectData => {
-			console.log(projectData.name);
-			console.log(formik.values.name);
 			// DATA VALIDATION
 			if (
 				projectData.name === "" ||
@@ -93,10 +100,15 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					const file = await storeImg(tempCoverImage);
 					projectData.coverImage = file;
 				}
-				await addProject(projectData);
-				window.location.assign("projects");
+
+				if (project === null) {
+					await addProject(projectData);
+				} else {
+					await updateProject(project.id, projectData);
+				}
+				navigate("/projects", { replace: false });
 			} else {
-				window.location.assign("project_creator");
+				navigate(`/projects/edit/${project?.id}`, { replace: false });
 			}
 		},
 	});
@@ -104,13 +116,14 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 	useEffect(() => {
 		initTagTable();
 		if (project === null) return;
-
-		if (project.fields.coverImage !== null) {
-			getImg(project.fields.coverImage).then(url => {
-				setCoverImageURL((coverImageURL = url));
-			});
-		}
-	}, []);
+		formik.setValues(project.fields).then(() => {
+			if (project.fields.coverImage !== null) {
+				getImg(project.fields.coverImage).then(url => {
+					setCoverImageURL((coverImageURL = url));
+				});
+			}
+		});
+	}, [project]);
 
 	function submitName() {
 		if (formik.values.name.trim().length === 0)
@@ -135,7 +148,15 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 	HTMLElement.prototype.scrollIntoView = function () {};
 
 	return (
-		<Box bg="white" minWidth="400px" p={6} rounded="md" boxShadow="2xl" marginBottom="25px">
+		<Box
+			maxWidth="600px"
+			bg="white"
+			minWidth="400px"
+			p={6}
+			rounded="md"
+			boxShadow="2xl"
+			marginBottom="25px"
+		>
 			<Box
 				backgroundColor="gray.200"
 				height="210px"
@@ -432,7 +453,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 													false,
 												);
 											}}
-											defaultValues={formik.values.tags}
+											values={formik.values.tags}
 										>
 											{editMode && (
 												<>

@@ -151,3 +151,7 @@ export const getDefaultRole = (i: number = 1): Role => ({
 
 export const addProject = (fields: Project[Fields]) =>
 	addFireDoc("projects", { id: RANDOM, fields });
+
+export const updateProject = (id: string, fields: Project[Fields]) =>
+	addFireDoc("projects", { id, fields })
+	
