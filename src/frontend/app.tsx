@@ -3,7 +3,7 @@ import Dashboard from "./components/dashboard";
 import Navbar from "./components/navbar";
 import Finder from "./components/finder";
 import React from "react";
-import ProjectCreator from "./components/project_creator";
+import ProjectEditor from "./components/project_creator";
 import ProjectPage from "./components/projectsPage";
 import ProfilePage from "./components/profile-page";
 import LoginPage from "./components/login";
@@ -63,7 +63,11 @@ function App() {
 						path="/signup"
 						element={<ProtectedRoute redirectPath="/" path={<SignupPage />} reverse />}
 					/>
-					<Route path="/project_creator" element={<ProjectCreator />} />
+					<Route
+						path="/projects/edit/:projectID"
+						element={<ProjectEditor isNew={false} />}
+					/>
+					<Route path="/projects/edit" element={<ProjectEditor isNew />} />
 					<Route path="/projects" element={<ProjectPage />} />
 				</Routes>
 			</AuthProvider>

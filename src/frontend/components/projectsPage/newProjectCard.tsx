@@ -14,7 +14,7 @@ const NewProjectCard = () => {
 				border="dashed"
 				borderColor={"gray.400"}
 			>
-				<LinkOverlay href="project_creator">
+				<LinkOverlay href="projects/edit">
 					<VStack>
 						<Icon as={AddIcon} w="24px" h="24px" />
 						<Text>Make New Project</Text>
