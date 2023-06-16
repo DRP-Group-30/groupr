@@ -12,7 +12,6 @@ const ProjectEditor = ({ isNew }: { isNew: boolean }) => {
 
 	useEffect(() => {
 		if (!isNew && projectID != null) {
-			console.log("EDITING A PROJECT");
 			getDoc(doc(Firebase.db, "projects", projectID)).then(doc => {
 				setProject(
 					(project = {

@@ -114,7 +114,60 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			},
 		},
 	],
-	users: [],
+	users: [
+		{
+			id: "uKSLFGA3qTuLmweXlv31",
+			fields: {
+				bio: "I am the default user, the main character.",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
+				availability: emptyAvailability(),
+				interested: [],
+				rejected: [],
+				matched: [],
+			},
+		},
+		{
+			id: RANDOM,
+			fields: {
+				bio: "Empty bio",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
+				availability: emptyAvailability(),
+				interested: [],
+				rejected: [],
+				matched: [],
+			},
+		},
+		{
+			id: RANDOM,
+			fields: {
+				bio: "Empty bio",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
+				availability: emptyAvailability(),
+				interested: [],
+				rejected: [],
+				matched: [],
+			},
+		},
+		{
+			id: RANDOM,
+			fields: {
+				bio: "Empty bio",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
+				availability: emptyAvailability(),
+				interested: [],
+				rejected: [],
+				matched: [],
+			},
+		},
+	],
 	globals: [
 		{
 			id: "globals",
