@@ -53,6 +53,8 @@ export type Project = {
 		roles: Role[];
 	};
 };
+
+
 /**
  * TODO: What type should experience be?
  */
@@ -80,6 +82,7 @@ export type User = {
         matched: DocumentReference[];
     };
 };
+
 type GlobalTable = { id: DocId; collections: {}; fields: {} };
 
 export const emptyAvailability = (): AvailSchedule =>

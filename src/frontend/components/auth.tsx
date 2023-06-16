@@ -1,9 +1,10 @@
 import { Center } from "@chakra-ui/react";
 import firebase from "firebase/compat/app";
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth";
-import { DEFAULT_USER } from "./finder";
 import firebaseui from "firebaseui";
+import { Firebase } from "../../backend/firebase";
 import React from "react";
+import { doc, getDoc } from "firebase/firestore";
 
 /**
  * Configuration for the UI.
@@ -24,7 +25,13 @@ const SIGN_IN_CONFIG: firebaseui.auth.Config = {
 };
 
 export function getCurrentUser() {
-	return DEFAULT_USER;
+	const { currentUser } = firebase.auth();
+	return getDoc(doc(Firebase.db, "users", currentUser?.uid ?? ""));
+}
+
+export function getCurrentUserRef() {
+	const { currentUser } = firebase.auth();
+	return doc(Firebase.db, "users", currentUser?.uid ?? "");
 }
 
 export default function SignInScreen() {
