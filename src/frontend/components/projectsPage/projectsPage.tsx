@@ -5,6 +5,7 @@ import { Firebase } from "../../../backend/firebase";
 import { useEffect, useState } from "react";
 import { Project } from "../../../backend";
 import CreatorCard from "../project_creator/creator_card";
+import { getCurrentUser } from "../auth";
 
 const ProjectSelector = () => {
 	let [projectRefs, setProjectRefs] = useState<DocumentReference[]>([]);
@@ -15,8 +16,14 @@ const ProjectSelector = () => {
 	}, []);
 
 	async function pollProjects() {
-		const ds = await getDocs(collection(Firebase.db, "projects"));
-		setProjectRefs((projectRefs = ds.docs.map(d => d.ref)));
+		const user = await getCurrentUser();
+		const projects = user.get("projects");
+		// const projecDocs = await Promise.all(
+		// 	projectRefs.map((ref: DocumentReference) => getDoc(ref)),
+		// );
+
+		// const ds = await getDocs(collection(Firebase.db, "projects"));
+		setProjectRefs((projectRefs = projects));
 	}
 
 	async function getProjects() {
@@ -28,7 +35,8 @@ const ProjectSelector = () => {
 		<Container
 			maxW="100%"
 			w="98%"
-			overflowY="initial"
+			height="calc(100% - 64px - 20pt)"
+			overflowY="scroll"
 			marginTop="10pt"
 			marginBottom="10pt"
 			centerContent
@@ -37,10 +45,10 @@ const ProjectSelector = () => {
 		>
 			<Heading margin="16px">{"Your Projects"}</Heading>
 			<SimpleGrid width="100%" columns={3} spacing={8} p="10pt">
+				<NewProjectCard />
 				{projects.map(p => (
 					<CreatorCard editMode={false} project={p}></CreatorCard>
 				))}
-				<NewProjectCard />
 			</SimpleGrid>
 		</Container>
 	);

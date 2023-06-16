@@ -24,6 +24,9 @@ import DashboardList from "./list";
 import DashboardSidebar from "./sidebar";
 import { CardStatus } from "./types";
 import React from "react";
+import { getCurrentUser, getCurrentUserRef } from "../auth";
+import { get } from "http";
+import { useAuth } from "../../../context/AuthContext";
 
 const Dashboard = () => {
 	const toast = useToast();
@@ -32,37 +35,40 @@ const Dashboard = () => {
 	let [interested, setInterested] = useState<Project[]>([]);
 	let [rejected, setRejected] = useState<Project[]>([]);
 	let [draggedProject, setDraggedProject] = useState<Project | null>(null);
+	const { currentUser } = useAuth();
 
 	useEffect(() => {
 		getProjects();
 	}, []);
 
 	async function getProjects() {
-		let defaultUser = await getDoc(DEFAULT_USER);
-		let matchedRefs = defaultUser.get("matched");
+		let user = await getCurrentUser();
+		let matchedRefs = user.get("matched");
 		let matchedDocs = await Promise.all(
 			matchedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
 		setMatched(
-			(matched = matchedDocs.map(
-				doc => ({ id: doc.id, collections: {}, fields: doc.data() } as Project),
-			)),
+			(matched = matchedDocs.map(doc => ({ id: doc.id, fields: doc.data() } as Project))),
 		);
 
-		let interestedRefs = defaultUser.get("interested");
+		let interestedRefs = user.get("interested");
 		let interestedDocs = await Promise.all(interestedRefs.map(getDoc));
 		setInterested(
 			(interested = interestedDocs.map(
 				doc =>
 					({
 						id: doc.id,
-						collections: {},
 						fields: doc.data(),
 					} as Project),
 			)),
 		);
+		interested.map(project => {
+			if (project.fields.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")) {
+				moveProjectInto("interested", project);
+			}
+		});
 
-		let rejectedRefs = defaultUser.get("rejected");
+		let rejectedRefs = user.get("rejected");
 		let rejectedDocs = await Promise.all(
 			rejectedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
@@ -71,7 +77,6 @@ const Dashboard = () => {
 				doc =>
 					({
 						id: doc.id,
-						collections: {},
 						fields: doc.data(),
 					} as Project),
 			)),
@@ -88,7 +93,9 @@ const Dashboard = () => {
 		setRejected((rejected = rejected.filter(p => p !== draggedProject)));
 
 		if (col.toLowerCase() === "interested") {
-			if (draggedProject.fields.interested.map(ref => ref.id).includes(DEFAULT_USER.id)) {
+			if (
+				draggedProject.fields.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")
+			) {
 				matched.push(draggedProject);
 				setMatched(matched);
 				toast({
@@ -122,7 +129,7 @@ const Dashboard = () => {
 			setDraggedProject(null);
 		}
 
-		updateDoc(DEFAULT_USER, {
+		updateDoc(getCurrentUserRef(), {
 			matched: matched.map(p => doc(Firebase.db, "projects", p.id)),
 			interested: interested.map(p => doc(Firebase.db, "projects", p.id)),
 			rejected: rejected.map(p => doc(Firebase.db, "projects", p.id)),

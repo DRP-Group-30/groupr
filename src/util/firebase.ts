@@ -139,11 +139,12 @@ export const addCollection = async (
 	c: FireCollection<AbstractFireDoc>,
 ): Promise<unknown> => Promise.all(c.map(d => addFireDoc(collectionPath, d)));
 
-export const addFireDoc = async (pathToDoc: string, { id, fields }: AbstractFireDoc) => {
+export const addFireDoc = async (pathToDoc: string, { id, fields }: AbstractFireDoc): Promise<string> => {
 	if (id === RANDOM) {
-		await addDoc(collection(Firebase.db, pathToDoc), fields);
+		return (await addDoc(collection(Firebase.db, pathToDoc), fields)).id;
 	} else {
-		await setDoc(doc(Firebase.db, pathToDoc, id), fields);
+		setDoc(doc(Firebase.db, pathToDoc, id), fields);
+		return id;
 	}
 	// addCollections(pathToDoc + "/" + id, collections);
 };

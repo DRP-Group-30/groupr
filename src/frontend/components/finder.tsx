@@ -5,12 +5,14 @@ import SwipeCard from "./swipe_card";
 import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Firebase } from "../../backend/firebase";
-import { getImg, resetDatabase, updateField } from "../../util/firebase";
+import { Fields, getImg, resetDatabase, updateField } from "../../util/firebase";
 import defaultDatabase from "../../backend/default_database";
-import { Project } from "../../backend";
-import { getCurrentUser } from "./auth";
+import { Project, User } from "../../backend";
+import { getCurrentUser, getCurrentUserRef } from "./auth";
 import React from "react";
 import { map, swapPromiseNull } from "../../util";
+import { useAuth } from "../../context/AuthContext";
+import { get } from "http";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);
@@ -31,6 +33,7 @@ const Finder = () => {
 	const [cardHidden, setCardHidden] = useState(false);
 	let [cardIndex, setCardIndex] = useState(0);
 	const [coverImgURL, setCoverImg] = useState<string | null>(null);
+	const { currentUser } = useAuth();
 
 	useEffect(() => {
 		swapPromiseNull(map(currentCard?.coverImage ?? null, c => getImg(c))).then(u => {
@@ -49,14 +52,19 @@ const Finder = () => {
 	}, []);
 
 	async function pollCards() {
-		let defaultUser = await getDoc(DEFAULT_USER);
-		const seenBefore = USER_CARD_CATEGORIES.flatMap<DocumentReference>(d =>
-			defaultUser.get(d),
-		).map(r => r.id);
+		let user = await getCurrentUser();
+		let userProjects = (user.data() as User[Fields]).projects.map(p => p.id);
+		const seenBefore = USER_CARD_CATEGORIES.flatMap<DocumentReference>(d => user.get(d)).map(
+			r => r.id,
+		);
 
 		const ds = await getDocs(collection(Firebase.db, "projects"));
 
-		setCards((cards = ds.docs.map(d => d.ref).filter(r => !seenBefore.includes(r.id))));
+		setCards(
+			(cards = ds.docs
+				.map(d => d.ref)
+				.filter(r => !seenBefore.includes(r.id) && !userProjects.includes(r.id))),
+		);
 	}
 
 	async function getNextCard() {
@@ -90,18 +98,18 @@ const Finder = () => {
 		const cur = cards[cardIndex - 1];
 		const snapshot = (await getDoc(cur)).data() as Project["fields"];
 		console.log(snapshot.interested);
-		const curUser = getCurrentUser();
-		if (snapshot.interested.map(i => i.id).includes(curUser.id)) {
+		const curUser = await getCurrentUserRef();
+		if (snapshot.interested.map(i => i.id).includes(currentUser?.uid ?? "")) {
 			console.log("MATCHED!");
-			updateField<DocumentReference[]>(DEFAULT_USER, MATCHED, rs =>
+			updateField<DocumentReference[]>(curUser, MATCHED, (rs: any[]) =>
 				rs.concat([cards[cardIndex - 1]]),
 			);
-			updateField<DocumentReference[]>(cur, INTERESTED, rs =>
-				rs.filter(r => r.id !== curUser.id),
+			updateField<DocumentReference[]>(cur, INTERESTED, (rs: any[]) =>
+				rs.filter((r: { id: any }) => r.id !== currentUser?.uid ?? ""),
 			);
 		} else {
 			console.log("RECORDED INTEREST!");
-			updateField<DocumentReference[]>(DEFAULT_USER, INTERESTED, rs =>
+			updateField<DocumentReference[]>(curUser, INTERESTED, (rs: any[]) =>
 				rs.concat([cards[cardIndex - 1]]),
 			);
 		}
@@ -109,9 +117,10 @@ const Finder = () => {
 	}
 
 	function rejectCard() {
+		const userRef = getCurrentUserRef();
 		console.log(`REJECTED ${currentCard?.name}`);
 		setOffset(-window.innerWidth / 2);
-		updateField<DocumentReference[]>(DEFAULT_USER, REJECTED, rs =>
+		updateField<DocumentReference[]>(userRef, REJECTED, (rs: any[]) =>
 			rs.concat([cards[cardIndex - 1]]),
 		);
 		showNextCard();

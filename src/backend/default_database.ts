@@ -15,7 +15,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			fields: {
 				name: "Natty B's Battlegrounds",
 				collaborators: [],
-				contactInfo: "",
+				contactInfo: "natty@b.com",
 				overview:
 					"Hol' up... is this the largest Battle Royale ever? With over 500 players in a single game?!",
 				coverImage: "x0psf22gvk801-cd18.jpg",
@@ -62,7 +62,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			fields: {
 				name: "Universe of Battlebuild",
 				collaborators: [],
-				contactInfo: "",
+				contactInfo: "https://discord.gg/battlebuild",
 				overview: "Game where you can go anywhere and do anything!",
 				coverImage: "Screenshot 2023-06-15 013346.png",
 				tags: [
@@ -83,7 +83,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			fields: {
 				name: "Afterstrife",
 				collaborators: [],
-				contactInfo: "Website: https://afterlifegames.gg/",
+				contactInfo: "https://afterlifegames.gg/",
 				overview:
 					"5v5 hero shooter with a large focus on melee combat, inspired by Gigantic",
 				coverImage: "image.png",
@@ -118,10 +118,10 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		{
 			id: "uKSLFGA3qTuLmweXlv31",
 			fields: {
-				username: "Default",
-				givenNames: ["Jeff"],
-				surname: "Default",
-				skillset: [],
+				bio: "I am the default user, the main character.",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -131,10 +131,10 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		{
 			id: RANDOM,
 			fields: {
-				username: "LordQuaggan",
-				givenNames: ["Nathaniel", "Robert"],
-				surname: "Burke",
-				skillset: [Skill.PROGRAMMING],
+				bio: "Empty bio",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -144,10 +144,10 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		{
 			id: RANDOM,
 			fields: {
-				username: "Xx_NoscopeCow_xX",
-				givenNames: ["Gary"],
-				surname: "Rodriguez",
-				skillset: [Skill.MUSIC_AND_SOUND, Skill.ART],
+				bio: "Empty bio",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -157,10 +157,10 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		{
 			id: RANDOM,
 			fields: {
-				username: "TheCarrot",
-				givenNames: ["Mark"],
-				surname: "Pintos",
-				skillset: [Skill.PROGRAMMING, Skill.PROJECT_MANAGEMENT],
+				bio: "Empty bio",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],

@@ -106,7 +106,7 @@ const Navbar = () => {
 								/>
 							</MenuButton>
 							<MenuList>
-								<MenuItem as="a" href="/profile">
+								<MenuItem as="a" href={`/profile/${currentUser.uid}`}>
 									Your Profile
 								</MenuItem>
 								<MenuItem

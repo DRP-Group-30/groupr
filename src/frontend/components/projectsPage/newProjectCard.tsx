@@ -8,13 +8,16 @@ const NewProjectCard = () => {
 				align="center"
 				direction="row"
 				justify="center"
-				h="150pt"
-				w="90%"
-				bgColor="gray.300"
+				h="100%"
+				w="100%"
+				boxShadow="none"
+				backgroundColor="gray.100"
+				_hover={{ backgroundColor: "gray.300" }}
+				transition="all 0.1s"
 				border="dashed"
 				borderColor={"gray.400"}
 			>
-				<LinkOverlay href="project_creator">
+				<LinkOverlay href="projects/edit">
 					<VStack>
 						<Icon as={AddIcon} w="24px" h="24px" />
 						<Text>Make New Project</Text>
