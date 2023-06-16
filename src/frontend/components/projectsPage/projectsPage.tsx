@@ -28,7 +28,8 @@ const ProjectSelector = () => {
 		<Container
 			maxW="100%"
 			w="98%"
-			overflowY="initial"
+			height="calc(100% - 64px - 20pt)"
+			overflowY="scroll"
 			marginTop="10pt"
 			marginBottom="10pt"
 			centerContent

@@ -213,12 +213,57 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								onCancel={submitName}
 								isDisabled={!editMode}
 							>
-								<FormControl>
-									<Flex
-										maxWidth="600px"
-										flexWrap="wrap"
-										marginBottom={tempTags.length > 0 ? "3px" : "0px"}
-									>
+								<Flex
+									maxWidth="600px"
+									flexWrap="wrap"
+									marginBottom={tempTags.length > 0 ? "3px" : "0px"}
+								>
+									<EditablePreview
+										className={editMode ? "EditPreview" : ""}
+										fontSize="2xl"
+										fontWeight="bold"
+										cursor={editMode ? "pointer" : ""}
+									/>
+									<Input
+										as={EditableInput}
+										id="project_name"
+										name="name"
+										type="text"
+										variant="flushed"
+										onChange={formik.handleChange}
+										fontSize="2xl"
+										fontWeight="bold"
+									/>
+								</Flex>
+							</Editable>
+						</FormControl>
+						<FormControl marginTop={editMode ? "0px" : "-12px"}>
+							<Editable
+								value={formik.values.overview}
+								onSubmit={submitOverview}
+								onCancel={submitOverview}
+								isDisabled={!editMode}
+							>
+								<EditablePreview
+									maxWidth="600px"
+									className={editMode ? "EditPreview" : ""}
+									cursor={editMode ? "pointer" : ""}
+									lineHeight="5"
+								/>
+								<Textarea
+									as={EditableTextarea}
+									maxWidth="600px"
+									id="overview"
+									name="overview"
+									variant="filled"
+									onChange={formik.handleChange}
+								/>
+							</Editable>
+						</FormControl>
+						<VStack marginBottom="6px">
+							{formik.values.roles.map((x, i) => (
+								<Box bg="gray.100" minWidth="600px" rounded="md" key={i}>
+									<Editable value={x.name}>
 										<EditablePreview
 											className={editMode ? "EditPreview" : ""}
 											fontSize="2xl"
@@ -227,292 +272,233 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 										/>
 										<Input
 											as={EditableInput}
-											id="project_name"
-											name="name"
+											id="role_name"
+											name={`roles[${i}].name`}
 											type="text"
 											variant="flushed"
 											onChange={formik.handleChange}
 											fontSize="2xl"
 											fontWeight="bold"
 										/>
-									</Flex>
-								</FormControl>
-								<FormControl marginTop={editMode ? "0px" : "-12px"}>
-									<Editable
-										value={formik.values.overview}
-										onSubmit={submitOverview}
-										onCancel={submitOverview}
-										isDisabled={!editMode}
-									>
-										<EditablePreview
-											maxWidth="600px"
-											className={editMode ? "EditPreview" : ""}
-											cursor={editMode ? "pointer" : ""}
-											lineHeight="5"
-										/>
-										<Textarea
-											as={EditableTextarea}
-											maxWidth="600px"
-											id="overview"
-											name="overview"
-											variant="filled"
-											onChange={formik.handleChange}
-										/>
 									</Editable>
-								</FormControl>
-								<VStack marginBottom="6px">
-									{formik.values.roles.map((x, i) => (
-										<Box bg="gray.100" minWidth="600px" rounded="md" key={i}>
-											<Editable value={x.name}>
-												<EditablePreview
-													className={editMode ? "EditPreview" : ""}
-													fontSize="2xl"
-													fontWeight="bold"
-													cursor={editMode ? "pointer" : ""}
-												/>
-												<Input
-													as={EditableInput}
-													id="role_name"
-													name={`roles[${i}].name`}
-													type="text"
-													variant="flushed"
-													onChange={formik.handleChange}
-													fontSize="2xl"
-													fontWeight="bold"
-												/>
-											</Editable>
-											<Slider
-												defaultValue={0}
-												min={0}
-												max={100}
-												step={1}
-												height="30px"
-												onChange={v => {
-													formik.setFieldValue(
-														`roles[${i}].approxPay`,
-														v,
-													);
-												}}
-											>
-												<SliderTrack bg="gold.100" mt="5">
-													<Box position="relative" right={10}></Box>
-													<SliderFilledTrack bg="tomato" />
-												</SliderTrack>
-												<SliderMark
-													value={x.approxPay}
-													textAlign="center"
-													bg="orange.500"
-													color="white"
-													mt="-5"
-													ml="-5"
-													w="15"
+									<Slider
+										defaultValue={0}
+										min={0}
+										max={100}
+										step={1}
+										height="30px"
+										onChange={v => {
+											formik.setFieldValue(`roles[${i}].approxPay`, v);
+										}}
+									>
+										<SliderTrack bg="gold.100" mt="5">
+											<Box position="relative" right={10}></Box>
+											<SliderFilledTrack bg="tomato" />
+										</SliderTrack>
+										<SliderMark
+											value={x.approxPay}
+											textAlign="center"
+											bg="orange.500"
+											color="white"
+											mt="-5"
+											ml="-5"
+											w="15"
+										>
+											{x.approxPay} $/hr
+										</SliderMark>
+										<SliderThumb boxSize={6} mt="5" />
+									</Slider>
+									<Flex
+										maxWidth="600px"
+										flexWrap="wrap"
+										marginBottom={
+											(tempSkills[i]?.length ?? 0) > 0 ? "3px" : "0px"
+										}
+									>
+										{(tempSkills[i] ?? []).map(({ label, onRemove }, i) => (
+											<AutoCompleteTag
+												key={i}
+												label={label}
+												onRemove={onRemove}
+												variant="solid"
+												colorScheme="teal"
+												marginRight="3px"
+												marginBottom="6px"
+											/>
+										))}
+									</Flex>
+									<AutoComplete
+										openOnFocus
+										multiple
+										creatable={false}
+										onReady={({ tags }) => {
+											tempSkills[i] = tags;
+											setTempSkills(tempSkills);
+										}}
+										onChange={(ts: string[]) => {
+											const curRoles = formik.values.roles;
+											curRoles[i].skillset = ts as Skillset;
+											formik.setFieldValue("roles", curRoles);
+										}}
+									>
+										<AutoCompleteInput
+											placeholder="Search for skills that this role requires..."
+											backgroundColor="white"
+										></AutoCompleteInput>
+										<AutoCompleteList height="200px" overflow="scroll">
+											{inlineLog(Object.values(Skill)).map(t => (
+												<AutoCompleteItem
+													key={t}
+													value={t}
+													textTransform="capitalize"
+													_selected={{ bg: "whiteAlpha.50" }}
+													_focus={{ bg: "whiteAlpha.100" }}
 												>
-													{x.approxPay} $/hr
-												</SliderMark>
-												<SliderThumb boxSize={6} mt="5" />
-											</Slider>
-											<Flex
-												maxWidth="600px"
-												flexWrap="wrap"
-												marginBottom={
-													(tempSkills[i]?.length ?? 0) > 0 ? "3px" : "0px"
-												}
-											>
-												{(tempSkills[i] ?? []).map(
-													({ label, onRemove }, i) => (
-														<AutoCompleteTag
-															key={i}
-															label={label}
-															onRemove={onRemove}
-															variant="solid"
-															colorScheme="teal"
-															marginRight="3px"
-															marginBottom="6px"
-														/>
-													),
-												)}
-											</Flex>
-											<AutoComplete
-												openOnFocus
-												multiple
-												creatable={false}
-												onReady={({ tags }) => {
-													tempSkills[i] = tags;
-													setTempSkills(tempSkills);
-												}}
-												onChange={(ts: string[]) => {
-													const curRoles = formik.values.roles;
-													curRoles[i].skillset = ts as Skillset;
-													formik.setFieldValue("roles", curRoles);
-												}}
-											>
+													{t}
+												</AutoCompleteItem>
+											))}
+										</AutoCompleteList>
+									</AutoComplete>
+								</Box>
+							))}
+						</VStack>
+						{editMode && (
+							<LinkBox
+								bgColor="gray.100"
+								border="dashed"
+								width="100%"
+								rounded="md"
+								onClick={() =>
+									formik.setFieldValue(
+										"roles",
+										formik.values.roles.concat([
+											getDefaultRole(formik.values.roles.length),
+										]),
+									)
+								}
+								cursor="pointer"
+								marginBottom="6px"
+							>
+								<VStack padding="6px">
+									<Icon as={AddIcon} w="24px" h="24px" />
+									<Text>Add a role to tell us who you're looking for...</Text>
+								</VStack>
+							</LinkBox>
+						)}
+
+						{(editMode || formik.values.tags.length !== 0) && (
+							<Box
+								backgroundColor="gray.100"
+								width="100%"
+								borderRadius="md"
+								padding="16px"
+							>
+								<FormControl>
+									<FormLabel fontWeight="bold">
+										Tags{" "}
+										{editMode && "- use these to describe your project's theme"}
+									</FormLabel>
+									<Flex
+										maxWidth="600px"
+										flexWrap="wrap"
+										marginBottom={
+											editMode
+												? tempTags.length > 0
+													? "3px"
+													: "0px"
+												: "-6px"
+										}
+									>
+										{nubWith(
+											tempTags.map((tag, tid) => ({
+												tid: tid,
+												onRemove: tag.onRemove,
+												label: (tag.label as string).toUpperCase(),
+											})),
+											t => t.label,
+										).map(({ label, tid, onRemove }) =>
+											editMode ? (
+												<AutoCompleteTag
+													key={tid}
+													label={label}
+													onRemove={onRemove}
+													variant="solid"
+													colorScheme="teal"
+													marginRight="3px"
+													marginBottom="6px"
+												/>
+											) : (
+												<Tag
+													key={tid}
+													variant="solid"
+													colorScheme="teal"
+													marginRight="3px"
+													marginBottom="6px"
+												>
+													{label}
+												</Tag>
+											),
+										)}
+									</Flex>
+									<AutoComplete
+										openOnFocus
+										multiple
+										creatable={true}
+										onReady={({ tags }) => {
+											setTempTags(tags);
+										}}
+										onChange={(ts: string[]) => {
+											formik.setFieldValue(
+												"tags",
+												nub(ts.map(t => t.toUpperCase())),
+												false,
+											);
+										}}
+										values={formik.values.tags}
+									>
+										{editMode && (
+											<>
 												<AutoCompleteInput
-													placeholder="Search for skills that this role requires..."
+													placeholder="Search for tags..."
 													backgroundColor="white"
 												></AutoCompleteInput>
 												<AutoCompleteList height="200px" overflow="scroll">
-													{inlineLog(Object.values(Skill)).map(t => (
-														<AutoCompleteItem
-															key={t}
-															value={t}
-															textTransform="capitalize"
-															_selected={{ bg: "whiteAlpha.50" }}
-															_focus={{ bg: "whiteAlpha.100" }}
-														>
-															{t}
-														</AutoCompleteItem>
-													))}
+													{allTags
+														.filter(
+															t =>
+																!tempTags
+																	.map(tt => tt.label)
+																	.includes(t),
+														)
+														.map(t => (
+															<AutoCompleteItem
+																key={t}
+																value={t}
+																textTransform="capitalize"
+																_selected={{
+																	bg: "whiteAlpha.50",
+																}}
+																_focus={{
+																	bg: "whiteAlpha.100",
+																}}
+															>
+																{t}
+															</AutoCompleteItem>
+														))}
+													<AutoCompleteCreatable>
+														{({ value }) => (
+															<span>
+																New Tag: {value.toUpperCase()}
+															</span>
+														)}
+													</AutoCompleteCreatable>
 												</AutoCompleteList>
-											</AutoComplete>
-										</Box>
-									))}
-								</VStack>
-								{editMode && (
-									<LinkBox
-										bgColor="gray.100"
-										border="dashed"
-										width="100%"
-										rounded="md"
-										onClick={() =>
-											formik.setFieldValue(
-												"roles",
-												formik.values.roles.concat([
-													getDefaultRole(formik.values.roles.length),
-												]),
-											)
-										}
-										cursor="pointer"
-										marginBottom="6px"
-									>
-										<VStack padding="6px">
-											<Icon as={AddIcon} w="24px" h="24px" />
-											<Text>
-												Add a role to tell us who you're looking for...
-											</Text>
-										</VStack>
-									</LinkBox>
-								)}
-
-								{(editMode || formik.values.tags.length !== 0) && (
-									<Box
-										backgroundColor="gray.100"
-										width="100%"
-										borderRadius="md"
-										padding="16px"
-									>
-										<FormControl>
-											<FormLabel fontWeight="bold">
-												Tags{" "}
-												{editMode &&
-													"- use these to describe your project's theme"}
-											</FormLabel>
-											<Flex
-												maxWidth="600px"
-												flexWrap="wrap"
-												marginBottom={
-													editMode
-														? tempTags.length > 0
-															? "3px"
-															: "0px"
-														: "-6px"
-												}
-											>
-												{nubWith(
-													tempTags.map((tag, tid) => ({
-														tid: tid,
-														onRemove: tag.onRemove,
-														label: (tag.label as string).toUpperCase(),
-													})),
-													t => t.label,
-												).map(({ label, tid, onRemove }) =>
-													editMode ? (
-														<AutoCompleteTag
-															key={tid}
-															label={label}
-															onRemove={onRemove}
-															variant="solid"
-															colorScheme="teal"
-															marginRight="3px"
-															marginBottom="6px"
-														/>
-													) : (
-														<Tag
-															key={tid}
-															variant="solid"
-															colorScheme="teal"
-															marginRight="3px"
-															marginBottom="6px"
-														>
-															{label}
-														</Tag>
-													),
-												)}
-											</Flex>
-											<AutoComplete
-												openOnFocus
-												multiple
-												creatable={true}
-												onReady={({ tags }) => {
-													setTempTags(tags);
-												}}
-												onChange={(ts: string[]) => {
-													formik.setFieldValue(
-														"tags",
-														nub(ts.map(t => t.toUpperCase())),
-														false,
-													);
-												}}
-												values={formik.values.tags}
-											>
-												{editMode && (
-													<>
-														<AutoCompleteInput
-															placeholder="Search for tags..."
-															backgroundColor="white"
-														></AutoCompleteInput>
-														<AutoCompleteList
-															height="200px"
-															overflow="scroll"
-														>
-															{allTags
-																.filter(
-																	t =>
-																		!tempTags
-																			.map(tt => tt.label)
-																			.includes(t),
-																)
-																.map(t => (
-																	<AutoCompleteItem
-																		key={t}
-																		value={t}
-																		textTransform="capitalize"
-																		_selected={{
-																			bg: "whiteAlpha.50",
-																		}}
-																		_focus={{
-																			bg: "whiteAlpha.100",
-																		}}
-																	>
-																		{t}
-																	</AutoCompleteItem>
-																))}
-															<AutoCompleteCreatable>
-																{({ value }) => (
-																	<span>
-																		New Tag:{" "}
-																		{value.toUpperCase()}
-																	</span>
-																)}
-															</AutoCompleteCreatable>
-														</AutoCompleteList>
-													</>
-												)}
-											</AutoComplete>
-										</FormControl>
-									</Box>
-								)}
-							</Editable>
-						</FormControl>
+											</>
+										)}
+									</AutoComplete>
+								</FormControl>
+							</Box>
+						)}
 					</VStack>
 					<VStack width="100%" spacing={2}>
 						{editMode && (

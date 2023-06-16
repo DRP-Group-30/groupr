@@ -118,10 +118,10 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		{
 			id: "uKSLFGA3qTuLmweXlv31",
 			fields: {
-				username: "Default",
-				givenNames: ["Jeff"],
-				surname: "Default",
-				skillset: [],
+				bio: "I am the default user, the main character.",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -131,10 +131,10 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		{
 			id: RANDOM,
 			fields: {
-				username: "LordQuaggan",
-				givenNames: ["Nathaniel", "Robert"],
-				surname: "Burke",
-				skillset: [Skill.PROGRAMMING],
+				bio: "Empty bio",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -144,10 +144,10 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		{
 			id: RANDOM,
 			fields: {
-				username: "Xx_NoscopeCow_xX",
-				givenNames: ["Gary"],
-				surname: "Rodriguez",
-				skillset: [Skill.MUSIC_AND_SOUND, Skill.ART],
+				bio: "Empty bio",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],
@@ -157,10 +157,10 @@ export const defaultDatabase = (): GrouprDatabase => ({
 		{
 			id: RANDOM,
 			fields: {
-				username: "TheCarrot",
-				givenNames: ["Mark"],
-				surname: "Pintos",
-				skillset: [Skill.PROGRAMMING, Skill.PROJECT_MANAGEMENT],
+				bio: "Empty bio",
+				pronouns: "he/him",
+				tags: [],
+				projects: [],
 				availability: emptyAvailability(),
 				interested: [],
 				rejected: [],

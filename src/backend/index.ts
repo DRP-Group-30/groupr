@@ -67,18 +67,18 @@ export type Role = {
 /**
  * TODO: Lots of potential for additional fields here
  */
-type User = {
-	id: DocId;
-	fields: {
-		username: string;
-		givenNames: string[];
-		surname: string;
-		skillset: Skillset;
-		availability: AvailSchedule;
-		rejected: DocumentReference[];
-		interested: DocumentReference[];
-		matched: DocumentReference[];
-	};
+export type User = {
+    id: DocId;
+    fields: {
+        bio: string;
+        pronouns: string;
+        availability: AvailSchedule;
+        tags: string[];
+        projects: DocumentReference[];
+        rejected: DocumentReference[];
+        interested: DocumentReference[];
+        matched: DocumentReference[];
+    };
 };
 type GlobalTable = { id: DocId; collections: {}; fields: {} };
 
@@ -155,3 +155,8 @@ export const addProject = (fields: Project[Fields]) =>
 export const updateProject = (id: string, fields: Project[Fields]) =>
 	addFireDoc("projects", { id, fields })
 	
+export const addUser = (fields: User[Fields]) =>
+	addFireDoc("users", { id: RANDOM, fields });
+
+export const updateUser = (id: string, fields: User[Fields]) =>
+	addFireDoc("users", { id, fields })
