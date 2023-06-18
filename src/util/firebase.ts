@@ -6,6 +6,7 @@
 import {
 	DocumentData,
 	DocumentReference,
+	DocumentSnapshot,
 	GeoPoint,
 	QueryDocumentSnapshot,
 	Timestamp,
@@ -105,6 +106,7 @@ export const toFireDoc = <F extends FireFields>(
 const deleteAll = async (model: FireDatabase): Promise<void> => {
 	const deleteCollections = async (currentPath: string, cs: FireCollections) => {
 		for (const n in cs) {
+			if (n === "users") continue;
 			await deleteCollection(currentPath + n, cs[n]);
 		}
 	};
@@ -131,6 +133,7 @@ const deleteAll = async (model: FireDatabase): Promise<void> => {
 
 export const addCollections = async (currentPath: string, cs: FireCollections): Promise<void> => {
 	for (const n in cs) {
+		if (n === "users") continue;
 		await addCollection(currentPath + n, cs[n]);
 	}
 };
@@ -147,6 +150,15 @@ export const addFireDoc = async (pathToDoc: string, { id, fields }: AbstractFire
 		return id;
 	}
 	// addCollections(pathToDoc + "/" + id, collections);
+};
+
+export const clearUserLists = async () => {
+	const users = await getDocs(collection(Firebase.db, "users"));
+	users.docs.map((u: DocumentSnapshot<DocumentData>) => updateDoc(u.ref, {
+		"interested": [],
+		"rejected": [],
+		"matched": [],
+	}));
 };
 
 export const addAll = async (model: FireDatabase): Promise<void> => {
@@ -169,6 +181,7 @@ export const getAllTags = async (): Promise<string[]> => {
 export const resetDatabase = async (model: FireDatabase): Promise<void> => {
 	await deleteAll(model);
 	await addAll(model);
+	await clearUserLists();
 	window.location.reload();
 };
 
