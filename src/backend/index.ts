@@ -112,7 +112,7 @@ export type User = {
 		pronouns: string;
 		availability: AvailSchedule;
 		skills: string[];
-		projects: DocumentReference[];
+		ownProjects: DocumentReference[];
 		irm: IRM;
 	};
 };

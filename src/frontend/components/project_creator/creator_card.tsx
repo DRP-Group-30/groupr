@@ -112,7 +112,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					let userData = currentUser.data() as User[Fields];
 
 					let id = await addProject(projectData);
-					let projects = userData.projects;
+					let projects = userData.ownProjects;
 					projects.push(doc(Firebase.db, "projects", id));
 
 					await updateDoc(getCurrentUserRef(), {

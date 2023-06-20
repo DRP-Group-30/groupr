@@ -63,7 +63,7 @@ const Dashboard = () => {
 			)),
 		);
 		interested.map(project => {
-			if (project.fields.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")) {
+			if (project.fields.irm.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")) {
 				moveProjectInto("interested", project);
 			}
 		});
@@ -94,7 +94,9 @@ const Dashboard = () => {
 
 		if (col.toLowerCase() === "interested") {
 			if (
-				draggedProject.fields.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")
+				draggedProject.fields.irm.interested
+					.map(ref => ref.id)
+					.includes(currentUser?.uid ?? "")
 			) {
 				matched.push(draggedProject);
 				setMatched(matched);

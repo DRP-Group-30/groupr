@@ -53,7 +53,7 @@ const Finder = () => {
 
 	async function pollCards() {
 		let user = await getCurrentUser();
-		let userProjects = (user.data() as User[Fields]).projects.map(p => p.id);
+		let userProjects = (user.data() as User[Fields]).ownProjects.map(p => p.id);
 		const seenBefore = USER_CARD_CATEGORIES.flatMap<DocumentReference>(d => user.get(d)).map(
 			r => r.id,
 		);

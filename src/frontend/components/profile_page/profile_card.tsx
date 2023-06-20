@@ -35,6 +35,7 @@ import { User, addUser, emptyAvailability, updateUser } from "../../../backend";
 import { Fields, getAllTags } from "../../../util/firebase";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { EMPTY_IRM } from "../../../backend/default_database";
 
 const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | null }) => {
 	const navigate = useNavigate();
@@ -49,14 +50,16 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 		initialValues: profile
 			? profile.fields
 			: {
+					profileImage: null,
+					firstName: "FirstName",
+					lastName: "LastName",
+					email: "email@email.com",
 					bio: "Your bio - tell us a little bit about yourself!",
 					pronouns: "(no pronouns provided)",
-					tags: [],
-					projects: [],
+					skills: [],
+					ownProjects: [],
 					availability: emptyAvailability(),
-					interested: [],
-					rejected: [],
-					matched: [],
+					irm: EMPTY_IRM,
 			  },
 		onSubmit: async profileData => {
 			if (canEdit) {
@@ -262,7 +265,7 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 												false,
 											);
 										}}
-										values={formik.values.tags}
+										values={formik.values.skills}
 									>
 										{canEdit && (
 											<>
