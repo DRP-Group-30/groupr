@@ -11,6 +11,8 @@ const NewProjectCard = () => {
 				minH="400px"
 				h="100%"
 				w="100%"
+				border="2px solid #293173"
+				color="groupr.700"
 				_hover={{
 					background: "#fffaf377",
 					boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",

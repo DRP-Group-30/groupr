@@ -104,15 +104,6 @@ const SwipeCard = <T extends ProjectOrUser>({
 					/>
 				</Box>
 				<Stack>
-					<Text
-						color={"green.500"}
-						textTransform={"uppercase"}
-						fontWeight={800}
-						fontSize={"sm"}
-						letterSpacing={1.1}
-					>
-						Developer
-					</Text>
 					<Heading
 						color={useColorModeValue("gray.700", "white")}
 						fontSize={"2xl"}
@@ -127,7 +118,7 @@ const SwipeCard = <T extends ProjectOrUser>({
 					<Text>Because you're interested in</Text>
 					<Flex flexWrap="wrap">
 						{dTagSkills(data).map(tag => (
-							<Tag variant="solid" key={tag} colorScheme="teal" margin="2px">
+							<Tag variant="solid" key={tag} colorScheme="groupr" margin="2px">
 								{tag}
 							</Tag>
 						))}
