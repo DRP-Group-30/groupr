@@ -77,8 +77,8 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 	const navigate = useNavigate();
 	const formik = useFormik<Project[Fields]>({
 		initialValues: project
-			? inlineLogPre("Case 1: ", project.fields)
-			: inlineLogPre("Case 2: ", {
+			? project.fields
+			: {
 					name: "Your Project Name",
 					contactInfo: "Project Contact Details",
 					overview:
@@ -91,7 +91,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					// Should `collaborators` be initialised to include the project creator?
 					creator: getCurrentUserRef(),
 					roles: [],
-			  }),
+			  },
 		onSubmit: async projectData => {
 			// DATA VALIDATION
 			if (

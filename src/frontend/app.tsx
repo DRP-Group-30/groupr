@@ -12,6 +12,7 @@ import SignupPage from "./components/signup";
 import Landing from "./components/landing";
 import ProtectedRoute from "../protectedRoute";
 import Finder2 from "./components/finder2/finder2";
+import Notifications from "./components/notifications";
 
 /**
  * The main app component.
@@ -21,6 +22,7 @@ function App() {
 		<>
 			<AuthProvider>
 				<Navbar></Navbar>
+				<Notifications></Notifications>
 				<Routes>
 					{/**
 					 * A list of routes, each with a path and an element.

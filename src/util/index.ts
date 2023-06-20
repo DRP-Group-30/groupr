@@ -76,3 +76,8 @@ export const nub = <T>(l: T[]) => nubWith(l, x => x);
 export const swapPromiseNull = async <T>(p: Promise<T> | null): Promise<T | null> => p;
 
 export const or = (l: boolean[]): boolean => l.reduce((b, acc) => b || acc, false);
+
+export const and = (l: boolean[]): boolean => l.reduce((b, acc) => b && acc, true);
+
+export const zipWith = <T, U, R>(l1: T[], l2: U[], f: (t: T, u: U) => R) =>
+	l1.map((t, i) => f(t, l2[i]));
