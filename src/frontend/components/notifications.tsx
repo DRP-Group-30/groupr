@@ -3,11 +3,24 @@ import { useEffect, useState, useRef } from "react";
 import { getCurrentUser, getCurrentUserRef } from "./auth";
 import { Project, User } from "../../backend";
 import { and, inlineLogPre, zipWith } from "../../util";
+import {
+	Center,
+	LinkBox,
+	LinkOverlay,
+	Stack,
+	Tag,
+	TagLabel,
+	TagLeftIcon,
+	Text,
+	useToast,
+} from "@chakra-ui/react";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 
 export const listsOfDocRefsEq = (l1: DocumentReference[], l2: DocumentReference[]) =>
 	and(zipWith(l1, l2, (r1, r2) => r1.id === r2.id));
 
 const Notifications = () => {
+	const toast = useToast();
 	const userRef = useRef<User["fields"]>();
 	const docMatchesRef = useRef<Map<string, DocumentReference[]>>();
 
@@ -24,7 +37,26 @@ const Notifications = () => {
 			const actuallyNew = newMatched.filter(r => !prev.map(r2 => r2.id).includes(r.id));
 			if (actuallyNew.length === 0) return;
 			console.log(actuallyNew);
-			alert("MATCH ALTERT 1!!!!");
+			toast({
+				render: () => (
+					<Center>
+						<LinkBox>
+							<LinkOverlay href="dashboard"></LinkOverlay>
+							<Tag colorScheme="green" size="lg" variant="solid">
+								<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
+								<TagLabel padding="12px">
+									<Stack spacing="0">
+										<Text as="b">Match!</Text>
+										<Text>Someone joined your project.</Text>
+									</Stack>
+								</TagLabel>
+							</Tag>
+						</LinkBox>
+					</Center>
+				),
+				duration: 2000,
+				isClosable: true,
+			});
 			console.log("M");
 			console.log(prev);
 			console.log(newMatched);
@@ -68,7 +100,26 @@ const Notifications = () => {
 			);
 			if (actuallyNew.length !== 0) {
 				console.log(actuallyNew);
-				alert("MATCH ALTERT 2!!!!");
+				toast({
+					render: () => (
+						<Center>
+							<LinkBox>
+								<LinkOverlay href="dashboard"></LinkOverlay>
+								<Tag colorScheme="green" size="lg" variant="solid">
+									<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
+									<TagLabel padding="12px">
+										<Stack spacing="0">
+											<Text as="b">Match!</Text>
+											<Text>You joined a project!</Text>
+										</Stack>
+									</TagLabel>
+								</Tag>
+							</LinkBox>
+						</Center>
+					),
+					duration: 2000,
+					isClosable: true,
+				});
 			}
 			userRef.current = newu;
 		});
