@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
-import { Project } from "../../../backend";
+import { Project, User } from "../../../backend";
 import { DocumentReference, doc, getDoc, updateDoc } from "firebase/firestore";
 import { DEFAULT_USER } from "../finder";
 import { Firebase } from "../../../backend/firebase";
@@ -42,8 +42,9 @@ const Dashboard = () => {
 	}, []);
 
 	async function getProjects() {
-		let user = await getCurrentUser();
-		let matchedRefs = user.get("matched");
+		const userSnapshot = await getCurrentUser();
+		const user: User["fields"] = userSnapshot.data() as User["fields"];
+		let matchedRefs = user.irm.matched;
 		let matchedDocs = await Promise.all(
 			matchedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
@@ -51,7 +52,7 @@ const Dashboard = () => {
 			(matched = matchedDocs.map(doc => ({ id: doc.id, fields: doc.data() } as Project))),
 		);
 
-		let interestedRefs = user.get("interested");
+		let interestedRefs = user.irm.interested;
 		let interestedDocs = await Promise.all(interestedRefs.map(getDoc));
 		setInterested(
 			(interested = interestedDocs.map(
@@ -62,13 +63,13 @@ const Dashboard = () => {
 					} as Project),
 			)),
 		);
-		interested.map(project => {
+		interested.forEach(project => {
 			if (project.fields.irm.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")) {
 				moveProjectInto("interested", project);
 			}
 		});
 
-		let rejectedRefs = user.get("rejected");
+		let rejectedRefs = user.irm.rejected;
 		let rejectedDocs = await Promise.all(
 			rejectedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
