@@ -27,6 +27,7 @@ import React from "react";
 import { getCurrentUser, getCurrentUserRef } from "../auth";
 import { get } from "http";
 import { useAuth } from "../../../context/AuthContext";
+import { inlineLog } from "../../../util";
 
 const Dashboard = () => {
 	const toast = useToast();
@@ -49,7 +50,9 @@ const Dashboard = () => {
 			matchedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
 		setMatched(
-			(matched = matchedDocs.map(doc => ({ id: doc.id, fields: doc.data() } as Project))),
+			(matched = matchedDocs.map(
+				doc => ({ id: doc.id, fields: inlineLog(doc.data()) } as Project),
+			)),
 		);
 
 		let interestedRefs = user.irm.interested;

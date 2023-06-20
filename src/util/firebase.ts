@@ -24,6 +24,7 @@ import { Firebase } from "../backend/firebase";
 import { Project } from "../backend";
 import { StorageReference, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { FirebaseError } from "firebase/app";
+import { emptyIRM } from "../backend/default_database";
 
 export const updateFields = async (
 	d: DocumentReference<DocumentData>,
@@ -142,7 +143,10 @@ export const addCollection = async (
 	c: FireCollection<AbstractFireDoc>,
 ): Promise<unknown> => Promise.all(c.map(d => addFireDoc(collectionPath, d)));
 
-export const addFireDoc = async (pathToDoc: string, { id, fields }: AbstractFireDoc): Promise<string> => {
+export const addFireDoc = async (
+	pathToDoc: string,
+	{ id, fields }: AbstractFireDoc,
+): Promise<string> => {
 	if (id === RANDOM) {
 		return (await addDoc(collection(Firebase.db, pathToDoc), fields)).id;
 	} else {
@@ -154,11 +158,13 @@ export const addFireDoc = async (pathToDoc: string, { id, fields }: AbstractFire
 
 export const clearUserLists = async () => {
 	const users = await getDocs(collection(Firebase.db, "users"));
-	users.docs.map((u: DocumentSnapshot<DocumentData>) => updateDoc(u.ref, {
-		"interested": [],
-		"rejected": [],
-		"matched": [],
-	}));
+	Promise.all(
+		users.docs.map((u: DocumentSnapshot<DocumentData>) =>
+			updateDoc(u.ref, {
+				irm: emptyIRM(),
+			}),
+		),
+	);
 };
 
 export const addAll = async (model: FireDatabase): Promise<void> => {

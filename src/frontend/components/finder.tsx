@@ -9,7 +9,16 @@ import {
 import "../app.css";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "./swipe_card";
-import { Button, Center, Flex, Grid, GridItem, Text, useColorModeValue } from "@chakra-ui/react";
+import {
+	Button,
+	Center,
+	Flex,
+	Grid,
+	GridItem,
+	Text,
+	VStack,
+	useColorModeValue,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Firebase } from "../../backend/firebase";
 import { Fields, getImg, resetDatabase, updateField } from "../../util/firebase";
@@ -20,6 +29,7 @@ import React from "react";
 import { map, swapPromiseNull } from "../../util";
 import { useAuth } from "../../context/AuthContext";
 import { get } from "http";
+import { useNavigate } from "react-router-dom";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);
@@ -34,6 +44,7 @@ const REJECTED = "irm.rejected";
 const USER_CARD_CATEGORIES = [INTERESTED, MATCHED, REJECTED];
 
 const Finder = () => {
+	const navigate = useNavigate();
 	const [offset, setOffset] = useState(0);
 	const [dragging, setDragging] = useState(false);
 	let [sideBarWidth, setSideBarWidth] = useState(25);
@@ -188,38 +199,51 @@ const Finder = () => {
 			<GridItem pl="2" area={"main"}>
 				<Center h="100%">
 					<Flex justifyContent="space-evenly" alignItems="center" w="60%">
-						<Button
-							className={`${dragging ? "Hidden" : ""}`}
-							onClick={rejectCard}
-							leftIcon={<MdClose />}
-							boxShadow="lg"
-						>
-							Reject
-						</Button>
 						{currentCard ? (
-							<SwipeCard
-								offset={offset}
-								setOffset={setOffset}
-								dragging={dragging}
-								setDragging={setDragging}
-								cardAnchor={cardAnchor}
-								acceptCard={acceptCard}
-								rejectCard={rejectCard}
-								data={{ type: ProjectOrUser.Project, fields: currentCard }}
-								cardHidden={cardHidden}
-								coverImgURL={coverImgURL}
-							></SwipeCard>
+							<>
+								<Button
+									className={`${dragging ? "Hidden" : ""}`}
+									onClick={rejectCard}
+									leftIcon={<MdClose />}
+									boxShadow="lg"
+								>
+									Reject
+								</Button>
+								<SwipeCard
+									offset={offset}
+									setOffset={setOffset}
+									dragging={dragging}
+									setDragging={setDragging}
+									cardAnchor={cardAnchor}
+									acceptCard={acceptCard}
+									rejectCard={rejectCard}
+									data={{ type: ProjectOrUser.Project, fields: currentCard }}
+									cardHidden={cardHidden}
+									coverImgURL={coverImgURL}
+								></SwipeCard>
+								<Button
+									className={`${dragging ? "Hidden" : ""}`}
+									onClick={acceptCard}
+									rightIcon={<MdDone />}
+									boxShadow="lg"
+								>
+									Accept
+								</Button>
+							</>
 						) : (
-							<Text fontSize="xl">No projects! Come back later.</Text>
+							<VStack>
+								<Text fontSize="xl">No projects! Come back later.</Text>
+								<Button
+									className={"dashboardbutton"}
+									onClick={() => {
+										navigate("/dashboard", { replace: false });
+									}}
+									boxShadow="lg"
+								>
+									Go to Dashboard
+								</Button>
+							</VStack>
 						)}
-						<Button
-							className={`${dragging ? "Hidden" : ""}`}
-							onClick={acceptCard}
-							rightIcon={<MdDone />}
-							boxShadow="lg"
-						>
-							Accept
-						</Button>
 					</Flex>
 				</Center>
 			</GridItem>
