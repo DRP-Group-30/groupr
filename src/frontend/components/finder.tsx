@@ -2,7 +2,7 @@ import { DocumentReference, doc, getDoc, getDocs, collection } from "firebase/fi
 import "../app.css";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "./swipe_card";
-import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import { Button, Center, Flex, Grid, GridItem, Text, useColorModeValue } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Firebase } from "../../backend/firebase";
 import { Fields, getImg, resetDatabase, updateField } from "../../util/firebase";
@@ -150,18 +150,30 @@ const Finder = () => {
 				transition: "all 0.5s",
 			}}
 		>
-			<GridItem pl="2" bg="gray.100" area={"nav"} zIndex="9999" mt="1pt">
+			<GridItem
+				pl="2"
+				// bg={useColorModeValue("groupr.900", "groupr.300")}
+				area={"nav"}
+				zIndex="9999"
+				mt="1pt"
+				// outlineColor="gray.100"
+				// outline="1px solid"
+				style={{
+					background: "rgba(255, 255, 255, 0.1)",
+					boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+					backdropFilter: "blur(5px)",
+					WebkitBackdropFilter: "blur(5px)",
+					border: "2px solid rgba(255, 255, 255, 0.3)",
+				}}
+			>
 				<Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
 					<Button
-						onClick={toggleSideBar}
-						alignSelf="flex-end"
-						transform="translate(50%)"
-						bg="white"
-						boxShadow={"base"}
+						colorScheme="groupr"
+						boxShadow="lg"
+						onClick={() => resetDatabase(defaultDatabase())}
 					>
-						{">"}
+						Reset!
 					</Button>
-					<Button onClick={() => resetDatabase(defaultDatabase())}>Reset!</Button>
 				</Flex>
 			</GridItem>
 			<GridItem pl="2" area={"main"}>
@@ -171,6 +183,7 @@ const Finder = () => {
 							className={`${dragging ? "Hidden" : ""}`}
 							onClick={rejectCard}
 							leftIcon={<MdClose />}
+							boxShadow="lg"
 						>
 							Reject
 						</Button>
@@ -194,6 +207,7 @@ const Finder = () => {
 							className={`${dragging ? "Hidden" : ""}`}
 							onClick={acceptCard}
 							rightIcon={<MdDone />}
+							boxShadow="lg"
 						>
 							Accept
 						</Button>
@@ -201,11 +215,6 @@ const Finder = () => {
 				</Center>
 			</GridItem>
 		</Grid>
-
-		// <div className="App">
-		//   {/* <Card></Card> */}
-		//   <SwipeCard></SwipeCard>
-		// </div>
 	);
 };
 

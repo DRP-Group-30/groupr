@@ -34,9 +34,9 @@ const NavLink = ({ children }: { children: string }) => (
 		px={2}
 		py={1}
 		rounded={"md"}
+		color="groupr.700"
 		_hover={{
 			textDecoration: "none",
-			bg: useColorModeValue("gray.200", "gray.700"),
 		}}
 		as={RouteLink}
 		to={LinksRoutes[children]}
@@ -63,7 +63,7 @@ const Navbar = () => {
 	return (
 		<>
 			<Box
-				bg={useColorModeValue("gray.100", "gray.900")}
+				bg={useColorModeValue("groupr.300", "gray.900")}
 				px={4}
 				outlineColor="gray.100"
 				outline="1px solid"
@@ -74,9 +74,9 @@ const Navbar = () => {
 							<LinkOverlay as={RouteLink} to="/">
 								<Image
 									src={logo}
-									h="100%"
+									maxH="36pt"
 									objectFit="scale-down"
-									mt="-3pt"
+									// mt="-3pt"
 									mr="-4pt"
 								/>
 							</LinkOverlay>

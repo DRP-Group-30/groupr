@@ -26,15 +26,7 @@ const Sidebar = ({ sideElem, mainElem }: SidebarSlots) => {
 				transition: "all 0.5s",
 			}}
 		>
-			<GridItem
-				pl="2"
-				mt="1pt"
-				pt="5pt"
-				bg="gray.100"
-				area={"nav"}
-				zIndex="9999"
-				alignContent="center"
-			>
+			<GridItem pl="2" mt="1pt" pt="5pt" area={"nav"} zIndex="9999" alignContent="center">
 				<Flex
 					h="100%"
 					flexDirection="column"
