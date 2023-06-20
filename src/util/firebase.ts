@@ -158,7 +158,7 @@ export const addFireDoc = async (
 
 export const clearUserLists = async () => {
 	const users = await getDocs(collection(Firebase.db, "users"));
-	Promise.all(
+	await Promise.all(
 		users.docs.map((u: DocumentSnapshot<DocumentData>) =>
 			updateDoc(u.ref, {
 				irm: emptyIRM(),
