@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
-import { Project, User } from "../../../backend";
+import { Project, User, getUserDocRef } from "../../../backend";
 import { DocumentReference, doc, getDoc, updateDoc } from "firebase/firestore";
 import { DEFAULT_USER } from "../finder";
 import { Firebase } from "../../../backend/firebase";
@@ -103,28 +103,12 @@ const Dashboard = () => {
 					.map(ref => ref.id)
 					.includes(currentUser?.uid ?? "")
 			) {
-				console.log("MATCH");
 				matched.push(draggedProject);
 				setMatched(matched);
-				toast({
-					render: () => (
-						<Center>
-							<LinkBox>
-								<LinkOverlay href="dashboard"></LinkOverlay>
-								<Tag colorScheme="green" size="lg" variant="solid">
-									<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
-									<TagLabel padding="12px">
-										<Stack spacing="0">
-											<Text as="b">Matched project!</Text>
-											<Text>See your matches in the Dashboard.</Text>
-										</Stack>
-									</TagLabel>
-								</Tag>
-							</LinkBox>
-						</Center>
-					),
-					duration: 2000,
-					isClosable: true,
+				draggedProject.fields.irm.matched.push(getCurrentUserRef());
+				setDraggedProject(draggedProject);
+				updateDoc(doc(Firebase.db, "projects", draggedProject.id), {
+					irm: draggedProject.fields.irm,
 				});
 			} else {
 				interested.push(draggedProject);

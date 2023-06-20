@@ -12,9 +12,11 @@ import {
 	TagLabel,
 	TagLeftIcon,
 	Text,
+	chakra,
 	useToast,
 } from "@chakra-ui/react";
 import { CheckCircleIcon } from "@chakra-ui/icons";
+import { Fields } from "../../util/firebase";
 
 export const listsOfDocRefsEq = (l1: DocumentReference[], l2: DocumentReference[]) =>
 	and(zipWith(l1, l2, (r1, r2) => r1.id === r2.id));
@@ -29,7 +31,8 @@ const Notifications = () => {
 			const docMatches = docMatchesRef.current ?? null;
 			if (docMatches === null) return; // To early
 			const prev = docMatches.get(p.id) ?? null;
-			const newMatched = (n.data() as Project["fields"]).irm.matched;
+			const newProject = n.data() as Project[Fields];
+			const newMatched = newProject.irm.matched;
 			docMatches.set(p.id, newMatched);
 			// Not sure how useRef works internally, this might not be necessary
 			docMatchesRef.current = docMatches;
@@ -41,25 +44,33 @@ const Notifications = () => {
 			const actuallyNew = newMatched.filter(r => !prev.map(r2 => r2.id).includes(r.id));
 			if (actuallyNew.length !== 0) {
 				console.log(actuallyNew);
-				toast({
-					render: () => (
-						<Center>
-							<LinkBox>
-								<LinkOverlay href="dashboard"></LinkOverlay>
-								<Tag colorScheme="green" size="lg" variant="solid">
-									<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
-									<TagLabel padding="12px">
-										<Stack spacing="0">
-											<Text as="b">Match!</Text>
-											<Text>Someone joined your project.</Text>
-										</Stack>
-									</TagLabel>
-								</Tag>
-							</LinkBox>
-						</Center>
-					),
-					duration: 2000,
-					isClosable: true,
+				getDoc(actuallyNew[0]).then(ds => {
+					let user = ds.data() as User[Fields];
+					toast({
+						render: () => (
+							<Center>
+								<LinkBox>
+									<LinkOverlay href="dashboard"></LinkOverlay>
+									<Tag colorScheme="groupr" size="lg" variant="solid">
+										<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
+										<TagLabel padding="12px">
+											<Stack spacing="0">
+												<Text as="b">Match!</Text>
+												<Text>
+													<chakra.span as="b">
+														{user.firstName} {user.lastName}
+													</chakra.span>{" "}
+													joined your project "{newProject.name}"!
+												</Text>
+											</Stack>
+										</TagLabel>
+									</Tag>
+								</LinkBox>
+							</Center>
+						),
+						duration: 5000,
+						isClosable: true,
+					});
 				});
 
 				console.log(actuallyNew);
@@ -117,25 +128,32 @@ const Notifications = () => {
 			);
 			if (actuallyNew.length !== 0) {
 				console.log(actuallyNew);
-				toast({
-					render: () => (
-						<Center>
-							<LinkBox>
-								<LinkOverlay href="dashboard"></LinkOverlay>
-								<Tag colorScheme="green" size="lg" variant="solid">
-									<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
-									<TagLabel padding="12px">
-										<Stack spacing="0">
-											<Text as="b">Match!</Text>
-											<Text>You joined a project!</Text>
-										</Stack>
-									</TagLabel>
-								</Tag>
-							</LinkBox>
-						</Center>
-					),
-					duration: 2000,
-					isClosable: true,
+				getDoc(actuallyNew[0]).then(ds => {
+					let project = ds.data() as Project[Fields];
+					toast({
+						render: () => (
+							<Center>
+								<LinkBox>
+									<LinkOverlay href="dashboard"></LinkOverlay>
+									<Tag colorScheme="groupr" size="lg" variant="solid">
+										<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
+										<TagLabel padding="12px">
+											<Stack spacing="0">
+												<Text as="b">Match!</Text>
+												<Text>
+													You joined project{" "}
+													<chakra.span as="b">{project.name}</chakra.span>
+													!
+												</Text>
+											</Stack>
+										</TagLabel>
+									</Tag>
+								</LinkBox>
+							</Center>
+						),
+						duration: 5000,
+						isClosable: true,
+					});
 				});
 			}
 			userRef.current = newu;
