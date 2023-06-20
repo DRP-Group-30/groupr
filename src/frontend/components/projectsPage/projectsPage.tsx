@@ -3,7 +3,7 @@ import NewProjectCard from "./newProjectCard";
 import { DocumentReference, getDocs, collection, getDoc } from "firebase/firestore";
 import { Firebase } from "../../../backend/firebase";
 import { useEffect, useState } from "react";
-import { Project } from "../../../backend";
+import { Project, User } from "../../../backend";
 import CreatorCard from "../project_creator/creator_card";
 import { getCurrentUser } from "../auth";
 
@@ -16,8 +16,10 @@ const ProjectSelector = () => {
 	}, []);
 
 	async function pollProjects() {
-		const user = await getCurrentUser();
-		const projects = user.get("projects");
+		const userSnapshot = await getCurrentUser();
+
+		const user: User["fields"] = userSnapshot.data() as User["fields"];
+		const projects = user.ownProjects;
 		// const projecDocs = await Promise.all(
 		// 	projectRefs.map((ref: DocumentReference) => getDoc(ref)),
 		// );
