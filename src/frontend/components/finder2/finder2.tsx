@@ -104,10 +104,10 @@ const Finder2 = () => {
 	async function acceptCard() {
 		setOffset(window.innerWidth / 2);
 		const cur = cards[cardIndex - 1];
-		const snapshot = (await getDoc(cur)).data() as Project["fields"];
+		const snapshot = (await getDoc(cur)).data() as User["fields"];
 		console.log(snapshot.irm.interested);
 		const curProject = getCurrentProjectRef();
-		if (snapshot.irm.interested.map(i => i.id).includes(currentUser?.uid ?? "")) {
+		if (snapshot.irm.interested.map(i => i.id).includes(curProject.id)) {
 			console.log("MATCHED!");
 			updateField<DocumentReference[]>(curProject, MATCHED, (rs: any[]) =>
 				rs.concat([cards[cardIndex - 1]]),
