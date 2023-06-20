@@ -1,4 +1,4 @@
-import { Container, Heading, VStack, Text, Center } from "@chakra-ui/react";
+import { Heading, VStack, Text, Center, Flex } from "@chakra-ui/react";
 import DashboardCard from "./card";
 import { Dispatch, DragEvent, SetStateAction } from "react";
 import { Project } from "../../../backend";
@@ -23,18 +23,23 @@ const DBColumn = ({ heading, children, moveProject, setDragged }: columnProps) =
 	}
 
 	return (
-		<Container
+		<Flex
 			className="GlassMorphic"
+			flexDirection="column"
+			alignItems="center"
 			h="100%"
-			w="100%"
+			w="45%"
+			p={4}
 			overflowY="auto"
 			borderRadius="lg"
-			centerContent
 			onDragOver={dragOver}
 			onDrop={drop}
 			color="groupr.700"
+			flexGrow="1"
 		>
-			<Heading mt="32px">{heading}</Heading>
+			<Heading mt="32px" mb="16px">
+				{heading}
+			</Heading>
 			<VStack h="100%" w="100%" spacing={5} scrollMarginBottom="100px">
 				{children.length > 0 ? (
 					children.map(project => (
@@ -47,15 +52,15 @@ const DBColumn = ({ heading, children, moveProject, setDragged }: columnProps) =
 						></DashboardCard>
 					))
 				) : (
-					<Center height="100%">
-						<Text fontSize="lg" textAlign="center">
+					<Center w="100%" h="100%">
+						<Text fontSize="xl" textAlign="center">
 							Nothing yet!<br></br> Projects you{" "}
 							{heading === "Rejected" ? "reject" : "accept"} will show up here.
 						</Text>
 					</Center>
 				)}
 			</VStack>
-		</Container>
+		</Flex>
 	);
 };
 

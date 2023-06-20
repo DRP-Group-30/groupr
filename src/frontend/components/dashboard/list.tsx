@@ -27,7 +27,7 @@ const DBList = ({ heading, children, moveInto, hasAddNewProject = false }: listP
 			<Heading mt="32px">{heading}</Heading>
 			<SimpleGrid
 				width="100%"
-				height="100%"
+				height={children.length > 0 || hasAddNewProject ? undefined : "100%"}
 				columns={children.length > 0 || hasAddNewProject ? 2 : 1}
 				spacing={8}
 				p="10pt"
@@ -47,7 +47,9 @@ const DBList = ({ heading, children, moveInto, hasAddNewProject = false }: listP
 				) : (
 					<Center height="100%">
 						<VStack>
-							<Text fontSize="lg">Nothing here for now!</Text>
+							<Text fontSize="xl" textAlign="center">
+								Nothing yet!<br></br>Projects you match with will show up here.
+							</Text>
 						</VStack>
 					</Center>
 				)}

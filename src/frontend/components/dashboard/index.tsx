@@ -97,11 +97,13 @@ const Dashboard = () => {
 		setRejected((rejected = rejected.filter(p => p !== draggedProject)));
 
 		if (col.toLowerCase() === "interested") {
+			console.log(draggedProject.fields.irm.interested);
 			if (
 				draggedProject.fields.irm.interested
 					.map(ref => ref.id)
 					.includes(currentUser?.uid ?? "")
 			) {
+				console.log("MATCH");
 				matched.push(draggedProject);
 				setMatched(matched);
 				toast({
@@ -161,7 +163,12 @@ const Dashboard = () => {
 							moveInto={moveProjectInto}
 						></DashboardList>
 					) : (
-						<>
+						<Flex
+							width="100%"
+							gap={8}
+							justifyContent="space-evenly"
+							alignItems="center"
+						>
 							<DashboardColumn
 								heading={CardStatus.INTERESTED}
 								children={interested}
@@ -174,7 +181,7 @@ const Dashboard = () => {
 								moveProject={moveProjectInto}
 								setDragged={setDraggedProject}
 							></DashboardColumn>
-						</>
+						</Flex>
 					)}
 					{/* <DashboardList heading="Interested" children={["Test","Test","Test","Test"]}></DashboardList> */}
 				</Flex>
