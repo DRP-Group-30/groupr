@@ -27,7 +27,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"SHOOTER",
 					"C++",
 				],
-				irm: EMPTY_IRM,
+				irm: emptyIRM(),
 				roles: [],
 			},
 		},
@@ -40,7 +40,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				overview: "SPOOKY",
 				coverImage: "0x0.webp",
 				tags: ["HORROR", "UNITY", "C#"],
-				irm: EMPTY_IRM,
+				irm: emptyIRM(),
 				roles: [],
 			},
 		},
@@ -53,7 +53,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				overview: "It's like my favourite game, Undertale",
 				coverImage: "Overstory.png",
 				tags: ["RPG", "RETRO", "PIXEL ART", "NARRATIVE DRIVEN", "RPG MAKER"],
-				irm: EMPTY_IRM,
+				irm: emptyIRM(),
 				roles: [],
 			},
 		},
@@ -74,7 +74,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"ROBLOX",
 					"LUA",
 				],
-				irm: EMPTY_IRM,
+				irm: emptyIRM(),
 				roles: [],
 			},
 		},
@@ -96,7 +96,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"UNREAL ENGINE",
 					"C++",
 				],
-				irm: EMPTY_IRM,
+				irm: emptyIRM(),
 				roles: [],
 			},
 		},
@@ -109,7 +109,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 				overview: "Horse is now even farther away",
 				coverImage: "SmartSelect_20230612-164646_YouTube.png",
 				tags: ["REALISTIC", "OPEN-WORLD", "REMAKE"],
-				irm: EMPTY_IRM,
+				irm: emptyIRM(),
 				roles: [],
 			},
 		},
@@ -128,4 +128,4 @@ export const defaultDatabase = (): GrouprDatabase => ({
 
 export default defaultDatabase;
 
-export const EMPTY_IRM: IRM = { interested: [], rejected: [], matched: [] };
+export const emptyIRM = (): IRM => ({ interested: [], rejected: [], matched: [] });

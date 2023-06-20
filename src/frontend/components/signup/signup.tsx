@@ -21,7 +21,8 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useAuth } from "../../../context/AuthContext";
 import { Field, Formik } from "formik";
 import { addFireDoc } from "../../../util/firebase";
-import { emptyAvailability } from "../../../backend";
+import { User, emptyAvailability } from "../../../backend";
+import { emptyIRM } from "../../../backend/default_database";
 
 const SignupPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -60,20 +61,22 @@ const SignupPage = () => {
 									user.user?.updateProfile({
 										displayName: values.firstName + " " + values.lastName,
 									});
-									addFireDoc("users", {
+									const u: User = {
 										id: user.user?.uid ?? "",
 										fields: {
 											bio: "",
 											pronouns: "",
 											availability: emptyAvailability(),
-											tags: [],
-											projects: [],
-											rejected: [],
-											interested: [],
-											matched: [],
+											skills: [],
+											irm: emptyIRM(),
+											profileImage: null,
+											firstName: values.firstName,
+											lastName: values.lastName,
+											email: values.email,
+											ownProjects: [],
 										},
-									});
-									console.log(currentUser);
+									};
+									addFireDoc("users", u).then(() => console.group(currentUser));
 								})
 								.catch(err => {
 									toast({

@@ -59,7 +59,7 @@ import { useNavigate } from "react-router-dom";
 import { doc, updateDoc } from "firebase/firestore";
 import { Firebase } from "../../../backend/firebase";
 import { getCurrentUser, getCurrentUserRef } from "../auth";
-import { EMPTY_IRM } from "../../../backend/default_database";
+import { emptyIRM } from "../../../backend/default_database";
 
 const contactIcons = {
 	discord: discord,
@@ -86,7 +86,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					tags: [],
 					// Should there be a type for only the document data fields that are
 					// editable/shown?
-					irm: EMPTY_IRM,
+					irm: emptyIRM(),
 					// Should `collaborators` be initialised to include the project creator?
 					creator: getCurrentUserRef(),
 					roles: [],

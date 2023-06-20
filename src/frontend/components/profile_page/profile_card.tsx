@@ -35,7 +35,7 @@ import { User, addUser, emptyAvailability, updateUser } from "../../../backend";
 import { Fields, getAllTags } from "../../../util/firebase";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { EMPTY_IRM } from "../../../backend/default_database";
+import { emptyIRM } from "../../../backend/default_database";
 
 const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | null }) => {
 	const navigate = useNavigate();
@@ -59,7 +59,7 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 					skills: [],
 					ownProjects: [],
 					availability: emptyAvailability(),
-					irm: EMPTY_IRM,
+					irm: emptyIRM(),
 			  },
 		onSubmit: async profileData => {
 			if (canEdit) {
