@@ -40,7 +40,7 @@ const SignupPage = () => {
 			<Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6} mt="-60pt">
 				<Stack align={"center"}>
 					<Heading fontSize={"4xl"} textAlign={"center"}>
-						Sign up
+						Sign Up
 					</Heading>
 				</Stack>
 				<Box
@@ -176,7 +176,7 @@ const SignupPage = () => {
 											size="lg"
 											color={"white"}
 										>
-											Sign up
+											Sign Up
 										</Button>
 									</Stack>
 									<Stack pt={6}>

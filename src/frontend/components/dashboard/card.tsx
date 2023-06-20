@@ -99,7 +99,7 @@ function DBCard({ project, status, moveInto, setDragged }: cardProps) {
 							<div></div>
 						)}
 						<Button
-							colorScheme="blue"
+							colorScheme="groupr"
 							rightIcon={status === CardStatus.REJECTED ? <MdDone /> : <MdClose />}
 							size="sm"
 							aria-label={""}
