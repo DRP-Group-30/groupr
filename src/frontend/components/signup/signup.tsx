@@ -31,10 +31,11 @@ const SignupPage = () => {
 
 	return (
 		<Flex
+			backgroundColor="groupr.100"
+			color="groupr.700"
 			minH={"100vh"}
 			align={"center"}
 			justify={"center"}
-			bg={useColorModeValue("gray.50", "gray.800")}
 		>
 			<Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6} mt="-60pt">
 				<Stack align={"center"}>
@@ -168,15 +169,12 @@ const SignupPage = () => {
 									</FormControl>
 									<Stack spacing={10} pt={2}>
 										<Button
+											colorScheme="groupr"
 											loadingText="Submitting"
 											type="submit"
 											id="submit"
 											size="lg"
-											bg={"blue.400"}
 											color={"white"}
-											_hover={{
-												bg: "blue.500",
-											}}
 										>
 											Sign up
 										</Button>
@@ -184,7 +182,7 @@ const SignupPage = () => {
 									<Stack pt={6}>
 										<Text align={"center"}>
 											Already a user?{" "}
-											<Link href="/login" color={"blue.400"}>
+											<Link href="/login" color={"groupr.500"}>
 												Login
 											</Link>
 										</Text>

@@ -32,7 +32,8 @@ const LoginPage = () => {
 			minH={"100%"}
 			align={"center"}
 			justify={"center"}
-			bg={useColorModeValue("gray.50", "gray.800")}
+			backgroundColor="groupr.100"
+			color="groupr.700"
 		>
 			<Stack spacing={8} mx={"auto"} maxW={"lg"} mt="-60pt" px={6}>
 				<Stack align={"center"}>
@@ -75,7 +76,13 @@ const LoginPage = () => {
 								<Stack spacing={4} align="flex-start" alignItems="center">
 									<FormControl id="email" isRequired>
 										<FormLabel htmlFor="email">Email Address</FormLabel>
-										<Field as={Input} id="email" name="email" type="email" />
+										<Field
+											as={Input}
+											colorScheme="groupr"
+											id="email"
+											name="email"
+											type="email"
+										/>
 									</FormControl>
 									<FormControl
 										isInvalid={!!errors.password && touched.password}
@@ -114,25 +121,18 @@ const LoginPage = () => {
 											>
 												Remember me?
 											</Field>
-											<Link color="blue.400" href="/forgot-password">
+											<Link color="groupr.500" href="/forgot-password">
 												{" "}
 												Forgot password?{" "}
 											</Link>
 										</Stack>
-										<Button
-											bg={"blue.400"}
-											color={"white"}
-											type="submit"
-											_hover={{
-												bg: "blue.500",
-											}}
-										>
+										<Button colorScheme="groupr" color={"white"} type="submit">
 											Sign in
 										</Button>
 									</Stack>
 									<Text fontSize="md">
 										Don't have an account?{" "}
-										<Link color="blue.400" href="/signup">
+										<Link color="groupr.500" href="/signup">
 											Sign up
 										</Link>
 									</Text>

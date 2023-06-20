@@ -1,21 +1,27 @@
 import { AddIcon } from "@chakra-ui/icons";
-import { Card, Icon, VStack, Text, LinkBox, LinkOverlay } from "@chakra-ui/react";
+import { Card, Icon, VStack, Text, LinkBox, LinkOverlay, Flex } from "@chakra-ui/react";
 
 const NewProjectCard = () => {
 	return (
 		<LinkBox>
-			<Card
-				align="center"
-				direction="row"
-				justify="center"
+			<Flex
+				alignItems="center"
+				flexDirection="row"
+				justifyContent="center"
+				minH="400px"
 				h="100%"
 				w="100%"
-				boxShadow="none"
-				backgroundColor="gray.100"
-				_hover={{ backgroundColor: "gray.300" }}
+				border="2px solid #293173"
+				color="groupr.700"
+				_hover={{
+					background: "#fffaf377",
+					boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
+					backdropFilter: "blur(5px)",
+					WebkitBackdropFilter: "blur(5px)",
+					border: "2px solid rgba(255, 255, 255, 0.5)",
+				}}
 				transition="all 0.1s"
-				border="dashed"
-				borderColor={"gray.400"}
+				rounded="lg"
 			>
 				<LinkOverlay href="projects/edit">
 					<VStack>
@@ -23,7 +29,7 @@ const NewProjectCard = () => {
 						<Text>Make New Project</Text>
 					</VStack>
 				</LinkOverlay>
-			</Card>
+			</Flex>
 		</LinkBox>
 	);
 };

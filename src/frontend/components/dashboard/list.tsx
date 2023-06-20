@@ -18,13 +18,15 @@ const DBList = ({ heading, children, moveInto, hasAddNewProject = false }: listP
 		<Container
 			className="GlassMorphic"
 			maxW="100%"
-			maxH=""
 			overflowY="auto"
 			centerContent
 			borderRadius="xl"
 			color="groupr.700"
+			p={4}
 		>
-			<Heading mt="32px">{heading}</Heading>
+			<Heading mt="32px" mb="16px">
+				{heading}
+			</Heading>
 			<SimpleGrid
 				width="100%"
 				height={children.length > 0 || hasAddNewProject ? undefined : "100%"}

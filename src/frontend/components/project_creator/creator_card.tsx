@@ -167,7 +167,15 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 	HTMLElement.prototype.scrollIntoView = function () {};
 
 	return (
-		<Box maxWidth="600px" bg="white" minWidth="400px" p={6} rounded="md" boxShadow="2xl">
+		<Box
+			color="groupr.700"
+			maxWidth="600px"
+			bg="white"
+			minWidth="400px"
+			p={6}
+			rounded="md"
+			boxShadow="2xl"
+		>
 			<Box
 				backgroundColor="gray.200"
 				height="210px"
@@ -210,7 +218,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								/>
 								{editMode && (
 									<Button
-										colorScheme="teal"
+										colorScheme="groupr"
 										fontWeight="400"
 										leftIcon={<MdUploadFile />}
 										onClick={() => imageInputElem?.click()}
@@ -438,7 +446,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 													label={label}
 													onRemove={onRemove}
 													variant="solid"
-													colorScheme="teal"
+													colorScheme="groupr"
 													marginRight="3px"
 													marginBottom="6px"
 												/>
@@ -446,7 +454,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 												<Tag
 													key={tid}
 													variant="solid"
-													colorScheme="teal"
+													colorScheme="groupr"
 													marginRight="3px"
 													marginBottom="6px"
 												>
@@ -520,6 +528,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 							<FormControl>
 								<FormLabel>Contact Method</FormLabel>
 								<RadioGroup
+									colorScheme="groupr"
 									value={contactMethod}
 									onChange={s => setContactMethod(s as ContactMethod)}
 								>
@@ -591,7 +600,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 						{editMode ? (
 							<Button
 								type="submit"
-								colorScheme="teal"
+								colorScheme="groupr"
 								width="full"
 								alignSelf="flex-end"
 							>
@@ -599,10 +608,10 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								{"Save Project"}
 							</Button>
 						) : (
-							<HStack>
+							<HStack width="100%">
 								<Button
 									type="submit"
-									colorScheme="teal"
+									colorScheme="groupr"
 									width="full"
 									alignSelf="flex-end"
 								>
@@ -610,7 +619,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 									{"Edit Project"}
 								</Button>
 								<Button
-									colorScheme="teal"
+									colorScheme="groupr"
 									width="full"
 									alignSelf="flex-end"
 									onClick={() => {
@@ -618,7 +627,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 									}}
 								>
 									{" "}
-									{"Look for Collaborators"}
+									{"Find Collaborators"}
 								</Button>
 							</HStack>
 						)}

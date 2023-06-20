@@ -227,6 +227,7 @@ const Finder = () => {
 							<VStack>
 								<Text fontSize="xl">No projects! Come back later.</Text>
 								<Button
+									colorScheme="groupr"
 									className={"dashboardbutton"}
 									onClick={() => {
 										navigate("/dashboard", { replace: false });
