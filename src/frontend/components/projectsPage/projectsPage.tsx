@@ -66,8 +66,11 @@ const ProjectSelector = ({ filterTags }: { filterTags: String[] }) => {
 			marginBottom="10pt"
 			centerContent
 			borderRadius="xl"
+			color="groupr.700"
 		>
-			<Heading margin="16px">{"Your Projects"}</Heading>
+			<Heading mt="32px" mb="16px">
+				{"Your Projects"}
+			</Heading>
 			<SimpleGrid width="100%" columns={3} spacing={8} p="10pt">
 				<NewProjectCard />
 				{projects
