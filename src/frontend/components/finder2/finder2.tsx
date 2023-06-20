@@ -1,29 +1,39 @@
-import { DocumentReference, doc, getDoc, getDocs, collection } from "firebase/firestore";
-import "../app.css";
+import {
+	DocumentReference,
+	doc,
+	getDoc,
+	getDocs,
+	collection,
+	DocumentData,
+} from "firebase/firestore";
+import "../../app.css";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "../swipe_card";
-import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import {
+	Button,
+	Center,
+	Flex,
+	Grid,
+	GridItem,
+	Text,
+	VStack,
+	useColorModeValue,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Firebase } from "../../../backend/firebase";
 import { Fields, getImg, resetDatabase, updateField } from "../../../util/firebase";
 import defaultDatabase from "../../../backend/default_database";
-import { Project, ProjectOrUser, User } from "../../../backend";
+import { IRM, Project, ProjectOrUser, User, userName } from "../../../backend";
 import { getCurrentUser, getCurrentUserRef } from "../auth";
 import React from "react";
 import { map, swapPromiseNull } from "../../../util";
 import { useAuth } from "../../../context/AuthContext";
 import { get } from "http";
+import { useNavigate } from "react-router-dom";
+import { INTERESTED, MATCHED, REJECTED, allSeen } from "../finder";
 
-export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
-export const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);
-
-const INTERESTED = "interested";
-const MATCHED = "matched";
-const REJECTED = "rejected";
-
-const USER_CARD_CATEGORIES = [INTERESTED, MATCHED, REJECTED];
-
-const Finder = () => {
+const Finder2 = () => {
+	const navigate = useNavigate();
 	const [offset, setOffset] = useState(0);
 	const [dragging, setDragging] = useState(false);
 	let [sideBarWidth, setSideBarWidth] = useState(25);
@@ -52,11 +62,10 @@ const Finder = () => {
 	}, []);
 
 	async function pollCards() {
-		let user = await getCurrentUser();
-		let userProjects = (user.data() as User[Fields]).ownProjects.map(p => p.id);
-		const seenBefore = USER_CARD_CATEGORIES.flatMap<DocumentReference>(d => user.get(d)).map(
-			r => r.id,
-		);
+		const userSnapshot = await getCurrentUser();
+		const user = userSnapshot.data() as User[Fields];
+		let userProjects = user.ownProjects.map(p => p.id);
+		const seenBefore = allSeen(user.irm).map(r => r.id);
 
 		const ds = await getDocs(collection(Firebase.db, "projects"));
 
@@ -93,7 +102,6 @@ const Finder = () => {
 	}
 
 	async function acceptCard() {
-		console.log(`ACCEPT ${map(currentCard, fullName)}`);
 		setOffset(window.innerWidth / 2);
 		const cur = cards[cardIndex - 1];
 		const snapshot = (await getDoc(cur)).data() as Project["fields"];
@@ -118,7 +126,6 @@ const Finder = () => {
 
 	function rejectCard() {
 		const userRef = getCurrentUserRef();
-		console.log(`REJECTED ${map(currentCard, fullName)}`);
 		setOffset(-window.innerWidth / 2);
 		updateField<DocumentReference[]>(userRef, REJECTED, (rs: any[]) =>
 			rs.concat([cards[cardIndex - 1]]),
@@ -140,6 +147,7 @@ const Finder = () => {
 	}
 	return (
 		<Grid
+			className="FinderBackground"
 			templateAreas={`"nav main"`}
 			gridTemplateRows={"100% 1fr"}
 			gridTemplateColumns={`${sideBarWidth}% 1fr`}
@@ -150,65 +158,79 @@ const Finder = () => {
 				transition: "all 0.5s",
 			}}
 		>
-			<GridItem pl="2" bg="gray.100" area={"nav"} zIndex="9999" mt="1pt">
+			<GridItem
+				pl="2"
+				// bg={useColorModeValue("groupr.900", "groupr.300")}
+				area={"nav"}
+				zIndex="9999"
+				mt="1pt"
+				// outlineColor="gray.100"
+				// outline="1px solid"
+				className="GlassMorphic"
+			>
 				<Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
 					<Button
-						onClick={toggleSideBar}
-						alignSelf="flex-end"
-						transform="translate(50%)"
-						bg="white"
-						boxShadow={"base"}
+						colorScheme="groupr"
+						boxShadow="lg"
+						onClick={() => resetDatabase(defaultDatabase())}
 					>
-						{">"}
+						Reset!
 					</Button>
-					<Button onClick={() => resetDatabase(defaultDatabase())}>Reset!</Button>
 				</Flex>
 			</GridItem>
 			<GridItem pl="2" area={"main"}>
 				<Center h="100%">
 					<Flex justifyContent="space-evenly" alignItems="center" w="60%">
-						<Button
-							className={`${dragging ? "Hidden" : ""}`}
-							onClick={rejectCard}
-							leftIcon={<MdClose />}
-						>
-							Reject
-						</Button>
 						{currentCard ? (
-							<SwipeCard
-								offset={offset}
-								setOffset={setOffset}
-								dragging={dragging}
-								setDragging={setDragging}
-								cardAnchor={cardAnchor}
-								acceptCard={acceptCard}
-								rejectCard={rejectCard}
-								data={{ type: ProjectOrUser.User, fields: currentCard }}
-								cardHidden={cardHidden}
-								coverImgURL={coverImgURL}
-							></SwipeCard>
+							<>
+								<Button
+									className={`${dragging ? "Hidden" : ""}`}
+									onClick={rejectCard}
+									leftIcon={<MdClose />}
+									boxShadow="lg"
+								>
+									Reject
+								</Button>
+								<SwipeCard
+									offset={offset}
+									setOffset={setOffset}
+									dragging={dragging}
+									setDragging={setDragging}
+									cardAnchor={cardAnchor}
+									acceptCard={acceptCard}
+									rejectCard={rejectCard}
+									data={{ type: ProjectOrUser.User, fields: currentCard }}
+									cardHidden={cardHidden}
+									coverImgURL={coverImgURL}
+								></SwipeCard>
+								<Button
+									className={`${dragging ? "Hidden" : ""}`}
+									onClick={acceptCard}
+									rightIcon={<MdDone />}
+									boxShadow="lg"
+								>
+									Accept
+								</Button>
+							</>
 						) : (
-							<Text fontSize="xl">No projects! Come back later.</Text>
+							<VStack>
+								<Text fontSize="xl">No projects! Come back later.</Text>
+								<Button
+									className={"dashboardbutton"}
+									onClick={() => {
+										navigate("/dashboard", { replace: false });
+									}}
+									boxShadow="lg"
+								>
+									Go to Dashboard
+								</Button>
+							</VStack>
 						)}
-						<Button
-							className={`${dragging ? "Hidden" : ""}`}
-							onClick={acceptCard}
-							rightIcon={<MdDone />}
-						>
-							Accept
-						</Button>
 					</Flex>
 				</Center>
 			</GridItem>
 		</Grid>
-
-		// <div className="App">
-		//   {/* <Card></Card> */}
-		//   <SwipeCard></SwipeCard>
-		// </div>
 	);
 };
 
-const fullName = (u: User["fields"]) => u.firstName + " " + u.lastName;
-
-export default Finder;
+export default Finder2;

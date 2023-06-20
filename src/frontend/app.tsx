@@ -11,6 +11,7 @@ import { AuthProvider, useAuth } from "../context/AuthContext";
 import SignupPage from "./components/signup";
 import Landing from "./components/landing";
 import ProtectedRoute from "../protectedRoute";
+import Finder2 from "./components/finder2/finder2";
 
 /**
  * The main app component.
@@ -69,6 +70,7 @@ function App() {
 					/>
 					<Route path="/projects/edit" element={<ProjectEditor isNew />} />
 					<Route path="/projects" element={<ProjectPage />} />
+					<Route path="/projects/finder/:projectID" element={<Finder2></Finder2>}></Route>
 				</Routes>
 			</AuthProvider>
 		</>

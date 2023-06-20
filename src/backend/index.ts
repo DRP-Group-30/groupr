@@ -117,6 +117,8 @@ export type User = {
 	};
 };
 
+export const userName = (u: User["fields"]) => u.firstName + " " + u.lastName;
+
 export type IRM = {
 	interested: DocumentReference[];
 	rejected: DocumentReference[];

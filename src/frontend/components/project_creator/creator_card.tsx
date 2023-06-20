@@ -25,6 +25,7 @@ import {
 	SliderThumb,
 	SliderMark,
 	Tag,
+	HStack,
 } from "@chakra-ui/react";
 import {
 	AutoCompleteTag,
@@ -116,7 +117,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					projects.push(doc(Firebase.db, "projects", id));
 
 					await updateDoc(getCurrentUserRef(), {
-						projects: projects,
+						ownProjects: projects,
 					});
 				} else {
 					await updateProject(project.id, projectData);
@@ -587,10 +588,40 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								</Editable>
 							</Stack>
 						</FormControl>
-						<Button type="submit" colorScheme="teal" width="full" alignSelf="flex-end">
-							{" "}
-							{editMode ? "Save Project" : "Edit Project"}
-						</Button>
+						{editMode ? (
+							<Button
+								type="submit"
+								colorScheme="teal"
+								width="full"
+								alignSelf="flex-end"
+							>
+								{" "}
+								{"Save Project"}
+							</Button>
+						) : (
+							<HStack>
+								<Button
+									type="submit"
+									colorScheme="teal"
+									width="full"
+									alignSelf="flex-end"
+								>
+									{" "}
+									{"Edit Project"}
+								</Button>
+								<Button
+									colorScheme="teal"
+									width="full"
+									alignSelf="flex-end"
+									onClick={() => {
+										navigate("/projects/finder/" + project?.id);
+									}}
+								>
+									{" "}
+									{"Look for Collaborators"}
+								</Button>
+							</HStack>
+						)}
 					</VStack>
 				</Flex>
 			</form>

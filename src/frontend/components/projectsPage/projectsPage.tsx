@@ -20,16 +20,11 @@ const ProjectSelector = () => {
 
 		const user: User["fields"] = userSnapshot.data() as User["fields"];
 		const projects = user.ownProjects;
-		// const projecDocs = await Promise.all(
-		// 	projectRefs.map((ref: DocumentReference) => getDoc(ref)),
-		// );
-
-		// const ds = await getDocs(collection(Firebase.db, "projects"));
 		setProjectRefs((projectRefs = projects));
 	}
 
 	async function getProjects() {
-		let snaps = await Promise.all(projectRefs.map((ref: DocumentReference) => getDoc(ref)));
+		const snaps = await Promise.all(projectRefs.map((ref: DocumentReference) => getDoc(ref)));
 		setProjects((projects = snaps.map(doc => ({ id: doc.id, fields: doc.data() } as Project))));
 	}
 
