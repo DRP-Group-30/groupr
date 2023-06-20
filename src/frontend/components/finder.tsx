@@ -5,14 +5,21 @@ import {
 	getDocs,
 	collection,
 	DocumentData,
+	query,
+	orderBy,
+	where,
 } from "firebase/firestore";
 import "../app.css";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "./swipe_card";
 import {
+	Box,
 	Button,
+	Card,
 	Center,
 	Flex,
+	FormControl,
+	FormLabel,
 	Grid,
 	GridItem,
 	Text,
@@ -21,15 +28,23 @@ import {
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import { Firebase } from "../../backend/firebase";
-import { Fields, getImg, resetDatabase, updateField } from "../../util/firebase";
+import { Fields, getAllTags, getImg, resetDatabase, updateField } from "../../util/firebase";
 import defaultDatabase from "../../backend/default_database";
 import { IRM, Project, ProjectOrUser, User } from "../../backend";
 import { getCurrentUser, getCurrentUserRef } from "./auth";
 import React from "react";
-import { map, swapPromiseNull } from "../../util";
+import { inlineLog, map, nubWith, swapPromiseNull } from "../../util";
 import { useAuth } from "../../context/AuthContext";
 import { get } from "http";
 import { useNavigate } from "react-router-dom";
+import {
+	AutoCompleteTag,
+	AutoComplete,
+	AutoCompleteInput,
+	AutoCompleteList,
+	AutoCompleteItem,
+	ItemTag,
+} from "@choc-ui/chakra-autocomplete";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);
@@ -53,14 +68,23 @@ const Finder = () => {
 	let [cardIndex, setCardIndex] = useState(0);
 	const [coverImgURL, setCoverImg] = useState<string | null>(null);
 	const { currentUser } = useAuth();
+	const [filterTags, setFilterTags] = useState<ItemTag[]>([]);
+	const [allTags, setAllTags] = useState<string[]>([]);
+	const initTagTable = async () => setAllTags(inlineLog(await getAllTags()));
+
+	function filterMatches(tags: String[]): number {
+		return inlineLog(tags.filter(t => filterTags.map(t => t.label).includes(t)).length);
+	}
 
 	useEffect(() => {
+		initTagTable();
 		swapPromiseNull(map(currentCard?.coverImage ?? null, c => getImg(c))).then(u => {
 			return setCoverImg(u);
 		});
 	}, []);
 
 	useEffect(() => {
+		setCardIndex((cardIndex = 0));
 		setCardAnchor(
 			window.innerWidth * (sideBarWidth / 100) +
 				(window.innerWidth * (1 - sideBarWidth / 100)) / 2,
@@ -68,7 +92,7 @@ const Finder = () => {
 		pollCards().then(() => {
 			getNextCard();
 		});
-	}, []);
+	}, [filterTags]);
 
 	async function pollCards() {
 		const userSnapshot = await getCurrentUser();
@@ -76,12 +100,24 @@ const Finder = () => {
 		let userProjects = user.ownProjects.map(p => p.id);
 		const seenBefore = allSeen(user.irm).map(r => r.id);
 
-		const ds = await getDocs(collection(Firebase.db, "projects"));
+		const ds = await getDocs(
+			filterTags.length === 0
+				? query(collection(Firebase.db, "projects"), orderBy("name"))
+				: query(
+						collection(Firebase.db, "projects"),
+						where(
+							"tags",
+							"array-contains-any",
+							filterTags.map(t => t.label),
+						),
+						orderBy("name"),
+				  ),
+		);
 
 		setCards(
 			(cards = ds.docs
 				.map(d => d.ref)
-				.filter(r => !seenBefore.includes(r.id) && !userProjects.includes(r.id))),
+				.filter(r => !seenBefore.includes(r.id) && !userProjects.includes(r.id))).sort(),
 		);
 	}
 
@@ -100,14 +136,6 @@ const Finder = () => {
 			);
 			setCoverImg(iHateDRPSoMuchIActuallyWantToDieWTFIsThisShit);
 		}
-	}
-
-	function toggleSideBar() {
-		setSideBarWidth((sideBarWidth = sideBarWidth === 4 ? 25 : 4));
-		setCardAnchor(
-			window.innerWidth * (sideBarWidth / 100) +
-				(window.innerWidth * (1 - sideBarWidth / 100)) / 2,
-		);
 	}
 
 	async function acceptCard() {
@@ -181,7 +209,76 @@ const Finder = () => {
 				// outline="1px solid"
 				className="GlassMorphic"
 			>
-				<Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
+				<Flex
+					h="100%"
+					flexDirection="column"
+					justifyContent="space-between"
+					alignItems="center"
+				>
+					<Card p={4} width="100%" mr={2} backgroundColor="gray.100" boxShadow="lg">
+						<Box width="100%" pr={2}>
+							<FormControl>
+								<FormLabel color="groupr.700" fontWeight="bold">
+									Filter by tags
+								</FormLabel>
+								<Flex maxWidth="600px" flexWrap="wrap">
+									{nubWith(
+										filterTags.map((tag, tid) => ({
+											tid: tid,
+											onRemove: tag.onRemove,
+											label: (tag.label as string).toUpperCase(),
+										})),
+										t => t.label,
+									).map(({ label, tid, onRemove }) => (
+										<AutoCompleteTag
+											key={tid}
+											label={label}
+											onRemove={onRemove}
+											variant="solid"
+											colorScheme="groupr"
+											marginRight="3px"
+											marginBottom="6px"
+										/>
+									))}
+								</Flex>
+								<AutoComplete
+									openOnFocus
+									multiple
+									onReady={({ tags }) => {
+										setFilterTags(tags);
+									}}
+								>
+									<AutoCompleteInput
+										placeholder="Search for tags..."
+										backgroundColor="white"
+										colorScheme="groupr"
+										borderColor="groupr.500"
+									></AutoCompleteInput>
+									<AutoCompleteList height="200px" width="100%" overflow="scroll">
+										{allTags
+											.filter(
+												t => !filterTags.map(tt => tt.label).includes(t),
+											)
+											.map(t => (
+												<AutoCompleteItem
+													key={t}
+													value={t}
+													textTransform="capitalize"
+													_selected={{
+														bg: "whiteAlpha.50",
+													}}
+													_focus={{
+														bg: "whiteAlpha.100",
+													}}
+												>
+													{t}
+												</AutoCompleteItem>
+											))}
+									</AutoCompleteList>
+								</AutoComplete>
+							</FormControl>
+						</Box>
+					</Card>
 					<Button
 						colorScheme="groupr"
 						boxShadow="lg"
@@ -189,6 +286,7 @@ const Finder = () => {
 					>
 						Reset!
 					</Button>
+					<div></div>
 				</Flex>
 			</GridItem>
 			<GridItem pl="2" area={"main"}>
