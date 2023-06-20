@@ -141,7 +141,12 @@ const Dashboard = () => {
 
 	return (
 		<Sidebar
-			sideElem={<DashboardSidebar setShowMatched={setShowMatched}></DashboardSidebar>}
+			sideElem={
+				<DashboardSidebar
+					showMatched={showMatched}
+					setShowMatched={setShowMatched}
+				></DashboardSidebar>
+			}
 			mainElem={
 				<Flex p="15" w="100%" h="100%" justifyContent="space-evenly">
 					{showMatched ? (
