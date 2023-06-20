@@ -4,7 +4,7 @@ import { MdExitToApp } from "react-icons/md";
 
 export const Landing = () => {
 	return (
-		<Box px={8} py={24} mx="auto" h="100%" overflow="scroll">
+		<Box backgroundColor="groupr.100" px={8} py={24} mx="auto" h="100%" overflow="scroll">
 			<Box
 				w={{
 					base: "full",
@@ -29,40 +29,22 @@ export const Landing = () => {
 						base: "normal",
 						md: "tight",
 					}}
-					color="gray.900"
-					_dark={{
-						color: "gray.100",
-					}}
+					color="groupr.700"
 				>
-					Unlock Creative Synergy{" "}
+					Unlock Creative Synergy.{" "}
 					<Text
-						display={{
-							base: "block",
-							lg: "inline",
-						}}
+						display={"inline"}
 						w="full"
 						bgClip="text"
-						bgGradient="linear(to-r, green.400,purple.500)"
+						padding="1px"
+						bgGradient="linear(to-r, red.300, groupr.500, green.300)"
+						filter="drop-shadow(0px 5px 20px #bfc5f8)"
 						fontWeight="extrabold"
 					>
 						<br></br>Connect. Collaborate. Create.
 					</Text>{" "}
 				</chakra.h1>
-				<chakra.p
-					px={{
-						base: 0,
-						lg: 24,
-					}}
-					mb={6}
-					fontSize={{
-						base: "lg",
-						md: "xl",
-					}}
-					color="gray.600"
-					_dark={{
-						color: "gray.300",
-					}}
-				>
+				<chakra.p px={24} mb={6} fontSize="xl" color="groupr.700">
 					Group'r: Your Gateway to Creative Collaboration. Explore, Connect, and Forge
 					Meaningful Partnerships with Game Developers and Artists. Discover a Thriving
 					Community to Bring Your Projects to Life.
@@ -85,7 +67,7 @@ export const Landing = () => {
 					<Button
 						as="a"
 						variant="outline"
-						colorScheme="teal"
+						colorScheme="groupr"
 						display="inline-flex"
 						alignItems="center"
 						justifyContent="center"
@@ -112,7 +94,7 @@ export const Landing = () => {
 					</Button>
 					<Button
 						as="a"
-						colorScheme="teal"
+						colorScheme="groupr"
 						display="inline-flex"
 						alignItems="center"
 						justifyContent="center"

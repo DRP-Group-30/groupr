@@ -12,11 +12,15 @@ const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 const theme = extendTheme({
 	colors: {
 		groupr: {
-			100: "#191919",
-			300: "#293173",
+			100: "#fffaf3",
+			200: "#dfd5e7",
+			300: "#bfc5f8",
+			400: "#9da7fc",
 			500: "#7b88ff",
-			700: "#bfc5f8",
-			900: "#ffe5d5",
+			600: "#525DB9",
+			700: "#293173",
+			800: "#212546",
+			900: "#191919",
 		},
 	},
 });
