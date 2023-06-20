@@ -9,7 +9,7 @@ import {
 	Flex,
 	Tag,
 } from "@chakra-ui/react";
-import { MouseEvent, Dispatch, SetStateAction } from "react";
+import { MouseEvent, Dispatch, SetStateAction, useState } from "react";
 import { Project, ProjectOrUser, ProjectOrUserData, User, discriminate } from "../../backend";
 import React from "react";
 import { useAsync } from "../../util/react";
@@ -41,14 +41,19 @@ const SwipeCard = <T extends ProjectOrUser>({
 	cardHidden,
 	coverImgURL,
 }: SwipeCardProps<T>) => {
+	let [preventDrag, setPreventDrag] = useState(true);
+
 	function dragStart(e: MouseEvent<HTMLDivElement>) {
 		e.preventDefault();
+		setPreventDrag((preventDrag = false));
 		setDragging(true);
 		setOffset(e.pageX - cardAnchor);
 	}
 
 	function dragEnd(e: MouseEvent<HTMLDivElement>, released: boolean) {
 		e.preventDefault();
+		if (preventDrag) return;
+		setPreventDrag((preventDrag = true));
 		setDragging(false);
 
 		if (released && Math.abs(offset) >= 300) {
