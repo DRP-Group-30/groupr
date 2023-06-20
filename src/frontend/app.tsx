@@ -22,7 +22,9 @@ function App() {
 		<>
 			<AuthProvider>
 				<Navbar></Navbar>
-				<Notifications></Notifications>
+				{window.location.pathname !== "/" &&
+					window.location.pathname !== "/login" &&
+					window.location.pathname !== "/signup" && <Notifications></Notifications>}
 				<Routes>
 					{/**
 					 * A list of routes, each with a path and an element.

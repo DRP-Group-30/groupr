@@ -117,6 +117,8 @@ const Finder = () => {
 		const snapshot = (await getDoc(cur)).data() as Project["fields"];
 		console.log(snapshot.irm.interested);
 		const curUser = await getCurrentUserRef();
+		console.log("HMMMMMM");
+		console.log(snapshot.irm.interested);
 		if (snapshot.irm.interested.map(i => i.id).includes(currentUser?.uid ?? "")) {
 			console.log("MATCHED!");
 			updateField<DocumentReference[]>(curUser, MATCHED, (rs: any[]) =>
