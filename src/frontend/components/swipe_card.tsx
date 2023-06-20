@@ -89,7 +89,7 @@ const SwipeCard = <T extends ProjectOrUser>({
 				onMouseDown={dragStart}
 				onMouseUp={e => dragEnd(e, true)}
 				onMouseMove={dragMove}
-				onMouseLeave={e => dragEnd(e, false)}
+				onMouseLeave={e => dragEnd(e, true)}
 				style={{
 					transform: `translate(${offset}px, 0) rotate(${offset / 20}deg)`,
 					userSelect: "none",

@@ -27,9 +27,9 @@ export const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);
 export const allSeen = (irm: IRM): DocumentReference<DocumentData>[] =>
 	irm.interested.concat(irm.rejected).concat(irm.matched);
 
-const INTERESTED = "interested";
-const MATCHED = "matched";
-const REJECTED = "rejected";
+const INTERESTED = "irm.interested";
+const MATCHED = "irm.matched";
+const REJECTED = "irm.rejected";
 
 const USER_CARD_CATEGORIES = [INTERESTED, MATCHED, REJECTED];
 
