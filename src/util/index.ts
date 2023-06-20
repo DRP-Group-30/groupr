@@ -1,4 +1,5 @@
 import { T } from "@chakra-ui/toast/dist/toast.types-f226a101";
+import { stringify } from "querystring";
 
 export const range = (min: number, max: number) =>
 	Array.from(Array(max - min).keys()).map(x => x + min);
@@ -36,6 +37,11 @@ export const enumVals = <E>(x: { [e: string]: E | string }): E[] =>
 
 export const inlineLog = <T>(x: T): T => {
 	console.log(x);
+	return x;
+};
+
+export const inlineLogPre = <T>(pre: string, x: T): T => {
+	console.log(pre + String(x));
 	return x;
 };
 

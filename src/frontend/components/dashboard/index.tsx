@@ -136,9 +136,11 @@ const Dashboard = () => {
 		}
 
 		updateDoc(getCurrentUserRef(), {
-			matched: matched.map(p => doc(Firebase.db, "projects", p.id)),
-			interested: interested.map(p => doc(Firebase.db, "projects", p.id)),
-			rejected: rejected.map(p => doc(Firebase.db, "projects", p.id)),
+			irm: {
+				matched: matched.map(p => doc(Firebase.db, "projects", p.id)),
+				interested: interested.map(p => doc(Firebase.db, "projects", p.id)),
+				rejected: rejected.map(p => doc(Firebase.db, "projects", p.id)),
+			},
 		});
 	}
 
