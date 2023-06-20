@@ -28,35 +28,43 @@ const Notifications = () => {
 		onSnapshot(p, n => {
 			const docMatches = docMatchesRef.current ?? null;
 			if (docMatches === null) return; // To early
-			const prev = docMatches.get(p.id);
+			const prev = docMatches.get(p.id) ?? null;
 			const newMatched = (n.data() as Project["fields"]).irm.matched;
 			docMatches.set(p.id, newMatched);
 			// Not sure how useRef works internally, this might not be necessary
 			docMatchesRef.current = docMatches;
-			if (prev === undefined) return;
+			// New project so no alert
+			if (prev === null) {
+				console.log("WAS NULL");
+				return;
+			}
 			const actuallyNew = newMatched.filter(r => !prev.map(r2 => r2.id).includes(r.id));
-			if (actuallyNew.length === 0) return;
-			console.log(actuallyNew);
-			toast({
-				render: () => (
-					<Center>
-						<LinkBox>
-							<LinkOverlay href="dashboard"></LinkOverlay>
-							<Tag colorScheme="green" size="lg" variant="solid">
-								<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
-								<TagLabel padding="12px">
-									<Stack spacing="0">
-										<Text as="b">Match!</Text>
-										<Text>Someone joined your project.</Text>
-									</Stack>
-								</TagLabel>
-							</Tag>
-						</LinkBox>
-					</Center>
-				),
-				duration: 2000,
-				isClosable: true,
-			});
+			if (actuallyNew.length !== 0) {
+				console.log(actuallyNew);
+				toast({
+					render: () => (
+						<Center>
+							<LinkBox>
+								<LinkOverlay href="dashboard"></LinkOverlay>
+								<Tag colorScheme="green" size="lg" variant="solid">
+									<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
+									<TagLabel padding="12px">
+										<Stack spacing="0">
+											<Text as="b">Match!</Text>
+											<Text>Someone joined your project.</Text>
+										</Stack>
+									</TagLabel>
+								</Tag>
+							</LinkBox>
+						</Center>
+					),
+					duration: 2000,
+					isClosable: true,
+				});
+
+				console.log(actuallyNew);
+			}
+
 			console.log("M");
 			console.log(prev);
 			console.log(newMatched);
@@ -82,6 +90,7 @@ const Notifications = () => {
 
 	useEffect(() => {
 		initUserAndDocs();
+
 		onSnapshot(getCurrentUserRef(), snapshot => {
 			console.log("ALLEGEDLY A MATCH!!");
 			console.log(userRef.current);
@@ -93,8 +102,16 @@ const Notifications = () => {
 			const newu = snapshot.data() as User["fields"];
 
 			newu.ownProjects
-				.filter(r => user.ownProjects.map(r2 => r2.id).includes(r.id))
-				.forEach(r => subscribeProject(r));
+				.filter(r => !user.ownProjects.map(r2 => r2.id).includes(r.id))
+				.forEach(r => {
+					const docMatches = docMatchesRef.current;
+					getDoc(r).then(rr => {
+						docMatches?.set(r.id, (rr.data() as Project["fields"]).irm.matched);
+						docMatchesRef.current = docMatches;
+					});
+
+					subscribeProject(r);
+				});
 			const actuallyNew = newu.irm.matched.filter(
 				r => !user.irm.matched.map(r2 => r2.id).includes(r.id),
 			);
