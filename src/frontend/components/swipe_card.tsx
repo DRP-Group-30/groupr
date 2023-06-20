@@ -10,13 +10,13 @@ import {
 	Tag,
 } from "@chakra-ui/react";
 import { MouseEvent, Dispatch, SetStateAction } from "react";
-import { Project } from "../../backend";
+import { Project, ProjectOrUser, ProjectOrUserData, User, discriminate } from "../../backend";
 import React from "react";
 import { useAsync } from "../../util/react";
 import { inlineLog, map, swapPromiseNull } from "../../util";
 import { getImg } from "../../util/firebase";
 
-interface SwipeCardProps {
+interface SwipeCardProps<T extends ProjectOrUser> {
 	offset: number;
 	setOffset: Dispatch<SetStateAction<number>>;
 	dragging: boolean;
@@ -24,12 +24,12 @@ interface SwipeCardProps {
 	cardAnchor: number;
 	acceptCard: () => void;
 	rejectCard: () => void;
-	data: Project["fields"];
+	data: ProjectOrUserData<T>;
 	cardHidden: boolean;
 	coverImgURL: string | null;
 }
 
-const SwipeCard = ({
+const SwipeCard = <T extends ProjectOrUser>({
 	offset,
 	setOffset,
 	dragging,
@@ -40,7 +40,7 @@ const SwipeCard = ({
 	data,
 	cardHidden,
 	coverImgURL,
-}: SwipeCardProps) => {
+}: SwipeCardProps<T>) => {
 	function dragStart(e: MouseEvent<HTMLDivElement>) {
 		e.preventDefault();
 		setDragging(true);
@@ -118,15 +118,15 @@ const SwipeCard = ({
 						fontSize={"2xl"}
 						fontFamily={"body"}
 					>
-						{data.name}
+						{dName(data)}
 					</Heading>
-					<Text color={"gray.500"}>{data.overview}</Text>
+					<Text color={"gray.500"}>{dOverview(data)}</Text>
 				</Stack>
 
 				<Box backgroundColor="gray.100" borderRadius="md" padding="16px" marginTop="16px">
 					<Text>Because you're interested in</Text>
 					<Flex flexWrap="wrap">
-						{data.tags.map(tag => (
+						{dTagSkills(data).map(tag => (
 							<Tag variant="solid" key={tag} colorScheme="teal" margin="2px">
 								{tag}
 							</Tag>
@@ -137,5 +137,26 @@ const SwipeCard = ({
 		</Center>
 	);
 };
+
+const dName = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
+	discriminate(
+		x,
+		p => p.name,
+		u => u.firstName + " " + u.lastName,
+	);
+
+const dTagSkills = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
+	discriminate(
+		x,
+		p => p.tags,
+		u => u.skills,
+	);
+
+const dOverview = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
+	discriminate(
+		x,
+		p => p.overview,
+		u => u.bio,
+	);
 
 export default SwipeCard;

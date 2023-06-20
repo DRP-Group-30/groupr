@@ -1,5 +1,5 @@
-import { doc } from "firebase/firestore";
-import { GrouprDatabase, Skill, emptyAvailability } from ".";
+import { Firestore, doc } from "firebase/firestore";
+import { GrouprDatabase, IRM, ProjectOrUser, Skill, emptyAvailability, getUserDocRef } from ".";
 import { RANDOM } from "../util/firebase";
 import { Firebase } from "./firebase";
 
@@ -14,7 +14,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			id: RANDOM,
 			fields: {
 				name: "Natty B's Battlegrounds",
-				collaborators: [],
+				creator: getUserDocRef(DEFAULT_USER_ID),
 				contactInfo: "natty@b.com",
 				overview:
 					"Hol' up... is this the largest Battle Royale ever? With over 500 players in a single game?!",
@@ -27,7 +27,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"SHOOTER",
 					"C++",
 				],
-				interested: [],
+				irm: EMPTY_IRM,
 				roles: [],
 			},
 		},
@@ -35,12 +35,12 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			id: RANDOM,
 			fields: {
 				name: "Six Nights at Bobs",
-				collaborators: [],
+				creator: getUserDocRef(DEFAULT_USER_ID),
 				contactInfo: "sixnights@gmail.com",
 				overview: "SPOOKY",
 				coverImage: "0x0.webp",
 				tags: ["HORROR", "UNITY", "C#"],
-				interested: [DEFAULT_USER],
+				irm: EMPTY_IRM,
 				roles: [],
 			},
 		},
@@ -48,12 +48,12 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			id: RANDOM,
 			fields: {
 				name: "Overstory",
-				collaborators: [],
+				creator: getUserDocRef(DEFAULT_USER_ID),
 				contactInfo: "bob@overstory.com",
 				overview: "It's like my favourite game, Undertale",
 				coverImage: "Overstory.png",
 				tags: ["RPG", "RETRO", "PIXEL ART", "NARRATIVE DRIVEN", "RPG MAKER"],
-				interested: [DEFAULT_USER],
+				irm: EMPTY_IRM,
 				roles: [],
 			},
 		},
@@ -61,7 +61,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			id: RANDOM,
 			fields: {
 				name: "Universe of Battlebuild",
-				collaborators: [],
+				creator: getUserDocRef(DEFAULT_USER_ID),
 				contactInfo: "https://discord.gg/battlebuild",
 				overview: "Game where you can go anywhere and do anything!",
 				coverImage: "Screenshot 2023-06-15 013346.png",
@@ -74,7 +74,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"ROBLOX",
 					"LUA",
 				],
-				interested: [],
+				irm: EMPTY_IRM,
 				roles: [],
 			},
 		},
@@ -82,7 +82,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			id: RANDOM,
 			fields: {
 				name: "Afterstrife",
-				collaborators: [],
+				creator: getUserDocRef(DEFAULT_USER_ID),
 				contactInfo: "https://afterlifegames.gg/",
 				overview:
 					"5v5 hero shooter with a large focus on melee combat, inspired by Gigantic",
@@ -96,7 +96,7 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"UNREAL ENGINE",
 					"C++",
 				],
-				interested: [],
+				irm: EMPTY_IRM,
 				roles: [],
 			},
 		},
@@ -104,70 +104,19 @@ export const defaultDatabase = (): GrouprDatabase => ({
 			id: RANDOM,
 			fields: {
 				name: "Very Far Away Horse",
-				collaborators: [],
+				creator: getUserDocRef(DEFAULT_USER_ID),
 				contactInfo: "Faraway@Horse.carr.ot",
 				overview: "Horse is now even farther away",
 				coverImage: "SmartSelect_20230612-164646_YouTube.png",
 				tags: ["REALISTIC", "OPEN-WORLD", "REMAKE"],
-				interested: [],
+				irm: EMPTY_IRM,
 				roles: [],
 			},
 		},
 	],
-	users: [
-		{
-			id: "uKSLFGA3qTuLmweXlv31",
-			fields: {
-				bio: "I am the default user, the main character.",
-				pronouns: "he/him",
-				tags: [],
-				projects: [],
-				availability: emptyAvailability(),
-				interested: [],
-				rejected: [],
-				matched: [],
-			},
-		},
-		{
-			id: RANDOM,
-			fields: {
-				bio: "Empty bio",
-				pronouns: "he/him",
-				tags: [],
-				projects: [],
-				availability: emptyAvailability(),
-				interested: [],
-				rejected: [],
-				matched: [],
-			},
-		},
-		{
-			id: RANDOM,
-			fields: {
-				bio: "Empty bio",
-				pronouns: "he/him",
-				tags: [],
-				projects: [],
-				availability: emptyAvailability(),
-				interested: [],
-				rejected: [],
-				matched: [],
-			},
-		},
-		{
-			id: RANDOM,
-			fields: {
-				bio: "Empty bio",
-				pronouns: "he/him",
-				tags: [],
-				projects: [],
-				availability: emptyAvailability(),
-				interested: [],
-				rejected: [],
-				matched: [],
-			},
-		},
-	],
+	// No Users: Managing firebase auth is more complicated than database
+	// (permissions-wise) so we handle users differently.
+	users: [],
 	globals: [
 		{
 			id: "globals",
@@ -178,3 +127,5 @@ export const defaultDatabase = (): GrouprDatabase => ({
 });
 
 export default defaultDatabase;
+
+export const EMPTY_IRM: IRM = { interested: [], rejected: [], matched: [] };

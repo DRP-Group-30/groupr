@@ -1,17 +1,17 @@
 import { DocumentReference, doc, getDoc, getDocs, collection } from "firebase/firestore";
 import "../app.css";
 import { MdDone, MdClose } from "react-icons/md";
-import SwipeCard from "./swipe_card";
-import { Button, Center, Flex, Grid, GridItem, Text, useColorModeValue } from "@chakra-ui/react";
+import SwipeCard from "../swipe_card";
+import { Button, Center, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { Firebase } from "../../backend/firebase";
-import { Fields, getImg, resetDatabase, updateField } from "../../util/firebase";
-import defaultDatabase from "../../backend/default_database";
-import { Project, ProjectOrUser, User } from "../../backend";
-import { getCurrentUser, getCurrentUserRef } from "./auth";
+import { Firebase } from "../../../backend/firebase";
+import { Fields, getImg, resetDatabase, updateField } from "../../../util/firebase";
+import defaultDatabase from "../../../backend/default_database";
+import { Project, ProjectOrUser, User } from "../../../backend";
+import { getCurrentUser, getCurrentUserRef } from "../auth";
 import React from "react";
-import { map, swapPromiseNull } from "../../util";
-import { useAuth } from "../../context/AuthContext";
+import { map, swapPromiseNull } from "../../../util";
+import { useAuth } from "../../../context/AuthContext";
 import { get } from "http";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
@@ -29,14 +29,14 @@ const Finder = () => {
 	let [sideBarWidth, setSideBarWidth] = useState(25);
 	const [cardAnchor, setCardAnchor] = useState(0);
 	let [cards, setCards] = useState<DocumentReference[]>([]);
-	let [currentCard, setCurrentCard] = useState<Project["fields"] | null>(null);
+	let [currentCard, setCurrentCard] = useState<User["fields"] | null>(null);
 	const [cardHidden, setCardHidden] = useState(false);
 	let [cardIndex, setCardIndex] = useState(0);
 	const [coverImgURL, setCoverImg] = useState<string | null>(null);
 	const { currentUser } = useAuth();
 
 	useEffect(() => {
-		swapPromiseNull(map(currentCard?.coverImage ?? null, c => getImg(c))).then(u => {
+		swapPromiseNull(map(currentCard?.profileImage ?? null, c => getImg(c))).then(u => {
 			return setCoverImg(u);
 		});
 	}, []);
@@ -74,10 +74,10 @@ const Finder = () => {
 			}, 200);
 		} else {
 			let card = await getDoc(cards[cardIndex]);
-			setCurrentCard((currentCard = card.data() as Project["fields"]));
+			setCurrentCard((currentCard = card.data() as User["fields"]));
 			setCardIndex((cardIndex = cardIndex + 1));
 			const iHateDRPSoMuchIActuallyWantToDieWTFIsThisShit = await map(
-				currentCard?.coverImage ?? null,
+				currentCard?.profileImage ?? null,
 				getImg,
 			);
 			setCoverImg(iHateDRPSoMuchIActuallyWantToDieWTFIsThisShit);
@@ -93,7 +93,7 @@ const Finder = () => {
 	}
 
 	async function acceptCard() {
-		console.log(`ACCEPT ${currentCard?.name}`);
+		console.log(`ACCEPT ${map(currentCard, fullName)}`);
 		setOffset(window.innerWidth / 2);
 		const cur = cards[cardIndex - 1];
 		const snapshot = (await getDoc(cur)).data() as Project["fields"];
@@ -118,7 +118,7 @@ const Finder = () => {
 
 	function rejectCard() {
 		const userRef = getCurrentUserRef();
-		console.log(`REJECTED ${currentCard?.name}`);
+		console.log(`REJECTED ${map(currentCard, fullName)}`);
 		setOffset(-window.innerWidth / 2);
 		updateField<DocumentReference[]>(userRef, REJECTED, (rs: any[]) =>
 			rs.concat([cards[cardIndex - 1]]),
@@ -150,30 +150,18 @@ const Finder = () => {
 				transition: "all 0.5s",
 			}}
 		>
-			<GridItem
-				pl="2"
-				// bg={useColorModeValue("groupr.900", "groupr.300")}
-				area={"nav"}
-				zIndex="9999"
-				mt="1pt"
-				// outlineColor="gray.100"
-				// outline="1px solid"
-				style={{
-					background: "rgba(255, 255, 255, 0.1)",
-					boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-					backdropFilter: "blur(5px)",
-					WebkitBackdropFilter: "blur(5px)",
-					border: "2px solid rgba(255, 255, 255, 0.3)",
-				}}
-			>
+			<GridItem pl="2" bg="gray.100" area={"nav"} zIndex="9999" mt="1pt">
 				<Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
 					<Button
-						colorScheme="groupr"
-						boxShadow="lg"
-						onClick={() => resetDatabase(defaultDatabase())}
+						onClick={toggleSideBar}
+						alignSelf="flex-end"
+						transform="translate(50%)"
+						bg="white"
+						boxShadow={"base"}
 					>
-						Reset!
+						{">"}
 					</Button>
+					<Button onClick={() => resetDatabase(defaultDatabase())}>Reset!</Button>
 				</Flex>
 			</GridItem>
 			<GridItem pl="2" area={"main"}>
@@ -183,7 +171,6 @@ const Finder = () => {
 							className={`${dragging ? "Hidden" : ""}`}
 							onClick={rejectCard}
 							leftIcon={<MdClose />}
-							boxShadow="lg"
 						>
 							Reject
 						</Button>
@@ -196,7 +183,7 @@ const Finder = () => {
 								cardAnchor={cardAnchor}
 								acceptCard={acceptCard}
 								rejectCard={rejectCard}
-								data={{ type: ProjectOrUser.Project, fields: currentCard }}
+								data={{ type: ProjectOrUser.User, fields: currentCard }}
 								cardHidden={cardHidden}
 								coverImgURL={coverImgURL}
 							></SwipeCard>
@@ -207,7 +194,6 @@ const Finder = () => {
 							className={`${dragging ? "Hidden" : ""}`}
 							onClick={acceptCard}
 							rightIcon={<MdDone />}
-							boxShadow="lg"
 						>
 							Accept
 						</Button>
@@ -215,7 +201,14 @@ const Finder = () => {
 				</Center>
 			</GridItem>
 		</Grid>
+
+		// <div className="App">
+		//   {/* <Card></Card> */}
+		//   <SwipeCard></SwipeCard>
+		// </div>
 	);
 };
+
+const fullName = (u: User["fields"]) => u.firstName + " " + u.lastName;
 
 export default Finder;
