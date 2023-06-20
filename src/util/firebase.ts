@@ -162,6 +162,7 @@ export const clearUserLists = async () => {
 		users.docs.map((u: DocumentSnapshot<DocumentData>) =>
 			updateDoc(u.ref, {
 				irm: emptyIRM(),
+				ownProjects: [],
 			}),
 		),
 	);

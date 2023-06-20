@@ -37,7 +37,7 @@ import {
 	ItemTag,
 } from "@choc-ui/chakra-autocomplete";
 import { MdUploadFile, MdEmail, MdLink } from "react-icons/md";
-import { nubWith, nub, inlineLog, or } from "../../../util";
+import { nubWith, nub, inlineLog, or, inlineLogPre } from "../../../util";
 import { ContactMethod } from "./types";
 import { useFormik } from "formik";
 import { useState, useEffect } from "react";
@@ -77,8 +77,8 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 	const navigate = useNavigate();
 	const formik = useFormik<Project[Fields]>({
 		initialValues: project
-			? project.fields
-			: {
+			? inlineLogPre("Case 1: ", project.fields)
+			: inlineLogPre("Case 2: ", {
 					name: "Your Project Name",
 					contactInfo: "Project Contact Details",
 					overview:
@@ -91,7 +91,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					// Should `collaborators` be initialised to include the project creator?
 					creator: getCurrentUserRef(),
 					roles: [],
-			  },
+			  }),
 		onSubmit: async projectData => {
 			// DATA VALIDATION
 			if (
