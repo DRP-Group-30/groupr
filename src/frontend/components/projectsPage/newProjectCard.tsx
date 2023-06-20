@@ -8,6 +8,7 @@ const NewProjectCard = () => {
 				align="center"
 				direction="row"
 				justify="center"
+				minH="400px"
 				h="100%"
 				w="100%"
 				boxShadow="none"

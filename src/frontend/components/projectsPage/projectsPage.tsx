@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { Project, User } from "../../../backend";
 import CreatorCard from "../project_creator/creator_card";
 import { getCurrentUser } from "../auth";
+import Sidebar from "../sidebar";
 
 const ProjectSelector = () => {
 	let [projectRefs, setProjectRefs] = useState<DocumentReference[]>([]);
@@ -30,14 +31,14 @@ const ProjectSelector = () => {
 
 	return (
 		<Container
+			className="GlassMorphic"
 			maxW="100%"
 			w="98%"
-			height="calc(100% - 64px - 20pt)"
+			height="calc(100% - 32px)"
 			overflowY="scroll"
 			marginTop="10pt"
 			marginBottom="10pt"
 			centerContent
-			backgroundColor="gray.100"
 			borderRadius="xl"
 		>
 			<Heading margin="16px">{"Your Projects"}</Heading>
@@ -53,8 +54,8 @@ const ProjectSelector = () => {
 
 const ProjectPage = () => {
 	return (
-		<ProjectSelector></ProjectSelector>
-		// <Sidebar sideElem={<Text>test</Text>} mainElem={} />
+		// <ProjectSelector></ProjectSelector>
+		<Sidebar sideElem={<></>} mainElem={<ProjectSelector></ProjectSelector>} />
 	);
 };
 
