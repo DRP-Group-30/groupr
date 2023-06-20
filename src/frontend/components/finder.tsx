@@ -149,6 +149,7 @@ const Finder = () => {
 	}
 	return (
 		<Grid
+			className="FinderBackground"
 			templateAreas={`"nav main"`}
 			gridTemplateRows={"100% 1fr"}
 			gridTemplateColumns={`${sideBarWidth}% 1fr`}
@@ -167,13 +168,7 @@ const Finder = () => {
 				mt="1pt"
 				// outlineColor="gray.100"
 				// outline="1px solid"
-				style={{
-					background: "rgba(255, 255, 255, 0.1)",
-					boxShadow: "0 4px 30px rgba(0, 0, 0, 0.1)",
-					backdropFilter: "blur(5px)",
-					WebkitBackdropFilter: "blur(5px)",
-					border: "2px solid rgba(255, 255, 255, 0.3)",
-				}}
+				className="GlassMorphic"
 			>
 				<Flex h="100%" flexDirection="column" justifyContent="center" alignItems="center">
 					<Button
@@ -189,6 +184,7 @@ const Finder = () => {
 				<Center h="100%">
 					<Flex justifyContent="space-evenly" alignItems="center" w="60%">
 						<Button
+							colorScheme="groupr"
 							className={`${dragging ? "Hidden" : ""}`}
 							onClick={rejectCard}
 							leftIcon={<MdClose />}
@@ -213,6 +209,7 @@ const Finder = () => {
 							<Text fontSize="xl">No projects! Come back later.</Text>
 						)}
 						<Button
+							colorScheme="groupr"
 							className={`${dragging ? "Hidden" : ""}`}
 							onClick={acceptCard}
 							rightIcon={<MdDone />}
