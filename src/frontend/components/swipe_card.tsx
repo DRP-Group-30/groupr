@@ -8,6 +8,7 @@ import {
 	useColorModeValue,
 	Flex,
 	Tag,
+	HStack,
 } from "@chakra-ui/react";
 import { MouseEvent, Dispatch, SetStateAction, useState } from "react";
 import { Project, ProjectOrUser, ProjectOrUserData, User, discriminate } from "../../backend";
@@ -15,6 +16,7 @@ import React from "react";
 import { useAsync } from "../../util/react";
 import { inlineLog, inlineLogPre, map, swapPromiseNull } from "../../util";
 import { getImg } from "../../util/firebase";
+import StarRating from "./star_rating";
 
 interface SwipeCardProps<T extends ProjectOrUser> {
 	offset: number;
@@ -109,13 +111,19 @@ const SwipeCard = <T extends ProjectOrUser>({
 					/>
 				</Box>
 				<Stack>
-					<Heading
-						color={useColorModeValue("gray.700", "white")}
-						fontSize={"2xl"}
-						fontFamily={"body"}
-					>
-						{dName(data)}
-					</Heading>
+					<HStack justify="space-between" alignContent="center">
+						<Heading
+							color={useColorModeValue("gray.700", "white")}
+							fontSize={"2xl"}
+							fontFamily={"body"}
+						>
+							{dName(data)}
+						</Heading>
+						<StarRating
+							stars={Math.max(1, dTagSkills(data).length % 5)}
+							ratings={Math.floor(dOverview(data).length / 4)}
+						></StarRating>
+					</HStack>
 					<Text color={"gray.500"}>{dOverview(data)}</Text>
 				</Stack>
 
