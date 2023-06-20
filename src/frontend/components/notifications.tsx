@@ -21,9 +21,14 @@ const Notifications = () => {
 			// Not sure how useRef works internally, this might not be necessary
 			docMatchesRef.current = docMatches;
 			if (prev === undefined) return;
-			const actuallyNew = newMatched.filter(r => prev.map(r2 => r2.id).includes(r.id));
+			const actuallyNew = newMatched.filter(r => !prev.map(r2 => r2.id).includes(r.id));
 			if (actuallyNew.length === 0) return;
-			alert("MATCH ALTERT!!!!");
+			console.log(actuallyNew);
+			alert("MATCH ALTERT 1!!!!");
+			console.log("M");
+			console.log(prev);
+			console.log(newMatched);
+			console.log(actuallyNew);
 		});
 
 	const initUserAndDocs = async () => {
@@ -54,15 +59,18 @@ const Notifications = () => {
 
 			console.log("HMMMMMMMM");
 			const newu = snapshot.data() as User["fields"];
-			userRef.current = newu;
+
 			newu.ownProjects
 				.filter(r => user.ownProjects.map(r2 => r2.id).includes(r.id))
 				.forEach(r => subscribeProject(r));
-			const actuallyNew = newu.irm.matched.filter(r =>
-				user.irm.matched.map(r2 => r2.id).includes(r.id),
+			const actuallyNew = newu.irm.matched.filter(
+				r => !user.irm.matched.map(r2 => r2.id).includes(r.id),
 			);
-			if (actuallyNew.length === 0) return;
-			alert("MATCH ALTERT!!!!");
+			if (actuallyNew.length !== 0) {
+				console.log(actuallyNew);
+				alert("MATCH ALTERT 2!!!!");
+			}
+			userRef.current = newu;
 		});
 	}, []);
 	return <></>;

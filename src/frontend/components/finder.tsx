@@ -155,6 +155,7 @@ const Finder = () => {
 			updateField<DocumentReference[]>(cur, INTERESTED, (rs: any[]) =>
 				rs.filter((r: { id: any }) => r.id !== currentUser?.uid ?? ""),
 			);
+			updateField<DocumentReference[]>(cur, MATCHED, (rs: any[]) => rs.concat([curUser]));
 		} else {
 			console.log("RECORDED INTEREST!");
 			updateField<DocumentReference[]>(curUser, INTERESTED, (rs: any[]) =>
