@@ -26,13 +26,14 @@ import defaultDatabase from "../../../backend/default_database";
 import { IRM, Project, ProjectOrUser, User, userName } from "../../../backend";
 import { getCurrentUser, getCurrentUserRef } from "../auth";
 import React from "react";
-import { map, swapPromiseNull } from "../../../util";
+import { inlineLogPre, map, swapPromiseNull } from "../../../util";
 import { useAuth } from "../../../context/AuthContext";
 import { get } from "http";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { INTERESTED, MATCHED, REJECTED, allSeen } from "../finder";
 
 const Finder2 = () => {
+	const { projectID } = useParams();
 	const navigate = useNavigate();
 	const [offset, setOffset] = useState(0);
 	const [dragging, setDragging] = useState(false);
@@ -44,6 +45,8 @@ const Finder2 = () => {
 	let [cardIndex, setCardIndex] = useState(0);
 	const [coverImgURL, setCoverImg] = useState<string | null>(null);
 	const { currentUser } = useAuth();
+
+	const getCurrentProjectRef = () => doc(Firebase.db, "projects", projectID ?? "");
 
 	useEffect(() => {
 		swapPromiseNull(map(currentCard?.profileImage ?? null, c => getImg(c))).then(u => {
@@ -62,18 +65,15 @@ const Finder2 = () => {
 	}, []);
 
 	async function pollCards() {
-		const userSnapshot = await getCurrentUser();
-		const user = userSnapshot.data() as User[Fields];
-		let userProjects = user.ownProjects.map(p => p.id);
-		const seenBefore = allSeen(user.irm).map(r => r.id);
+		const projectSnapshot = await getDoc(getCurrentProjectRef());
+		const project = projectSnapshot.data() as Project[Fields];
+		const seenBefore = allSeen(project.irm)
+			.map(r => r.id)
+			.concat([project.creator.id]);
 
-		const ds = await getDocs(collection(Firebase.db, "projects"));
+		const ds = await getDocs(collection(Firebase.db, "users"));
 
-		setCards(
-			(cards = ds.docs
-				.map(d => d.ref)
-				.filter(r => !seenBefore.includes(r.id) && !userProjects.includes(r.id))),
-		);
+		setCards((cards = ds.docs.map(d => d.ref).filter(r => !seenBefore.includes(r.id))));
 	}
 
 	async function getNextCard() {
@@ -106,10 +106,10 @@ const Finder2 = () => {
 		const cur = cards[cardIndex - 1];
 		const snapshot = (await getDoc(cur)).data() as Project["fields"];
 		console.log(snapshot.irm.interested);
-		const curUser = await getCurrentUserRef();
+		const curProject = getCurrentProjectRef();
 		if (snapshot.irm.interested.map(i => i.id).includes(currentUser?.uid ?? "")) {
 			console.log("MATCHED!");
-			updateField<DocumentReference[]>(curUser, MATCHED, (rs: any[]) =>
+			updateField<DocumentReference[]>(curProject, MATCHED, (rs: any[]) =>
 				rs.concat([cards[cardIndex - 1]]),
 			);
 			updateField<DocumentReference[]>(cur, INTERESTED, (rs: any[]) =>
@@ -117,7 +117,7 @@ const Finder2 = () => {
 			);
 		} else {
 			console.log("RECORDED INTEREST!");
-			updateField<DocumentReference[]>(curUser, INTERESTED, (rs: any[]) =>
+			updateField<DocumentReference[]>(curProject, INTERESTED, (rs: any[]) =>
 				rs.concat([cards[cardIndex - 1]]),
 			);
 		}
@@ -125,9 +125,9 @@ const Finder2 = () => {
 	}
 
 	function rejectCard() {
-		const userRef = getCurrentUserRef();
+		const projRef = getCurrentProjectRef();
 		setOffset(-window.innerWidth / 2);
-		updateField<DocumentReference[]>(userRef, REJECTED, (rs: any[]) =>
+		updateField<DocumentReference[]>(projRef, REJECTED, (rs: any[]) =>
 			rs.concat([cards[cardIndex - 1]]),
 		);
 		showNextCard();
@@ -214,15 +214,15 @@ const Finder2 = () => {
 							</>
 						) : (
 							<VStack>
-								<Text fontSize="xl">No projects! Come back later.</Text>
+								<Text fontSize="xl">No developers! Come back later.</Text>
 								<Button
-									className={"dashboardbutton"}
+									className={"projectsbutton"}
 									onClick={() => {
-										navigate("/dashboard", { replace: false });
+										navigate("/projects", { replace: false });
 									}}
 									boxShadow="lg"
 								>
-									Go to Dashboard
+									Go to Your Projects
 								</Button>
 							</VStack>
 						)}

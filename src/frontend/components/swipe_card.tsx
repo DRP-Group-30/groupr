@@ -13,7 +13,7 @@ import { MouseEvent, Dispatch, SetStateAction } from "react";
 import { Project, ProjectOrUser, ProjectOrUserData, User, discriminate } from "../../backend";
 import React from "react";
 import { useAsync } from "../../util/react";
-import { inlineLog, map, swapPromiseNull } from "../../util";
+import { inlineLog, inlineLogPre, map, swapPromiseNull } from "../../util";
 import { getImg } from "../../util/firebase";
 
 interface SwipeCardProps<T extends ProjectOrUser> {
@@ -124,7 +124,11 @@ const SwipeCard = <T extends ProjectOrUser>({
 				</Stack>
 
 				<Box backgroundColor="gray.100" borderRadius="md" padding="16px" marginTop="16px">
-					<Text>Because you're interested in</Text>
+					{isProject(data) ? (
+						<Text>Because you're interested in</Text>
+					) : (
+						<Text>Because you're looking for</Text>
+					)}
 					<Flex flexWrap="wrap">
 						{dTagSkills(data).map(tag => (
 							<Tag variant="solid" key={tag} colorScheme="teal" margin="2px">
@@ -138,6 +142,9 @@ const SwipeCard = <T extends ProjectOrUser>({
 	);
 };
 
+const isProject = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
+	x.type === ProjectOrUser.Project;
+
 const dName = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
 	discriminate(
 		x,
@@ -149,7 +156,11 @@ const dTagSkills = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
 	discriminate(
 		x,
 		p => p.tags,
-		u => u.skills,
+		u => {
+			console.log("HMMM!");
+			console.log(u);
+			return inlineLogPre("SKILLS ", u.skills);
+		},
 	);
 
 const dOverview = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
