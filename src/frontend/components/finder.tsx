@@ -1,4 +1,11 @@
-import { DocumentReference, doc, getDoc, getDocs, collection } from "firebase/firestore";
+import {
+	DocumentReference,
+	doc,
+	getDoc,
+	getDocs,
+	collection,
+	DocumentData,
+} from "firebase/firestore";
 import "../app.css";
 import { MdDone, MdClose } from "react-icons/md";
 import SwipeCard from "./swipe_card";
@@ -7,7 +14,7 @@ import { useEffect, useState } from "react";
 import { Firebase } from "../../backend/firebase";
 import { Fields, getImg, resetDatabase, updateField } from "../../util/firebase";
 import defaultDatabase from "../../backend/default_database";
-import { Project, ProjectOrUser, User } from "../../backend";
+import { IRM, Project, ProjectOrUser, User } from "../../backend";
 import { getCurrentUser, getCurrentUserRef } from "./auth";
 import React from "react";
 import { map, swapPromiseNull } from "../../util";
@@ -16,6 +23,9 @@ import { get } from "http";
 
 export const DEFAULT_USER_ID = "uKSLFGA3qTuLmweXlv31";
 export const DEFAULT_USER = doc(Firebase.db, "users", DEFAULT_USER_ID);
+
+export const allSeen = (irm: IRM): DocumentReference<DocumentData>[] =>
+	irm.interested.concat(irm.rejected).concat(irm.matched);
 
 const INTERESTED = "interested";
 const MATCHED = "matched";
@@ -52,11 +62,10 @@ const Finder = () => {
 	}, []);
 
 	async function pollCards() {
-		let user = await getCurrentUser();
-		let userProjects = (user.data() as User[Fields]).ownProjects.map(p => p.id);
-		const seenBefore = USER_CARD_CATEGORIES.flatMap<DocumentReference>(d => user.get(d)).map(
-			r => r.id,
-		);
+		const userSnapshot = await getCurrentUser();
+		const user = userSnapshot.data() as User[Fields];
+		let userProjects = user.ownProjects.map(p => p.id);
+		const seenBefore = allSeen(user.irm).map(r => r.id);
 
 		const ds = await getDocs(collection(Firebase.db, "projects"));
 
