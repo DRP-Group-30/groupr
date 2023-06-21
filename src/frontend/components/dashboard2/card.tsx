@@ -11,11 +11,12 @@ import {
 	CardFooter,
 	Tag,
 	Box,
+	Avatar,
 } from "@chakra-ui/react";
 import { Dispatch, DragEvent, SetStateAction, useEffect, useState } from "react";
 import { MdClose, MdDone } from "react-icons/md";
 import { CardStatus } from "./types";
-import { Project } from "../../../backend";
+import { Project, User } from "../../../backend";
 import React from "react";
 import { getImg } from "../../../util/firebase";
 import { map, swapPromiseNull } from "../../../util";
@@ -28,25 +29,25 @@ const PROMPTS: Map<CardStatus, string> = new Map([
 ]);
 
 export type cardProps = {
-	project: Project;
+	user: User;
 	status: CardStatus;
-	moveInto: (status: CardStatus, project?: Project) => void;
-	setDragged: Dispatch<SetStateAction<Project | null>>;
+	moveInto: (status: CardStatus, project?: User) => void;
+	setDragged: Dispatch<SetStateAction<User | null>>;
 };
 
-function DBCard({ project, status, moveInto, setDragged }: cardProps) {
-	const coverImageURL = useAsync<string | null>(() =>
-		swapPromiseNull(map(project.fields.coverImage, getImg)),
-	);
+function DBCard({ user, status, moveInto, setDragged }: cardProps) {
+	const coverImageURL = ""; //useAsync<string | null>(() =>
+	// 	swapPromiseNull(map(project.fields.coverImage, getImg)),
+	// );
 
 	function dragStart(e: DragEvent<HTMLDivElement>) {
-		setDragged(project);
+		setDragged(user);
 	}
 
 	function moveProject() {
 		moveInto(
 			status === CardStatus.REJECTED ? CardStatus.INTERESTED : CardStatus.REJECTED,
-			project,
+			user,
 		);
 	}
 
@@ -56,27 +57,35 @@ function DBCard({ project, status, moveInto, setDragged }: cardProps) {
 			boxShadow={"xl"}
 			draggable={status !== CardStatus.MATCHED}
 			onDragStart={dragStart}
-			width="100%"
+			width="85%"
+			ml={16}
+			align="center"
 		>
-			<Image
-				roundedLeft="md"
-				objectFit="cover"
-				maxW={{ base: "100%", sm: "200px" }}
+			<Avatar
 				src={coverImageURL ?? ""}
-				alt="Project Cover Image"
+				name={`${user.fields.firstName} ${user.fields.lastName}`}
+				borderRadius="full"
+				borderWidth="5px"
+				size="2xl"
+				shadow="lg"
+				transform="translate(-50%)"
+				mr={-16}
 			/>
-
 			<Stack width="100%">
 				<CardBody>
-					<Heading size="md">{project.fields.name}</Heading>
+					<Heading size="md">
+						{user.fields.firstName} {user.fields.lastName}
+					</Heading>
 
-					<Text py="2">{project.fields.overview}</Text>
+					<Text py="2">{user.fields.pronouns}</Text>
 
-					{status === "Matched" && project.fields.tags.length > 0 && (
+					<Text py="2">{user.fields.bio}</Text>
+
+					{status === "Matched" && user.fields.skills.length > 0 && (
 						<Box backgroundColor="gray.100" borderRadius="md" padding="8px">
-							<Text>Because you're interested in</Text>
+							<Text>Because you're looking for</Text>
 							<Flex flexWrap="wrap">
-								{project.fields.tags.map(tag => (
+								{user.fields.skills.map(tag => (
 									<Tag variant="solid" colorScheme="groupr" margin="2px">
 										{tag}
 									</Tag>
@@ -89,11 +98,8 @@ function DBCard({ project, status, moveInto, setDragged }: cardProps) {
 				<CardFooter>
 					<Flex width="100%" justifyContent="space-between" alignItems="center">
 						{status === CardStatus.MATCHED ? (
-							<Link
-								href={`mailto:${project.fields.contactInfo}`}
-								textDecoration="underline"
-							>
-								{project.fields.contactInfo}
+							<Link href={`mailto:${user.fields.email}`} textDecoration="underline">
+								{user.fields.email}
 							</Link>
 						) : (
 							<div></div>

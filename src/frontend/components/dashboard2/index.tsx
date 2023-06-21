@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
-import { Project, User, getUserDocRef } from "../../../backend";
+import { Project, User, getProjectDocRef, getUserDocRef } from "../../../backend";
 import { DocumentReference, doc, getDoc, updateDoc } from "firebase/firestore";
 import { DEFAULT_USER } from "../finder";
 import { Firebase } from "../../../backend/firebase";
@@ -24,37 +24,35 @@ import DashboardList from "./list";
 import DashboardSidebar from "./sidebar";
 import { CardStatus } from "./types";
 import React from "react";
-import { getCurrentUser, getCurrentUserRef } from "../auth";
-import { get } from "http";
-import { useAuth } from "../../../context/AuthContext";
 import { inlineLog } from "../../../util";
+import { useParams } from "react-router-dom";
 
-const Dashboard = () => {
+const Dashboard2 = () => {
+	const { projectID } = useParams();
 	const [showMatched, setShowMatched] = useState<boolean>(true);
-	let [matched, setMatched] = useState<Project[]>([]);
-	let [interested, setInterested] = useState<Project[]>([]);
-	let [rejected, setRejected] = useState<Project[]>([]);
-	let [draggedProject, setDraggedProject] = useState<Project | null>(null);
-	const { currentUser } = useAuth();
+	let [matched, setMatched] = useState<User[]>([]);
+	let [interested, setInterested] = useState<User[]>([]);
+	let [rejected, setRejected] = useState<User[]>([]);
+	let [draggedProject, setDraggedProject] = useState<User | null>(null);
 
 	useEffect(() => {
 		getProjects();
 	}, []);
 
 	async function getProjects() {
-		const userSnapshot = await getCurrentUser();
-		const user: User["fields"] = userSnapshot.data() as User["fields"];
-		let matchedRefs = user.irm.matched;
+		const projectSnapshot = await getDoc(getProjectDocRef(projectID ?? ""));
+		const project: Project["fields"] = projectSnapshot.data() as Project["fields"];
+		let matchedRefs = project.irm.matched;
 		let matchedDocs = await Promise.all(
 			matchedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
 		setMatched(
 			(matched = matchedDocs.map(
-				doc => ({ id: doc.id, fields: inlineLog(doc.data()) } as Project),
+				doc => ({ id: doc.id, fields: inlineLog(doc.data()) } as User),
 			)),
 		);
 
-		let interestedRefs = user.irm.interested;
+		let interestedRefs = project.irm.interested;
 		let interestedDocs = await Promise.all(interestedRefs.map(getDoc));
 		setInterested(
 			(interested = interestedDocs.map(
@@ -62,16 +60,16 @@ const Dashboard = () => {
 					({
 						id: doc.id,
 						fields: doc.data(),
-					} as Project),
+					} as User),
 			)),
 		);
 		interested.forEach(project => {
-			if (project.fields.irm.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")) {
+			if (project.fields.irm.interested.map(ref => ref.id).includes(projectID ?? "")) {
 				moveProjectInto("interested", project);
 			}
 		});
 
-		let rejectedRefs = user.irm.rejected;
+		let rejectedRefs = project.irm.rejected;
 		let rejectedDocs = await Promise.all(
 			rejectedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
@@ -81,14 +79,14 @@ const Dashboard = () => {
 					({
 						id: doc.id,
 						fields: doc.data(),
-					} as Project),
+					} as User),
 			)),
 		);
 	}
 
-	function moveProjectInto(col: string, project?: Project | null) {
-		if (project === undefined) project = null;
-		if (draggedProject === null) draggedProject = project;
+	function moveProjectInto(col: string, user?: User | null) {
+		if (user === undefined) user = null;
+		if (draggedProject === null) draggedProject = user;
 		if (draggedProject === null) return;
 
 		setMatched((matched = matched.filter(p => p !== draggedProject)));
@@ -96,23 +94,19 @@ const Dashboard = () => {
 		setRejected((rejected = rejected.filter(p => p !== draggedProject)));
 
 		draggedProject.fields.irm.matched = draggedProject.fields.irm.matched.filter(
-			ref => ref.id !== currentUser?.uid,
+			ref => ref.id !== projectID,
 		);
 		setDraggedProject(draggedProject);
 
 		if (col.toLowerCase() === "interested") {
 			console.log(draggedProject.fields.irm.interested);
-			if (
-				draggedProject.fields.irm.interested
-					.map(ref => ref.id)
-					.includes(currentUser?.uid ?? "")
-			) {
+			if (draggedProject.fields.irm.interested.map(ref => ref.id).includes(projectID ?? "")) {
 				matched.push(draggedProject);
 				setMatched(matched);
 				draggedProject.fields.irm.interested = draggedProject.fields.irm.interested.filter(
-					ref => ref.id !== currentUser?.uid,
+					ref => ref.id !== projectID,
 				);
-				draggedProject.fields.irm.matched.push(getCurrentUserRef());
+				draggedProject.fields.irm.matched.push(getProjectDocRef(projectID ?? ""));
 				setDraggedProject(draggedProject);
 			} else {
 				interested.push(draggedProject);
@@ -125,15 +119,15 @@ const Dashboard = () => {
 			setDraggedProject(null);
 		}
 
-		updateDoc(getCurrentUserRef(), {
+		updateDoc(getProjectDocRef(projectID ?? ""), {
 			irm: {
-				matched: matched.map(p => doc(Firebase.db, "projects", p.id)),
-				interested: interested.map(p => doc(Firebase.db, "projects", p.id)),
-				rejected: rejected.map(p => doc(Firebase.db, "projects", p.id)),
+				matched: matched.map(p => doc(Firebase.db, "users", p.id)),
+				interested: interested.map(p => doc(Firebase.db, "users", p.id)),
+				rejected: rejected.map(p => doc(Firebase.db, "users", p.id)),
 			},
 		});
 
-		updateDoc(doc(Firebase.db, "projects", draggedProject.id), {
+		updateDoc(doc(Firebase.db, "users", draggedProject.id), {
 			irm: draggedProject.fields.irm,
 		});
 	}
@@ -182,4 +176,4 @@ const Dashboard = () => {
 	);
 };
 
-export default Dashboard;
+export default Dashboard2;

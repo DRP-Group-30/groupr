@@ -13,6 +13,7 @@ import Landing from "./components/landing";
 import ProtectedRoute from "../protectedRoute";
 import Finder2 from "./components/finder2/finder2";
 import Notifications from "./components/notifications";
+import Dashboard2 from "./components/dashboard2";
 
 /**
  * The main app component.
@@ -75,6 +76,10 @@ function App() {
 					<Route path="/projects/edit" element={<ProjectEditor isNew />} />
 					<Route path="/projects" element={<ProjectPage />} />
 					<Route path="/projects/finder/:projectID" element={<Finder2></Finder2>}></Route>
+					<Route
+						path="/projects/dashboard/:projectID"
+						element={<Dashboard2></Dashboard2>}
+					></Route>
 				</Routes>
 			</AuthProvider>
 		</>

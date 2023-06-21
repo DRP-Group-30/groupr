@@ -55,7 +55,7 @@ import { Fields, getImg, storeImg, getAllTags } from "../../../util/firebase";
 import discord from "../../static/discord.png";
 import slack from "../../static/slack.png";
 import whatsapp from "../../static/whatsapp.png";
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon } from "@chakra-ui/icons";
 import { useNavigate } from "react-router-dom";
 import { doc, updateDoc } from "firebase/firestore";
 import { Firebase } from "../../../backend/firebase";
@@ -344,7 +344,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 												label={label}
 												onRemove={onRemove}
 												variant="solid"
-												colorScheme="teal"
+												colorScheme="groupr"
 												marginRight="3px"
 												marginBottom="6px"
 											/>
@@ -608,28 +608,42 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								{"Save Project"}
 							</Button>
 						) : (
-							<HStack width="100%">
+							<VStack width="100%">
+								<HStack width="100%">
+									<Button
+										colorScheme="groupr"
+										width="full"
+										alignSelf="flex-end"
+										onClick={() => {
+											navigate("/projects/dashboard/" + project?.id);
+										}}
+									>
+										{" "}
+										{"Dashboard"}
+									</Button>
+									<Button
+										colorScheme="groupr"
+										width="full"
+										alignSelf="flex-end"
+										onClick={() => {
+											navigate("/projects/finder/" + project?.id);
+										}}
+									>
+										{" "}
+										{"Find Collaborators"}
+									</Button>
+								</HStack>
 								<Button
 									type="submit"
 									colorScheme="groupr"
 									width="full"
 									alignSelf="flex-end"
+									leftIcon={<EditIcon></EditIcon>}
 								>
 									{" "}
-									{"Edit Project"}
+									{"Edit"}
 								</Button>
-								<Button
-									colorScheme="groupr"
-									width="full"
-									alignSelf="flex-end"
-									onClick={() => {
-										navigate("/projects/finder/" + project?.id);
-									}}
-								>
-									{" "}
-									{"Find Collaborators"}
-								</Button>
-							</HStack>
+							</VStack>
 						)}
 					</VStack>
 				</Flex>
