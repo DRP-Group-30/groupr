@@ -1,6 +1,7 @@
 import { Icon } from "@chakra-ui/icons";
 import { chakra, Stack, Button, Box, Image, Text } from "@chakra-ui/react";
 import { MdExitToApp } from "react-icons/md";
+import screenshot from "../../../assets/Screenshot from 2023-06-21 02-51-43.png";
 
 export const Landing = () => {
 	return (
@@ -116,13 +117,7 @@ export const Landing = () => {
 				</Stack>
 			</Box>
 			<Box w="auto" mx="auto" mt={20} textAlign="center">
-				<Image
-					w="full"
-					rounded="lg"
-					shadow="2xl"
-					src="https://kutty.netlify.app/hero.jpg"
-					alt="Hellonext feedback boards software screenshot"
-				/>
+				<Image w="full" rounded="lg" shadow="2xl" src={screenshot} />
 			</Box>
 		</Box>
 	);
