@@ -3,6 +3,8 @@
 import { DocumentReference, addDoc } from "@firebase/firestore";
 import { DocId, Fields, FireCollection, FireMap, RANDOM, addFireDoc } from "../util/firebase";
 import { enumVals, makeArr } from "../util";
+import { doc } from "firebase/firestore";
+import { Firebase } from "./firebase";
 
 /**
  * Models the structure of the data stored in Groupr
@@ -27,10 +29,41 @@ enum Day {
 const HOURS_PER_DAY = 24;
 const DAYS_PER_WEEK = enumVals(Day).length;
 
-enum Availability {
+export enum Availability {
 	NotAvailable,
 	Available,
 }
+export enum ProjectOrUser {
+	Project,
+	User,
+}
+
+export type ProjectOrUserDict = {
+	[ProjectOrUser.Project]: Project["fields"];
+	[ProjectOrUser.User]: User["fields"];
+};
+
+export type ProjectOrUserData<T extends ProjectOrUser> = {
+	type: T;
+	fields: T extends ProjectOrUser.Project
+		? Project["fields"]
+		: T extends ProjectOrUser.User
+		? User["fields"]
+		: never;
+};
+
+/**
+ * Discriminate on the tag to execute the continuation on the fields of the
+ * project or the user.
+ */
+export const discriminate = <T extends ProjectOrUser, R>(
+	e: ProjectOrUserData<T>,
+	cont1: (p: Project["fields"]) => R,
+	cont2: (u: User["fields"]) => R,
+): R =>
+	e.type === ProjectOrUser.Project
+		? cont1(e.fields as Project["fields"])
+		: cont2(e.fields as User["fields"]);
 
 type Projects = FireCollection<Project>;
 type Users = FireCollection<User>;
@@ -44,16 +77,15 @@ export type Project = {
 	id: DocId;
 	fields: {
 		name: string;
-		collaborators: string[];
+		creator: DocumentReference;
 		contactInfo: string;
 		overview: string;
 		coverImage: string | null;
 		tags: string[];
-		interested: DocumentReference[];
+		irm: IRM;
 		roles: Role[];
 	};
 };
-
 
 /**
  * TODO: What type should experience be?
@@ -70,17 +102,27 @@ export type Role = {
  * TODO: Lots of potential for additional fields here
  */
 export type User = {
-    id: DocId;
-    fields: {
-        bio: string;
-        pronouns: string;
-        availability: AvailSchedule;
-        tags: string[];
-        projects: DocumentReference[];
-        rejected: DocumentReference[];
-        interested: DocumentReference[];
-        matched: DocumentReference[];
-    };
+	id: DocId;
+	fields: {
+		profileImage: string | null;
+		firstName: string;
+		lastName: string;
+		email: string;
+		bio: string;
+		pronouns: string;
+		availability: AvailSchedule;
+		skills: string[];
+		ownProjects: DocumentReference[];
+		irm: IRM;
+	};
+};
+
+export const userName = (u: User["fields"]) => u.firstName + " " + u.lastName;
+
+export type IRM = {
+	interested: DocumentReference[];
+	rejected: DocumentReference[];
+	matched: DocumentReference[];
 };
 
 type GlobalTable = { id: DocId; collections: {}; fields: {} };
@@ -154,13 +196,15 @@ export const getDefaultRole = (i: number = 1): Role => ({
 
 export const addProject = async (fields: Project[Fields]): Promise<string> => {
 	return addFireDoc("projects", { id: RANDOM, fields });
-}
+};
 
 export const updateProject = (id: string, fields: Project[Fields]) =>
-	addFireDoc("projects", { id, fields })
-	
-export const addUser = (fields: User[Fields]) =>
-	addFireDoc("users", { id: RANDOM, fields });
+	addFireDoc("projects", { id, fields });
 
-export const updateUser = (id: string, fields: User[Fields]) =>
-	addFireDoc("users", { id, fields })
+export const addUser = (fields: User[Fields]) => addFireDoc("users", { id: RANDOM, fields });
+
+export const updateUser = (id: string, fields: User[Fields]) => addFireDoc("users", { id, fields });
+
+export const getUserDocRef = (id: string) => doc(Firebase.db, "users", id);
+
+export const getProjectDocRef = (id: string) => doc(Firebase.db, "projects", id);

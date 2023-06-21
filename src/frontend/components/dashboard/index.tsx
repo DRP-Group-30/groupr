@@ -1,6 +1,6 @@
 import { CheckCircleIcon } from "@chakra-ui/icons";
 import { useEffect, useState } from "react";
-import { Project } from "../../../backend";
+import { Project, User, getUserDocRef } from "../../../backend";
 import { DocumentReference, doc, getDoc, updateDoc } from "firebase/firestore";
 import { DEFAULT_USER } from "../finder";
 import { Firebase } from "../../../backend/firebase";
@@ -27,6 +27,7 @@ import React from "react";
 import { getCurrentUser, getCurrentUserRef } from "../auth";
 import { get } from "http";
 import { useAuth } from "../../../context/AuthContext";
+import { inlineLog } from "../../../util";
 
 const Dashboard = () => {
 	const toast = useToast();
@@ -42,16 +43,19 @@ const Dashboard = () => {
 	}, []);
 
 	async function getProjects() {
-		let user = await getCurrentUser();
-		let matchedRefs = user.get("matched");
+		const userSnapshot = await getCurrentUser();
+		const user: User["fields"] = userSnapshot.data() as User["fields"];
+		let matchedRefs = user.irm.matched;
 		let matchedDocs = await Promise.all(
 			matchedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
 		setMatched(
-			(matched = matchedDocs.map(doc => ({ id: doc.id, fields: doc.data() } as Project))),
+			(matched = matchedDocs.map(
+				doc => ({ id: doc.id, fields: inlineLog(doc.data()) } as Project),
+			)),
 		);
 
-		let interestedRefs = user.get("interested");
+		let interestedRefs = user.irm.interested;
 		let interestedDocs = await Promise.all(interestedRefs.map(getDoc));
 		setInterested(
 			(interested = interestedDocs.map(
@@ -62,13 +66,13 @@ const Dashboard = () => {
 					} as Project),
 			)),
 		);
-		interested.map(project => {
-			if (project.fields.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")) {
+		interested.forEach(project => {
+			if (project.fields.irm.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")) {
 				moveProjectInto("interested", project);
 			}
 		});
 
-		let rejectedRefs = user.get("rejected");
+		let rejectedRefs = user.irm.rejected;
 		let rejectedDocs = await Promise.all(
 			rejectedRefs.map((ref: DocumentReference) => getDoc(ref)),
 		);
@@ -93,30 +97,18 @@ const Dashboard = () => {
 		setRejected((rejected = rejected.filter(p => p !== draggedProject)));
 
 		if (col.toLowerCase() === "interested") {
+			console.log(draggedProject.fields.irm.interested);
 			if (
-				draggedProject.fields.interested.map(ref => ref.id).includes(currentUser?.uid ?? "")
+				draggedProject.fields.irm.interested
+					.map(ref => ref.id)
+					.includes(currentUser?.uid ?? "")
 			) {
 				matched.push(draggedProject);
 				setMatched(matched);
-				toast({
-					render: () => (
-						<Center>
-							<LinkBox>
-								<LinkOverlay href="dashboard"></LinkOverlay>
-								<Tag colorScheme="green" size="lg" variant="solid">
-									<TagLeftIcon as={CheckCircleIcon}></TagLeftIcon>
-									<TagLabel padding="12px">
-										<Stack spacing="0">
-											<Text as="b">Matched project!</Text>
-											<Text>See your matches in the Dashboard.</Text>
-										</Stack>
-									</TagLabel>
-								</Tag>
-							</LinkBox>
-						</Center>
-					),
-					duration: 2000,
-					isClosable: true,
+				draggedProject.fields.irm.matched.push(getCurrentUserRef());
+				setDraggedProject(draggedProject);
+				updateDoc(doc(Firebase.db, "projects", draggedProject.id), {
+					irm: draggedProject.fields.irm,
 				});
 			} else {
 				interested.push(draggedProject);
@@ -130,15 +122,22 @@ const Dashboard = () => {
 		}
 
 		updateDoc(getCurrentUserRef(), {
-			matched: matched.map(p => doc(Firebase.db, "projects", p.id)),
-			interested: interested.map(p => doc(Firebase.db, "projects", p.id)),
-			rejected: rejected.map(p => doc(Firebase.db, "projects", p.id)),
+			irm: {
+				matched: matched.map(p => doc(Firebase.db, "projects", p.id)),
+				interested: interested.map(p => doc(Firebase.db, "projects", p.id)),
+				rejected: rejected.map(p => doc(Firebase.db, "projects", p.id)),
+			},
 		});
 	}
 
 	return (
 		<Sidebar
-			sideElem={<DashboardSidebar setShowMatched={setShowMatched}></DashboardSidebar>}
+			sideElem={
+				<DashboardSidebar
+					showMatched={showMatched}
+					setShowMatched={setShowMatched}
+				></DashboardSidebar>
+			}
 			mainElem={
 				<Flex p="15" w="100%" h="100%" justifyContent="space-evenly">
 					{showMatched ? (
@@ -148,7 +147,12 @@ const Dashboard = () => {
 							moveInto={moveProjectInto}
 						></DashboardList>
 					) : (
-						<>
+						<Flex
+							width="100%"
+							gap={8}
+							justifyContent="space-evenly"
+							alignItems="center"
+						>
 							<DashboardColumn
 								heading={CardStatus.INTERESTED}
 								children={interested}
@@ -161,7 +165,7 @@ const Dashboard = () => {
 								moveProject={moveProjectInto}
 								setDragged={setDraggedProject}
 							></DashboardColumn>
-						</>
+						</Flex>
 					)}
 					{/* <DashboardList heading="Interested" children={["Test","Test","Test","Test"]}></DashboardList> */}
 				</Flex>

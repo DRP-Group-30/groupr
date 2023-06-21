@@ -1,4 +1,5 @@
 import { T } from "@chakra-ui/toast/dist/toast.types-f226a101";
+import { stringify } from "querystring";
 
 export const range = (min: number, max: number) =>
 	Array.from(Array(max - min).keys()).map(x => x + min);
@@ -39,6 +40,11 @@ export const inlineLog = <T>(x: T): T => {
 	return x;
 };
 
+export const inlineLogPre = <T>(pre: string, x: T): T => {
+	console.log(pre + String(x));
+	return x;
+};
+
 /**
  * Something of type `any` created from thin air (otherwise known as `null`)
  * Obviously unsafe
@@ -70,3 +76,8 @@ export const nub = <T>(l: T[]) => nubWith(l, x => x);
 export const swapPromiseNull = async <T>(p: Promise<T> | null): Promise<T | null> => p;
 
 export const or = (l: boolean[]): boolean => l.reduce((b, acc) => b || acc, false);
+
+export const and = (l: boolean[]): boolean => l.reduce((b, acc) => b && acc, true);
+
+export const zipWith = <T, U, R>(l1: T[], l2: U[], f: (t: T, u: U) => R) =>
+	l1.map((t, i) => f(t, l2[i]));

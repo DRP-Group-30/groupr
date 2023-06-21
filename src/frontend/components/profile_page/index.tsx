@@ -28,7 +28,7 @@ const ProfilePage = () => {
 	}, []);
 
 	return (
-		<Flex bg="white" align="center" justify="center" h="100%">
+		<Flex backgroundColor="groupr.100" align="center" justify="center" h="100%">
 			<ProfileCard canEdit={currentUser?.uid === userID} profile={profile}></ProfileCard>
 		</Flex>
 	);

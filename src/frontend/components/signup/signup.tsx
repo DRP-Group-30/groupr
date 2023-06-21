@@ -21,7 +21,8 @@ import { ViewIcon, ViewOffIcon } from "@chakra-ui/icons";
 import { useAuth } from "../../../context/AuthContext";
 import { Field, Formik } from "formik";
 import { addFireDoc } from "../../../util/firebase";
-import { emptyAvailability } from "../../../backend";
+import { User, emptyAvailability } from "../../../backend";
+import { emptyIRM } from "../../../backend/default_database";
 
 const SignupPage = () => {
 	const [showPassword, setShowPassword] = useState(false);
@@ -30,15 +31,16 @@ const SignupPage = () => {
 
 	return (
 		<Flex
+			backgroundColor="groupr.100"
+			color="groupr.700"
 			minH={"100vh"}
 			align={"center"}
 			justify={"center"}
-			bg={useColorModeValue("gray.50", "gray.800")}
 		>
 			<Stack spacing={8} mx={"auto"} maxW={"lg"} py={12} px={6} mt="-60pt">
 				<Stack align={"center"}>
 					<Heading fontSize={"4xl"} textAlign={"center"}>
-						Sign up
+						Sign Up
 					</Heading>
 				</Stack>
 				<Box
@@ -60,20 +62,22 @@ const SignupPage = () => {
 									user.user?.updateProfile({
 										displayName: values.firstName + " " + values.lastName,
 									});
-									addFireDoc("users", {
+									const u: User = {
 										id: user.user?.uid ?? "",
 										fields: {
 											bio: "",
 											pronouns: "",
 											availability: emptyAvailability(),
-											tags: [],
-											projects: [],
-											rejected: [],
-											interested: [],
-											matched: [],
+											skills: [],
+											irm: emptyIRM(),
+											profileImage: null,
+											firstName: values.firstName,
+											lastName: values.lastName,
+											email: values.email,
+											ownProjects: [],
 										},
-									});
-									console.log(currentUser);
+									};
+									addFireDoc("users", u).then(() => console.group(currentUser));
 								})
 								.catch(err => {
 									toast({
@@ -165,23 +169,20 @@ const SignupPage = () => {
 									</FormControl>
 									<Stack spacing={10} pt={2}>
 										<Button
+											colorScheme="groupr"
 											loadingText="Submitting"
 											type="submit"
 											id="submit"
 											size="lg"
-											bg={"blue.400"}
 											color={"white"}
-											_hover={{
-												bg: "blue.500",
-											}}
 										>
-											Sign up
+											Sign Up
 										</Button>
 									</Stack>
 									<Stack pt={6}>
 										<Text align={"center"}>
 											Already a user?{" "}
-											<Link href="/login" color={"blue.400"}>
+											<Link href="/login" color={"groupr.500"}>
 												Login
 											</Link>
 										</Text>

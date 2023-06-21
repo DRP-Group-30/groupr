@@ -8,15 +8,17 @@ import {
 	useColorModeValue,
 	Flex,
 	Tag,
+	HStack,
 } from "@chakra-ui/react";
-import { MouseEvent, Dispatch, SetStateAction } from "react";
-import { Project } from "../../backend";
+import { MouseEvent, Dispatch, SetStateAction, useState } from "react";
+import { Project, ProjectOrUser, ProjectOrUserData, User, discriminate } from "../../backend";
 import React from "react";
 import { useAsync } from "../../util/react";
-import { inlineLog, map, swapPromiseNull } from "../../util";
+import { inlineLog, inlineLogPre, map, swapPromiseNull } from "../../util";
 import { getImg } from "../../util/firebase";
+import StarRating from "./star_rating";
 
-interface SwipeCardProps {
+interface SwipeCardProps<T extends ProjectOrUser> {
 	offset: number;
 	setOffset: Dispatch<SetStateAction<number>>;
 	dragging: boolean;
@@ -24,12 +26,12 @@ interface SwipeCardProps {
 	cardAnchor: number;
 	acceptCard: () => void;
 	rejectCard: () => void;
-	data: Project["fields"];
+	data: ProjectOrUserData<T>;
 	cardHidden: boolean;
 	coverImgURL: string | null;
 }
 
-const SwipeCard = ({
+const SwipeCard = <T extends ProjectOrUser>({
 	offset,
 	setOffset,
 	dragging,
@@ -40,15 +42,20 @@ const SwipeCard = ({
 	data,
 	cardHidden,
 	coverImgURL,
-}: SwipeCardProps) => {
+}: SwipeCardProps<T>) => {
+	let [preventDrag, setPreventDrag] = useState(true);
+
 	function dragStart(e: MouseEvent<HTMLDivElement>) {
 		e.preventDefault();
+		setPreventDrag((preventDrag = false));
 		setDragging(true);
 		setOffset(e.pageX - cardAnchor);
 	}
 
 	function dragEnd(e: MouseEvent<HTMLDivElement>, released: boolean) {
 		e.preventDefault();
+		if (preventDrag) return;
+		setPreventDrag((preventDrag = true));
 		setDragging(false);
 
 		if (released && Math.abs(offset) >= 300) {
@@ -89,7 +96,7 @@ const SwipeCard = ({
 				onMouseDown={dragStart}
 				onMouseUp={e => dragEnd(e, true)}
 				onMouseMove={dragMove}
-				onMouseLeave={e => dragEnd(e, false)}
+				onMouseLeave={e => dragEnd(e, true)}
 				style={{
 					transform: `translate(${offset}px, 0) rotate(${offset / 20}deg)`,
 					userSelect: "none",
@@ -104,30 +111,31 @@ const SwipeCard = ({
 					/>
 				</Box>
 				<Stack>
-					<Text
-						color={"green.500"}
-						textTransform={"uppercase"}
-						fontWeight={800}
-						fontSize={"sm"}
-						letterSpacing={1.1}
-					>
-						Developer
-					</Text>
-					<Heading
-						color={useColorModeValue("gray.700", "white")}
-						fontSize={"2xl"}
-						fontFamily={"body"}
-					>
-						{data.name}
-					</Heading>
-					<Text color={"gray.500"}>{data.overview}</Text>
+					<HStack justify="space-between" alignContent="center">
+						<Heading
+							color={useColorModeValue("gray.700", "white")}
+							fontSize={"2xl"}
+							fontFamily={"body"}
+						>
+							{dName(data)}
+						</Heading>
+						<StarRating
+							stars={Math.max(1, dTagSkills(data).length % 5)}
+							ratings={Math.floor(dOverview(data).length / 4)}
+						></StarRating>
+					</HStack>
+					<Text color={"gray.500"}>{dOverview(data)}</Text>
 				</Stack>
 
 				<Box backgroundColor="gray.100" borderRadius="md" padding="16px" marginTop="16px">
-					<Text>Because you're interested in</Text>
+					{isProject(data) ? (
+						<Text>Because you're interested in</Text>
+					) : (
+						<Text>Because you're looking for</Text>
+					)}
 					<Flex flexWrap="wrap">
-						{data.tags.map(tag => (
-							<Tag variant="solid" key={tag} colorScheme="teal" margin="2px">
+						{dTagSkills(data).map(tag => (
+							<Tag variant="solid" key={tag} colorScheme="groupr" margin="2px">
 								{tag}
 							</Tag>
 						))}
@@ -137,5 +145,33 @@ const SwipeCard = ({
 		</Center>
 	);
 };
+
+const isProject = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
+	x.type === ProjectOrUser.Project;
+
+const dName = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
+	discriminate(
+		x,
+		p => p.name,
+		u => u.firstName + " " + u.lastName,
+	);
+
+const dTagSkills = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
+	discriminate(
+		x,
+		p => p.tags,
+		u => {
+			console.log("HMMM!");
+			console.log(u);
+			return inlineLogPre("SKILLS ", u.skills);
+		},
+	);
+
+const dOverview = <T extends ProjectOrUser>(x: ProjectOrUserData<T>) =>
+	discriminate(
+		x,
+		p => p.overview,
+		u => u.bio,
+	);
 
 export default SwipeCard;

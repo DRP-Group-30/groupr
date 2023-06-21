@@ -5,7 +5,7 @@ import "firebase/compat/auth";
 
 import { getStorage } from "firebase/storage";
 
-const FIREBASE_CONFIG = {
+export const FIREBASE_CONFIG = {
 	apiKey: "AIzaSyDXfjUuI5_Zkx_aHnG3K83Hr24_Kd4HKtA",
 	authDomain: "drp-group-30.firebaseapp.com",
 	databaseURL: "https://drp-group-30-default-rtdb.europe-west1.firebasedatabase.app",
@@ -28,7 +28,7 @@ initializeApp(FIREBASE_CONFIG);
 firebase.initializeApp(FIREBASE_CONFIG);
 
 export namespace Firebase {
-    export const db = getFirestore();
-    export const auth = firebase.auth();
-    export const storage = getStorage();
+	export const db = getFirestore();
+	export const auth = firebase.auth();
+	export const storage = getStorage();
 }

@@ -16,6 +16,7 @@ const Sidebar = ({ sideElem, mainElem }: SidebarSlots) => {
 
 	return (
 		<Grid
+			className="NormalBackground"
 			templateAreas={`"nav main"`}
 			gridTemplateRows={"100% 1fr"}
 			gridTemplateColumns={`${sideBarWidth}% 1fr`}
@@ -27,10 +28,10 @@ const Sidebar = ({ sideElem, mainElem }: SidebarSlots) => {
 			}}
 		>
 			<GridItem
+				className="GlassMorphic"
 				pl="2"
 				mt="1pt"
 				pt="5pt"
-				bg="gray.100"
 				area={"nav"}
 				zIndex="9999"
 				alignContent="center"
@@ -42,16 +43,6 @@ const Sidebar = ({ sideElem, mainElem }: SidebarSlots) => {
 					alignItems="center"
 				>
 					{sideElem}
-					<Button
-						onClick={toggleSideBar}
-						alignSelf="flex-end"
-						transform="translate(50%)"
-						bg="white"
-						boxShadow={"base"}
-					>
-						{">"}
-					</Button>
-					<div></div>
 				</Flex>
 			</GridItem>
 			<GridItem pl="2" area={"main"}>

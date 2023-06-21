@@ -35,6 +35,7 @@ import { User, addUser, emptyAvailability, updateUser } from "../../../backend";
 import { Fields, getAllTags } from "../../../util/firebase";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { emptyIRM } from "../../../backend/default_database";
 
 const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | null }) => {
 	const navigate = useNavigate();
@@ -49,14 +50,16 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 		initialValues: profile
 			? profile.fields
 			: {
-					bio: "Your bio - tell us a little bit about yourself!",
-					pronouns: "(no pronouns provided)",
-					tags: [],
-					projects: [],
+					profileImage: null,
+					firstName: "",
+					lastName: "",
+					email: "",
+					bio: "",
+					pronouns: "",
+					skills: [],
+					ownProjects: [],
 					availability: emptyAvailability(),
-					interested: [],
-					rejected: [],
-					matched: [],
+					irm: emptyIRM(),
 			  },
 		onSubmit: async profileData => {
 			if (canEdit) {
@@ -76,27 +79,16 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 		formik.setValues(profile.fields);
 	}, [profile]);
 
-	function submitBio() {
-		if (formik.values.bio.trim().length === 0)
-			formik.setFieldValue("name", formik.initialValues.bio);
-	}
-
-	function submitPronouns() {
-		if (formik.values.pronouns.trim().length === 0)
-			formik.setFieldValue("pronouns", formik.initialValues.pronouns);
-	}
+	HTMLElement.prototype.scrollIntoView = function () {};
 
 	return (
 		<form onSubmit={formik.handleSubmit}>
-			<Box bgColor="ffffff00" p={4} w="100%" alignItems="center" justifyContent="center">
+			<Box bgColor="transparent" p={4} w="100%" alignItems="center" justifyContent="center">
 				<Flex
 					width="100%"
 					shadow="lg"
 					rounded="lg"
 					bg="#ffffff"
-					_dark={{
-						bg: "gray.800",
-					}}
 					mb={4}
 					direction="column"
 					alignItems="center"
@@ -104,9 +96,6 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 				>
 					<Box
 						bg="#ffffff"
-						_dark={{
-							bg: "#3e3e3e",
-						}}
 						style={{
 							backgroundImage: `url(https://picsum.photos/seed/${currentUser?.uid}/1200)`,
 							backgroundSize: "cover",
@@ -141,22 +130,18 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 						spacing={2}
 						align="left"
 					>
-						<Text
-							fontSize="4xl"
-							fontWeight="bold"
-							color="gray.800"
-							_dark={{
-								color: "white",
-							}}
-						>
+						<Text fontSize="4xl" fontWeight="bold" color="groupr.700">
 							{currentUser?.displayName}
 						</Text>
 						<FormControl>
 							<Editable
-								value={formik.values.pronouns}
-								onSubmit={submitPronouns}
-								onCancel={submitPronouns}
+								value={
+									formik.values.pronouns.length === 0
+										? "(no pronouns provided)"
+										: formik.values.pronouns
+								}
 								isDisabled={!canEdit}
+								color="groupr.700"
 							>
 								<Flex width="600px" flexWrap="wrap">
 									<EditablePreview
@@ -180,10 +165,13 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 						</FormControl>
 						<FormControl>
 							<Editable
-								value={formik.values.bio}
-								onSubmit={submitBio}
-								onCancel={submitBio}
+								value={
+									formik.values.bio.length === 0
+										? "Your bio - tell us a little about yourself!"
+										: formik.values.bio
+								}
 								isDisabled={!canEdit}
+								color="groupr.700"
 							>
 								<EditablePreview
 									maxWidth="600px"
@@ -209,7 +197,9 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 								padding="16px"
 							>
 								<FormControl>
-									<FormLabel fontWeight="bold">Interests and skills</FormLabel>
+									<FormLabel color="groupr.700" fontWeight="bold">
+										Interests and skills
+									</FormLabel>
 									<Flex
 										maxWidth="600px"
 										flexWrap="wrap"
@@ -231,7 +221,7 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 													label={label}
 													onRemove={onRemove}
 													variant="solid"
-													colorScheme="teal"
+													colorScheme="groupr"
 													marginRight="3px"
 													marginBottom="6px"
 												/>
@@ -239,7 +229,7 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 												<Tag
 													key={tid}
 													variant="solid"
-													colorScheme="teal"
+													colorScheme="groupr"
 													marginRight="3px"
 													marginBottom="6px"
 												>
@@ -257,17 +247,17 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 										}}
 										onChange={(ts: string[]) => {
 											formik.setFieldValue(
-												"tags",
+												"skills",
 												nub(ts.map(t => t.toUpperCase())),
 												false,
 											);
 										}}
-										values={formik.values.tags}
+										values={formik.values.skills}
 									>
 										{canEdit && (
 											<>
 												<AutoCompleteInput
-													placeholder="Search for tags..."
+													placeholder="Search for keywords..."
 													backgroundColor="white"
 												></AutoCompleteInput>
 												<AutoCompleteList height="200px" overflow="scroll">
@@ -307,7 +297,12 @@ const ProfileCard = ({ canEdit, profile }: { canEdit: boolean; profile: User | n
 								</FormControl>
 							</Box>
 						)}
-						<Button type="submit" colorScheme="teal" width="full" alignSelf="flex-end">
+						<Button
+							type="submit"
+							colorScheme="groupr"
+							width="full"
+							alignSelf="flex-end"
+						>
 							Save profile
 						</Button>
 					</VStack>

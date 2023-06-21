@@ -25,6 +25,7 @@ import {
 	SliderThumb,
 	SliderMark,
 	Tag,
+	HStack,
 } from "@chakra-ui/react";
 import {
 	AutoCompleteTag,
@@ -36,7 +37,7 @@ import {
 	ItemTag,
 } from "@choc-ui/chakra-autocomplete";
 import { MdUploadFile, MdEmail, MdLink } from "react-icons/md";
-import { nubWith, nub, inlineLog, or } from "../../../util";
+import { nubWith, nub, inlineLog, or, inlineLogPre } from "../../../util";
 import { ContactMethod } from "./types";
 import { useFormik } from "formik";
 import { useState, useEffect } from "react";
@@ -59,6 +60,7 @@ import { useNavigate } from "react-router-dom";
 import { doc, updateDoc } from "firebase/firestore";
 import { Firebase } from "../../../backend/firebase";
 import { getCurrentUser, getCurrentUserRef } from "../auth";
+import { emptyIRM } from "../../../backend/default_database";
 
 const contactIcons = {
 	discord: discord,
@@ -85,9 +87,9 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					tags: [],
 					// Should there be a type for only the document data fields that are
 					// editable/shown?
-					interested: [],
+					irm: emptyIRM(),
 					// Should `collaborators` be initialised to include the project creator?
-					collaborators: [],
+					creator: getCurrentUserRef(),
 					roles: [],
 			  },
 		onSubmit: async projectData => {
@@ -111,11 +113,11 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					let userData = currentUser.data() as User[Fields];
 
 					let id = await addProject(projectData);
-					let projects = userData.projects;
+					let projects = userData.ownProjects;
 					projects.push(doc(Firebase.db, "projects", id));
 
 					await updateDoc(getCurrentUserRef(), {
-						projects: projects,
+						ownProjects: projects,
 					});
 				} else {
 					await updateProject(project.id, projectData);
@@ -165,7 +167,15 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 	HTMLElement.prototype.scrollIntoView = function () {};
 
 	return (
-		<Box maxWidth="600px" bg="white" minWidth="400px" p={6} rounded="md" boxShadow="2xl">
+		<Box
+			color="groupr.700"
+			maxWidth="600px"
+			bg="white"
+			minWidth="400px"
+			p={6}
+			rounded="md"
+			boxShadow="2xl"
+		>
 			<Box
 				backgroundColor="gray.200"
 				height="210px"
@@ -208,7 +218,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								/>
 								{editMode && (
 									<Button
-										colorScheme="teal"
+										colorScheme="groupr"
 										fontWeight="400"
 										leftIcon={<MdUploadFile />}
 										onClick={() => imageInputElem?.click()}
@@ -436,7 +446,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 													label={label}
 													onRemove={onRemove}
 													variant="solid"
-													colorScheme="teal"
+													colorScheme="groupr"
 													marginRight="3px"
 													marginBottom="6px"
 												/>
@@ -444,7 +454,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 												<Tag
 													key={tid}
 													variant="solid"
-													colorScheme="teal"
+													colorScheme="groupr"
 													marginRight="3px"
 													marginBottom="6px"
 												>
@@ -518,6 +528,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 							<FormControl>
 								<FormLabel>Contact Method</FormLabel>
 								<RadioGroup
+									colorScheme="groupr"
 									value={contactMethod}
 									onChange={s => setContactMethod(s as ContactMethod)}
 								>
@@ -586,10 +597,40 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								</Editable>
 							</Stack>
 						</FormControl>
-						<Button type="submit" colorScheme="teal" width="full" alignSelf="flex-end">
-							{" "}
-							{editMode ? "Save Project" : "Edit Project"}
-						</Button>
+						{editMode ? (
+							<Button
+								type="submit"
+								colorScheme="groupr"
+								width="full"
+								alignSelf="flex-end"
+							>
+								{" "}
+								{"Save Project"}
+							</Button>
+						) : (
+							<HStack width="100%">
+								<Button
+									type="submit"
+									colorScheme="groupr"
+									width="full"
+									alignSelf="flex-end"
+								>
+									{" "}
+									{"Edit Project"}
+								</Button>
+								<Button
+									colorScheme="groupr"
+									width="full"
+									alignSelf="flex-end"
+									onClick={() => {
+										navigate("/projects/finder/" + project?.id);
+									}}
+								>
+									{" "}
+									{"Find Collaborators"}
+								</Button>
+							</HStack>
+						)}
 					</VStack>
 				</Flex>
 			</form>

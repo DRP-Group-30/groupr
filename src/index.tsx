@@ -4,12 +4,29 @@ import "./index.css";
 import App from "./frontend/app";
 import reportWebVitals from "./util/report_web_vitals";
 import { BrowserRouter } from "react-router-dom";
-import { ChakraProvider } from "@chakra-ui/react";
+import { ChakraProvider, extendTheme, withDefaultColorScheme } from "@chakra-ui/react";
 import "./index.css";
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement);
+
+const theme = extendTheme({
+	colors: {
+		groupr: {
+			100: "#fffaf3",
+			200: "#dfd5e7",
+			300: "#bfc5f8",
+			400: "#9da7fc",
+			500: "#7b88ff",
+			600: "#525DB9",
+			700: "#293173",
+			800: "#212546",
+			900: "#191919",
+		},
+	},
+});
+
 root.render(
-	<ChakraProvider>
+	<ChakraProvider theme={theme}>
 		<BrowserRouter>
 			<App />
 		</BrowserRouter>

@@ -11,6 +11,8 @@ import { AuthProvider, useAuth } from "../context/AuthContext";
 import SignupPage from "./components/signup";
 import Landing from "./components/landing";
 import ProtectedRoute from "../protectedRoute";
+import Finder2 from "./components/finder2/finder2";
+import Notifications from "./components/notifications";
 
 /**
  * The main app component.
@@ -20,6 +22,9 @@ function App() {
 		<>
 			<AuthProvider>
 				<Navbar></Navbar>
+				{window.location.pathname !== "/" &&
+					window.location.pathname !== "/login" &&
+					window.location.pathname !== "/signup" && <Notifications></Notifications>}
 				<Routes>
 					{/**
 					 * A list of routes, each with a path and an element.
@@ -69,6 +74,7 @@ function App() {
 					/>
 					<Route path="/projects/edit" element={<ProjectEditor isNew />} />
 					<Route path="/projects" element={<ProjectPage />} />
+					<Route path="/projects/finder/:projectID" element={<Finder2></Finder2>}></Route>
 				</Routes>
 			</AuthProvider>
 		</>
