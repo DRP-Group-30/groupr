@@ -93,10 +93,12 @@ export type Project = {
 export type Role = {
 	name: string;
 	skillset: Skillset;
-	experience: string;
-	approxPay: number;
-	commitment: number;
+	experience: Experience;
+	approxPay: Range;
+	commitment: Range;
 };
+
+type Range = { min: number; max: number };
 
 /**
  * TODO: Lots of potential for additional fields here
@@ -160,16 +162,12 @@ enum BoxType {
 type ImageContents = { path: string };
 type TextContents = { title: string; body: string };
 
-/**
- * Could be more fine-grained
- * Perhaps hierarchical? i.e: `PROGRAMMING` comprised of `GAMEPLAY_SCRIPTING`,
- * `ENGINE_PROGRAMMING`, `SHADERS`, `PHYSICS`, `NETWORKING` etc...
- */
-export enum Skill {
-	PROGRAMMING = "Programming",
-	ART = "Art",
-	MUSIC_AND_SOUND = "Music and Sound",
-	PROJECT_MANAGEMENT = "Project Management",
+type Skill = string;
+
+export enum Experience {
+	Begin = "Beginner", // Know the basics, currently learning
+	Intermediate = "Intermediate", // Extensive experience from personal projects/earnt a qualification
+	Pro = "Professional", // Shipped multiple games working within this role
 }
 
 /**
@@ -189,9 +187,9 @@ export const DEFAULT_SKILL_SET: Skillset = [];
 export const getDefaultRole = (i: number = 1): Role => ({
 	name: `Role ${i}`,
 	skillset: [],
-	experience: "",
-	approxPay: 0,
-	commitment: 0,
+	experience: Experience.Begin,
+	approxPay: { min: 0, max: 0 },
+	commitment: { min: 0, max: 0 },
 });
 
 export const addProject = async (fields: Project[Fields]): Promise<string> => {

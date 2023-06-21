@@ -1,5 +1,12 @@
 import { Firestore, doc } from "firebase/firestore";
-import { GrouprDatabase, IRM, ProjectOrUser, Skill, emptyAvailability, getUserDocRef } from ".";
+import {
+	Experience,
+	GrouprDatabase,
+	IRM,
+	ProjectOrUser,
+	emptyAvailability,
+	getUserDocRef,
+} from ".";
 import { RANDOM } from "../util/firebase";
 import { Firebase } from "./firebase";
 
@@ -28,7 +35,15 @@ export const defaultDatabase = (): GrouprDatabase => ({
 					"C++",
 				],
 				irm: emptyIRM(),
-				roles: [],
+				roles: [
+					{
+						name: "Character Animator",
+						skillset: ["Animation"],
+						experience: Experience.Intermediate,
+						approxPay: { min: 10, max: 15 },
+						commitment: { min: 5, max: 10 },
+					},
+				],
 			},
 		},
 		{

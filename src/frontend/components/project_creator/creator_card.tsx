@@ -48,7 +48,6 @@ import { useFormik } from "formik";
 import { useState, useEffect } from "react";
 import {
 	Project,
-	Skill,
 	Skillset,
 	User,
 	addProject,
@@ -663,7 +662,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 										backgroundColor="white"
 									></AutoCompleteInput>
 									<AutoCompleteList height="200px" overflow="scroll">
-										{inlineLog(Object.values(Skill)).map(t => (
+										{/*inlineLog(Object.values(Skill)).map(t => (
 											<AutoCompleteItem
 												key={t}
 												value={t}
@@ -673,7 +672,7 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 											>
 												{t}
 											</AutoCompleteItem>
-										))}
+										))*/}
 									</AutoCompleteList>
 								</AutoComplete>
 							</Box>
