@@ -21,6 +21,8 @@ import { HamburgerIcon, CloseIcon, AddIcon } from "@chakra-ui/icons";
 import { Link as RouteLink, useNavigate } from "react-router-dom";
 import logo from "../../assets/LogoWName.svg";
 import { useAuth } from "../../context/AuthContext";
+import defaultDatabase from "../../backend/default_database";
+import { resetDatabase } from "../../util/firebase";
 
 const Links = ["Dashboard", "Find Projects", "Your Projects"];
 const LinksRoutes: { [key: string]: string } = {
@@ -66,15 +68,17 @@ const Navbar = () => {
 				<Flex h={16} alignItems={"center"} justifyContent={"space-between"}>
 					<HStack spacing={8} alignItems={"center"} w="80%">
 						<LinkBox minH="100%" minW="80pt">
-							<LinkOverlay as={RouteLink} to="/">
-								<Image
-									src={logo}
-									maxH="36pt"
-									objectFit="scale-down"
-									mt="-3pt"
-									mr="-4pt"
-								/>
-							</LinkOverlay>
+							{/* <LinkOverlay as={RouteLink} to="/"> */}
+							<Image
+								src={logo}
+								maxH="36pt"
+								objectFit="scale-down"
+								mt="-3pt"
+								mr="-4pt"
+								onClick={() => resetDatabase(defaultDatabase())}
+								cursor="pointer"
+							/>
+							{/* </LinkOverlay> */}
 						</LinkBox>
 						{isLoggedIn ? (
 							<HStack as={"nav"} spacing={4} display={{ base: "none", md: "flex" }}>

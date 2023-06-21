@@ -189,6 +189,7 @@ const Finder2 = () => {
 									onClick={rejectCard}
 									leftIcon={<MdClose />}
 									boxShadow="lg"
+									colorScheme="groupr"
 								>
 									Reject
 								</Button>
@@ -209,6 +210,7 @@ const Finder2 = () => {
 									onClick={acceptCard}
 									rightIcon={<MdDone />}
 									boxShadow="lg"
+									colorScheme="groupr"
 								>
 									Accept
 								</Button>
