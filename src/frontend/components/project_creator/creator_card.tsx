@@ -527,37 +527,38 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 					</Flex>
 				</form>
 			</Box>
-			<Box
-				color="groupr.700"
-				maxWidth="600px"
-				bg="white"
-				minWidth="400px"
-				p={6}
-				rounded="md"
-				boxShadow="2xl"
-			>
-				<VStack marginBottom="6px">
-					{formik.values.roles.map((x, i) => (
-						<Box bg="gray.100" minWidth="600px" rounded="md" key={i}>
-							<Editable value={x.name}>
-								<EditablePreview
-									className={editMode ? "EditPreview" : ""}
-									fontSize="2xl"
-									fontWeight="bold"
-									cursor={editMode ? "pointer" : ""}
-								/>
-								<Input
-									as={EditableInput}
-									id="role_name"
-									name={`roles[${i}].name`}
-									type="text"
-									variant="flushed"
-									onChange={formik.handleChange}
-									fontSize="2xl"
-									fontWeight="bold"
-								/>
-							</Editable>
-							{/**<Slider
+			{editMode === true ? (
+				<Box
+					color="groupr.700"
+					maxWidth="600px"
+					bg="white"
+					minWidth="400px"
+					p={6}
+					rounded="md"
+					boxShadow="2xl"
+				>
+					<VStack marginBottom="6px">
+						{formik.values.roles.map((x, i) => (
+							<Box bg="gray.100" minWidth="600px" rounded="md" key={i}>
+								<Editable value={x.name}>
+									<EditablePreview
+										className={editMode ? "EditPreview" : ""}
+										fontSize="2xl"
+										fontWeight="bold"
+										cursor={editMode ? "pointer" : ""}
+									/>
+									<Input
+										as={EditableInput}
+										id="role_name"
+										name={`roles[${i}].name`}
+										type="text"
+										variant="flushed"
+										onChange={formik.handleChange}
+										fontSize="2xl"
+										fontWeight="bold"
+									/>
+								</Editable>
+								{/**<Slider
 								defaultValue={0}
 								min={0}
 								max={100}
@@ -584,124 +585,127 @@ const CreatorCard = ({ editMode, project }: { editMode: boolean; project: Projec
 								</SliderMark>
 								<SliderThumb boxSize={6} mt="5" />
 							</Slider>*/}
-							<HStack>
-								<Text>Pay ($/Hr)</Text>
-								<span style={{ width: 50 }}></span>
-								<Text>Min: </Text>
-								<NumberInput width={100} step={1} defaultValue={10} min={0}>
-									<NumberInputField />
-									<NumberInputStepper>
-										<NumberIncrementStepper />
-										<NumberDecrementStepper />
-									</NumberInputStepper>
-								</NumberInput>
-								<span style={{ width: 50 }}></span>
-								<Text>Max:</Text>
-								<NumberInput width={100} step={1} defaultValue={20} min={0}>
-									<NumberInputField />
-									<NumberInputStepper>
-										<NumberIncrementStepper />
-										<NumberDecrementStepper />
-									</NumberInputStepper>
-								</NumberInput>
-							</HStack>
-							<HStack>
-								<Text>Commitment (Hr/Wk)</Text>
-								<span style={{ width: 50 }}></span>
-								<Text>Min: </Text>
-								<NumberInput width={100} step={1} defaultValue={10} min={0}>
-									<NumberInputField />
-									<NumberInputStepper>
-										<NumberIncrementStepper />
-										<NumberDecrementStepper />
-									</NumberInputStepper>
-								</NumberInput>
-								<span style={{ width: 50 }}></span>
-								<Text>Max:</Text>
-								<NumberInput width={100} step={1} defaultValue={25} min={0}>
-									<NumberInputField />
-									<NumberInputStepper>
-										<NumberIncrementStepper />
-										<NumberDecrementStepper />
-									</NumberInputStepper>
-								</NumberInput>
-							</HStack>
-							<Flex
-								maxWidth="600px"
-								flexWrap="wrap"
-								marginBottom={(tempSkills[i]?.length ?? 0) > 0 ? "3px" : "0px"}
-							>
-								{(tempSkills[i] ?? []).map(({ label, onRemove }, i) => (
-									<AutoCompleteTag
-										key={i}
-										label={label}
-										onRemove={onRemove}
-										variant="solid"
-										colorScheme="teal"
-										marginRight="3px"
-										marginBottom="6px"
-									/>
-								))}
-							</Flex>
-							<AutoComplete
-								openOnFocus
-								multiple
-								creatable={false}
-								onReady={({ tags }) => {
-									tempSkills[i] = tags;
-									setTempSkills(tempSkills);
-								}}
-								onChange={(ts: string[]) => {
-									const curRoles = formik.values.roles;
-									curRoles[i].skillset = ts as Skillset;
-									formik.setFieldValue("roles", curRoles);
-								}}
-							>
-								<AutoCompleteInput
-									placeholder="Search for skills that this role requires..."
-									backgroundColor="white"
-								></AutoCompleteInput>
-								<AutoCompleteList height="200px" overflow="scroll">
-									{inlineLog(Object.values(Skill)).map(t => (
-										<AutoCompleteItem
-											key={t}
-											value={t}
-											textTransform="capitalize"
-											_selected={{ bg: "whiteAlpha.50" }}
-											_focus={{ bg: "whiteAlpha.100" }}
-										>
-											{t}
-										</AutoCompleteItem>
+								<HStack>
+									<Text>Pay ($/Hr)</Text>
+									<span style={{ width: 50 }}></span>
+									<Text>Min: </Text>
+									<NumberInput width={100} step={1} defaultValue={10} min={0}>
+										<NumberInputField />
+										<NumberInputStepper>
+											<NumberIncrementStepper />
+											<NumberDecrementStepper />
+										</NumberInputStepper>
+									</NumberInput>
+									<span style={{ width: 50 }}></span>
+									<Text>Max:</Text>
+									<NumberInput width={100} step={1} defaultValue={20} min={0}>
+										<NumberInputField />
+										<NumberInputStepper>
+											<NumberIncrementStepper />
+											<NumberDecrementStepper />
+										</NumberInputStepper>
+									</NumberInput>
+								</HStack>
+								<HStack>
+									<Text>Commitment (Hr/Wk)</Text>
+									<span style={{ width: 50 }}></span>
+									<Text>Min: </Text>
+									<NumberInput width={100} step={1} defaultValue={10} min={0}>
+										<NumberInputField />
+										<NumberInputStepper>
+											<NumberIncrementStepper />
+											<NumberDecrementStepper />
+										</NumberInputStepper>
+									</NumberInput>
+									<span style={{ width: 50 }}></span>
+									<Text>Max:</Text>
+									<NumberInput width={100} step={1} defaultValue={25} min={0}>
+										<NumberInputField />
+										<NumberInputStepper>
+											<NumberIncrementStepper />
+											<NumberDecrementStepper />
+										</NumberInputStepper>
+									</NumberInput>
+								</HStack>
+								<Flex
+									maxWidth="600px"
+									flexWrap="wrap"
+									marginBottom={(tempSkills[i]?.length ?? 0) > 0 ? "3px" : "0px"}
+								>
+									{(tempSkills[i] ?? []).map(({ label, onRemove }, i) => (
+										<AutoCompleteTag
+											key={i}
+											label={label}
+											onRemove={onRemove}
+											variant="solid"
+											colorScheme="teal"
+											marginRight="3px"
+											marginBottom="6px"
+										/>
 									))}
-								</AutoCompleteList>
-							</AutoComplete>
-						</Box>
-					))}
-					{editMode && (
-						<LinkBox
-							bgColor="gray.100"
-							border="dashed"
-							width="100%"
-							rounded="md"
-							onClick={() =>
-								formik.setFieldValue(
-									"roles",
-									formik.values.roles.concat([
-										getDefaultRole(formik.values.roles.length),
-									]),
-								)
-							}
-							cursor="pointer"
-							marginBottom="6px"
-						>
-							<VStack padding="6px">
-								<Icon as={AddIcon} w="24px" h="24px" />
-								<Text>Add a role to tell us who you're looking for...</Text>
-							</VStack>
-						</LinkBox>
-					)}
-				</VStack>
-			</Box>
+								</Flex>
+								<AutoComplete
+									openOnFocus
+									multiple
+									creatable={false}
+									onReady={({ tags }) => {
+										tempSkills[i] = tags;
+										setTempSkills(tempSkills);
+									}}
+									onChange={(ts: string[]) => {
+										const curRoles = formik.values.roles;
+										curRoles[i].skillset = ts as Skillset;
+										formik.setFieldValue("roles", curRoles);
+									}}
+								>
+									<AutoCompleteInput
+										placeholder="Search for skills that this role requires..."
+										backgroundColor="white"
+									></AutoCompleteInput>
+									<AutoCompleteList height="200px" overflow="scroll">
+										{inlineLog(Object.values(Skill)).map(t => (
+											<AutoCompleteItem
+												key={t}
+												value={t}
+												textTransform="capitalize"
+												_selected={{ bg: "whiteAlpha.50" }}
+												_focus={{ bg: "whiteAlpha.100" }}
+											>
+												{t}
+											</AutoCompleteItem>
+										))}
+									</AutoCompleteList>
+								</AutoComplete>
+							</Box>
+						))}
+						{editMode && (
+							<LinkBox
+								bgColor="gray.100"
+								border="dashed"
+								width="100%"
+								rounded="md"
+								onClick={() =>
+									formik.setFieldValue(
+										"roles",
+										formik.values.roles.concat([
+											getDefaultRole(formik.values.roles.length),
+										]),
+									)
+								}
+								cursor="pointer"
+								marginBottom="6px"
+							>
+								<VStack padding="6px">
+									<Icon as={AddIcon} w="24px" h="24px" />
+									<Text>Add a role to tell us who you're looking for...</Text>
+								</VStack>
+							</LinkBox>
+						)}
+					</VStack>
+				</Box>
+			) : (
+				<></>
+			)}
 		</HStack>
 	);
 };
