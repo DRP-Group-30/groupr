@@ -145,8 +145,6 @@ const Finder = () => {
 		const snapshot = (await getDoc(cur)).data() as Project["fields"];
 		console.log(snapshot.irm.interested);
 		const curUser = await getCurrentUserRef();
-		console.log("HMMMMMM");
-		console.log(snapshot.irm.interested);
 		if (snapshot.irm.interested.map(i => i.id).includes(currentUser?.uid ?? "")) {
 			console.log("MATCHED!");
 			updateField<DocumentReference[]>(curUser, MATCHED, (rs: any[]) =>
@@ -155,7 +153,6 @@ const Finder = () => {
 			updateField<DocumentReference[]>(cur, INTERESTED, (rs: any[]) =>
 				rs.filter((r: { id: any }) => r.id !== currentUser?.uid ?? ""),
 			);
-			updateField<DocumentReference[]>(cur, MATCHED, (rs: any[]) => rs.concat([curUser]));
 		} else {
 			console.log("RECORDED INTEREST!");
 			updateField<DocumentReference[]>(curUser, INTERESTED, (rs: any[]) =>
@@ -280,13 +277,6 @@ const Finder = () => {
 							</FormControl>
 						</Box>
 					</Card>
-					<Button
-						colorScheme="groupr"
-						boxShadow="lg"
-						onClick={() => resetDatabase(defaultDatabase())}
-					>
-						Reset!
-					</Button>
 					<div></div>
 				</Flex>
 			</GridItem>
@@ -300,6 +290,7 @@ const Finder = () => {
 									onClick={rejectCard}
 									leftIcon={<MdClose />}
 									boxShadow="lg"
+									colorScheme="groupr"
 								>
 									Reject
 								</Button>
@@ -320,6 +311,7 @@ const Finder = () => {
 									onClick={acceptCard}
 									rightIcon={<MdDone />}
 									boxShadow="lg"
+									colorScheme="groupr"
 								>
 									Accept
 								</Button>
